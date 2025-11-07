@@ -460,8 +460,8 @@
             // 发送点击数据
             async sendClickData(clickData) {
                 try {
-                    // 获取用户IP
-                    const userIP = await this.getUserIP();
+                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
+                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
                     clickData.userIP = userIP;
                     
                     // 发送到 Google Apps Script

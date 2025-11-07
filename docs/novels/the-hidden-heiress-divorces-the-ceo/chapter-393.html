@@ -129,10 +129,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-07T17:39:54.765501">
-    <meta property="article:modified_time" content="2025-11-07T17:39:54.765501">
+    <meta property="article:published_time" content="2025-11-07T17:52:08.519151">
+    <meta property="article:modified_time" content="2025-11-07T17:52:08.519151">
     <meta name="date" content="2025-11-07">
-    <meta name="last-modified" content="2025-11-07 17:39:54">
+    <meta name="last-modified" content="2025-11-07 17:52:08">
     
     
     <!-- Open Graph Meta Tags -->
@@ -579,8 +579,8 @@
             // 发送点击数据
             async sendClickData(clickData) {
                 try {
-                    // 获取用户IP
-                    const userIP = await this.getUserIP();
+                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
+                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
                     clickData.userIP = userIP;
                     
                     // 发送到 Google Apps Script
@@ -969,8 +969,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-07T17:39:54.765501",
-        "dateModified": "2025-11-07T17:39:54.765501",
+        "datePublished": "2025-11-07T17:52:08.519151",
+        "dateModified": "2025-11-07T17:52:08.519151",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
