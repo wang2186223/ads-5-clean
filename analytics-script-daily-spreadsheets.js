@@ -26,6 +26,8 @@ function doPost(e) {
     
     if (eventType === 'ad_guide_triggered') {
       handleAdGuideEvent(dailySpreadsheet, data);
+    } else if (eventType === 'ad_click') {
+      handleAdClickEvent(dailySpreadsheet, data);
     } else {
       handlePageVisitEvent(dailySpreadsheet, data);
     }
@@ -171,6 +173,27 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   adGuideSheet.setColumnWidth(8, 120);
   adGuideSheet.setColumnWidth(9, 180);
   
+  // 创建"广告点击"sheet
+  const adClickSheet = spreadsheet.insertSheet('广告点击');
+  adClickSheet.getRange(1, 1, 1, 13).setValues([
+    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数']
+  ]);
+  const adClickHeader = adClickSheet.getRange(1, 1, 1, 13);
+  adClickHeader.setBackground('#34A853').setFontColor('white').setFontWeight('bold');
+  adClickSheet.setColumnWidth(1, 150);   // 时间
+  adClickSheet.setColumnWidth(2, 200);   // 小说标题
+  adClickSheet.setColumnWidth(3, 80);    // 章节号
+  adClickSheet.setColumnWidth(4, 300);   // 页面URL
+  adClickSheet.setColumnWidth(5, 120);   // 广告位ID
+  adClickSheet.setColumnWidth(6, 100);   // 广告位置
+  adClickSheet.setColumnWidth(7, 100);   // 滚动深度
+  adClickSheet.setColumnWidth(8, 120);   // IP地址
+  adClickSheet.setColumnWidth(9, 100);   // 设备类型
+  adClickSheet.setColumnWidth(10, 120);  // 屏幕尺寸
+  adClickSheet.setColumnWidth(11, 100);  // 停留时长
+  adClickSheet.setColumnWidth(12, 120);  // 历史累计点击
+  adClickSheet.setColumnWidth(13, 200);  // 来源参数
+  
   // 创建"当日统计"概览sheet
   const summarySheet = spreadsheet.insertSheet('📊当日统计', 0);
   initializeDailySummary(summarySheet, dateString);
@@ -187,6 +210,7 @@ function initializeDailySummary(sheet, dateString) {
   const headers = [
     ['统计项目', '数值', '说明'],
     ['页面访问次数', 0, '当天的总访问次数'],
+    ['广告点击次数', 0, '当天的广告点击次数'],
     ['广告引导触发', 0, '广告引导弹窗触发次数'],
     ['独立IP数量', 0, '去重后的访问IP数量'],
     ['最后更新时间', '', '数据最后更新的时间']
@@ -323,6 +347,48 @@ function handleAdGuideEvent(dailySpreadsheet, data) {
   adGuideSheet.appendRow(rowData);
 }
 
+/**
+ * 处理广告点击事件
+ */
+function handleAdClickEvent(dailySpreadsheet, data) {
+  // 确保广告点击工作表存在
+  let adClickSheet = dailySpreadsheet.getSheetByName('广告点击');
+  
+  if (!adClickSheet) {
+    console.log('广告点击工作表不存在，正在创建...');
+    adClickSheet = addAdClickSheetToExisting(dailySpreadsheet);
+  }
+  
+  // 解析设备信息
+  const deviceType = getDeviceType(data.userAgent);
+  
+  // 提取来源参数
+  const sourceParams = extractSourceParams(data.pageUrl);
+  
+  const rowData = [
+    getTimeString(),                    // 时间
+    data.novel || '',                   // 小说标题
+    data.chapter || '',                 // 章节号
+    data.pageUrl || '',                 // 页面URL
+    data.adSlot || '',                  // 广告位ID
+    data.adPosition || '',              // 广告位置(px)
+    data.scrollDepth || '',             // 滚动深度
+    data.userIP || 'Unknown',           // IP地址
+    deviceType,                         // 设备类型
+    data.screenSize || '',              // 屏幕尺寸
+    data.stayDuration || 0,             // 停留时长(秒)
+    data.totalClickCount || 0,          // 历史累计点击次数
+    sourceParams                        // 来源参数
+  ];
+  
+  adClickSheet.appendRow(rowData);
+  
+  // 5%概率更新当日统计
+  if (Math.random() < 0.05) {
+    updateDailySummary(dailySpreadsheet);
+  }
+}
+
 // ==================== 统计更新函数 ====================
 
 /**
@@ -341,6 +407,10 @@ function updateDailySummary(dailySpreadsheet) {
     const adGuideSheet = dailySpreadsheet.getSheetByName('广告引导');
     const adGuideCount = adGuideSheet ? Math.max(0, adGuideSheet.getDataRange().getNumRows() - 1) : 0;
     
+    // 统计广告点击
+    const adClickSheet = dailySpreadsheet.getSheetByName('广告点击');
+    const adClickCount = adClickSheet ? Math.max(0, adClickSheet.getDataRange().getNumRows() - 1) : 0;
+    
     // 统计独立IP
     let uniqueIPs = 0;
     if (visitSheet && visitCount > 0) {
@@ -357,9 +427,10 @@ function updateDailySummary(dailySpreadsheet) {
     
     // 更新数据
     summarySheet.getRange(3, 2).setValue(visitCount);
-    summarySheet.getRange(4, 2).setValue(adGuideCount);
-    summarySheet.getRange(5, 2).setValue(uniqueIPs);
-    summarySheet.getRange(6, 2).setValue(getTimeString());
+    summarySheet.getRange(4, 2).setValue(adClickCount);
+    summarySheet.getRange(5, 2).setValue(adGuideCount);
+    summarySheet.getRange(6, 2).setValue(uniqueIPs);
+    summarySheet.getRange(7, 2).setValue(getTimeString());
   } catch (error) {
     console.error('更新每日统计失败:', error);
   }
@@ -386,6 +457,7 @@ function updateMainDashboard() {
     const indexData = indexSheet.getDataRange().getValues();
     let totalVisits = 0;
     let totalAdGuides = 0;
+    let totalAdClicks = 0;
     let activeDays = 0;
     let todayVisits = 0;
     
@@ -401,6 +473,7 @@ function updateMainDashboard() {
         const dailySpreadsheet = SpreadsheetApp.openById(spreadsheetId);
         const visitSheet = dailySpreadsheet.getSheetByName('页面访问');
         const adGuideSheet = dailySpreadsheet.getSheetByName('广告引导');
+        const adClickSheet = dailySpreadsheet.getSheetByName('广告点击');
         
         if (visitSheet) {
           const visitCount = Math.max(0, visitSheet.getDataRange().getNumRows() - 1);
@@ -413,6 +486,10 @@ function updateMainDashboard() {
         if (adGuideSheet) {
           totalAdGuides += Math.max(0, adGuideSheet.getDataRange().getNumRows() - 1);
         }
+        
+        if (adClickSheet) {
+          totalAdClicks += Math.max(0, adClickSheet.getDataRange().getNumRows() - 1);
+        }
       } catch (e) {
         console.log(`无法打开表格 ${spreadsheetId}`);
       }
@@ -421,9 +498,10 @@ function updateMainDashboard() {
     // 更新控制台数据
     dashboardSheet.getRange(3, 2).setValue(todayVisits);
     dashboardSheet.getRange(4, 2).setValue(totalVisits);
-    dashboardSheet.getRange(5, 2).setValue(totalAdGuides);
-    dashboardSheet.getRange(6, 2).setValue(activeDays);
-    dashboardSheet.getRange(7, 2).setValue(activeDays > 0 ? Math.round(totalVisits / activeDays) : 0);
+    dashboardSheet.getRange(5, 2).setValue(totalAdClicks);
+    dashboardSheet.getRange(6, 2).setValue(totalAdGuides);
+    dashboardSheet.getRange(7, 2).setValue(activeDays);
+    dashboardSheet.getRange(8, 2).setValue(activeDays > 0 ? Math.round(totalVisits / activeDays) : 0);
     
     const updateTime = getTimeString();
     dashboardSheet.getRange(3, 3).setValue(updateTime);
@@ -445,6 +523,7 @@ function initializeMainDashboard(sheet) {
     ['统计项目', '数值', '最后更新', '说明'],
     ['今日访问量', 0, '', '今天的访问次数'],
     ['总访问量', 0, '', '所有记录的总访问量'],
+    ['总广告点击', 0, '', '所有广告点击次数'],
     ['总广告引导', 0, '', '所有广告引导触发次数'],
     ['活跃天数', 0, '', '有访问记录的天数'],
     ['平均日访问', 0, '', '每日平均访问量']
@@ -604,4 +683,124 @@ function testAdGuide() {
   handleAdGuideEvent(dailySpreadsheet, testData);
   
   return '测试数据已写入: ' + dailySpreadsheet.getUrl();
+}
+
+/**
+ * 为现有的每日表格添加"广告点击"工作表（如果不存在）
+ */
+function addAdClickSheetToExisting(spreadsheet) {
+  let adClickSheet = spreadsheet.getSheetByName('广告点击');
+  
+  if (adClickSheet) {
+    console.log('广告点击工作表已存在');
+    return adClickSheet;
+  }
+  
+  // 创建新的广告点击工作表
+  adClickSheet = spreadsheet.insertSheet('广告点击');
+  adClickSheet.getRange(1, 1, 1, 13).setValues([
+    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数']
+  ]);
+  
+  const adClickHeader = adClickSheet.getRange(1, 1, 1, 13);
+  adClickHeader.setBackground('#34A853').setFontColor('white').setFontWeight('bold');
+  
+  adClickSheet.setColumnWidth(1, 150);   // 时间
+  adClickSheet.setColumnWidth(2, 200);   // 小说标题
+  adClickSheet.setColumnWidth(3, 80);    // 章节号
+  adClickSheet.setColumnWidth(4, 300);   // 页面URL
+  adClickSheet.setColumnWidth(5, 120);   // 广告位ID
+  adClickSheet.setColumnWidth(6, 100);   // 广告位置
+  adClickSheet.setColumnWidth(7, 100);   // 滚动深度
+  adClickSheet.setColumnWidth(8, 120);   // IP地址
+  adClickSheet.setColumnWidth(9, 100);   // 设备类型
+  adClickSheet.setColumnWidth(10, 120);  // 屏幕尺寸
+  adClickSheet.setColumnWidth(11, 100);  // 停留时长
+  adClickSheet.setColumnWidth(12, 120);  // 历史累计点击
+  adClickSheet.setColumnWidth(13, 200);  // 来源参数
+  
+  console.log('成功创建广告点击工作表');
+  return adClickSheet;
+}
+
+/**
+ * 为今日表格添加广告点击工作表（如果不存在）
+ */
+function initTodayAdClickSheet() {
+  const dateString = getDateString();
+  const dailySpreadsheet = getOrCreateDailySpreadsheet(dateString);
+  addAdClickSheetToExisting(dailySpreadsheet);
+  
+  return '已为今日表格添加广告点击工作表: ' + dailySpreadsheet.getUrl();
+}
+
+function testAdClick() {
+  const testData = {
+    eventType: 'ad_click',
+    novel: 'The Queen\'s Rebirth',
+    chapter: '4',
+    pageUrl: 'https://novel.oalfa.com/novels/the-queens-rebirth/chapter-4',
+    adSlot: '2912660874',
+    adPosition: '850',
+    scrollDepth: '500',
+    userIP: '127.0.0.1',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
+    screenSize: '390x844',
+    stayDuration: 45,
+    totalClickCount: 5,
+    timestamp: new Date().toISOString()
+  };
+  
+  const dateString = getDateString();
+  const dailySpreadsheet = getOrCreateDailySpreadsheet(dateString);
+  
+  // 确保广告点击工作表存在
+  addAdClickSheetToExisting(dailySpreadsheet);
+  
+  handleAdClickEvent(dailySpreadsheet, testData);
+  
+  return '测试广告点击数据已写入: ' + dailySpreadsheet.getUrl();
+}
+
+// ==================== 辅助函数 ====================
+
+/**
+ * 获取设备类型
+ */
+function getDeviceType(userAgent) {
+  if (!userAgent) return 'Unknown';
+  
+  if (/mobile/i.test(userAgent)) {
+    if (/iphone/i.test(userAgent)) return 'iPhone';
+    if (/android/i.test(userAgent)) return 'Android';
+    return 'Mobile';
+  }
+  if (/tablet|ipad/i.test(userAgent)) return 'Tablet';
+  return 'Desktop';
+}
+
+/**
+ * 提取来源参数
+ */
+function extractSourceParams(url) {
+  if (!url) return '';
+  
+  try {
+    const urlObj = new URL(url);
+    const params = [];
+    
+    if (urlObj.searchParams.get('utm_source')) {
+      params.push('source=' + urlObj.searchParams.get('utm_source'));
+    }
+    if (urlObj.searchParams.get('utm_campaign')) {
+      params.push('campaign=' + urlObj.searchParams.get('utm_campaign'));
+    }
+    if (urlObj.searchParams.get('fbclid')) {
+      params.push('fb=yes');
+    }
+    
+    return params.join(';');
+  } catch (e) {
+    return '';
+  }
 }
