@@ -175,10 +175,10 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   
   // 创建"广告点击"sheet
   const adClickSheet = spreadsheet.insertSheet('广告点击');
-  adClickSheet.getRange(1, 1, 1, 13).setValues([
-    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数']
+  adClickSheet.getRange(1, 1, 1, 17).setValues([
+    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数', '点击来源', '保护状态', '保护期点击', '保护剩余时间']
   ]);
-  const adClickHeader = adClickSheet.getRange(1, 1, 1, 13);
+  const adClickHeader = adClickSheet.getRange(1, 1, 1, 17);
   adClickHeader.setBackground('#34A853').setFontColor('white').setFontWeight('bold');
   adClickSheet.setColumnWidth(1, 150);   // 时间
   adClickSheet.setColumnWidth(2, 200);   // 小说标题
@@ -193,6 +193,10 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   adClickSheet.setColumnWidth(11, 100);  // 停留时长
   adClickSheet.setColumnWidth(12, 120);  // 历史累计点击
   adClickSheet.setColumnWidth(13, 200);  // 来源参数
+  adClickSheet.setColumnWidth(14, 120);  // 点击来源
+  adClickSheet.setColumnWidth(15, 100);  // 保护状态
+  adClickSheet.setColumnWidth(16, 100);  // 保护期点击
+  adClickSheet.setColumnWidth(17, 120);  // 保护剩余时间
   
   // 创建"当日统计"概览sheet
   const summarySheet = spreadsheet.insertSheet('📊当日统计', 0);
@@ -365,6 +369,9 @@ function handleAdClickEvent(dailySpreadsheet, data) {
   // 提取来源参数
   const sourceParams = extractSourceParams(data.pageUrl);
   
+  // 格式化保护剩余时间
+  const protectionRemainingFormatted = formatProtectionTime(data.protectionRemaining || 0);
+  
   const rowData = [
     getTimeString(),                    // 时间
     data.novel || '',                   // 小说标题
@@ -378,7 +385,11 @@ function handleAdClickEvent(dailySpreadsheet, data) {
     data.screenSize || '',              // 屏幕尺寸
     data.stayDuration || 0,             // 停留时长(秒)
     data.totalClickCount || 0,          // 历史累计点击次数
-    sourceParams                        // 来源参数
+    sourceParams,                       // 来源参数
+    data.clickSource || 'normal',       // 点击来源
+    data.protectionActive ? '是' : '否', // 保护状态
+    data.clicksInProtection || 0,       // 保护期内点击
+    protectionRemainingFormatted        // 保护剩余时间
   ];
   
   adClickSheet.appendRow(rowData);
@@ -698,11 +709,11 @@ function addAdClickSheetToExisting(spreadsheet) {
   
   // 创建新的广告点击工作表
   adClickSheet = spreadsheet.insertSheet('广告点击');
-  adClickSheet.getRange(1, 1, 1, 13).setValues([
-    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数']
+  adClickSheet.getRange(1, 1, 1, 17).setValues([
+    ['时间', '小说标题', '章节号', '页面URL', '广告位ID', '广告位置(px)', '滚动深度', '用户IP', '设备类型', '屏幕尺寸', '停留时长(秒)', '历史累计点击', '来源参数', '点击来源', '保护状态', '保护期点击', '保护剩余时间']
   ]);
   
-  const adClickHeader = adClickSheet.getRange(1, 1, 1, 13);
+  const adClickHeader = adClickSheet.getRange(1, 1, 1, 17);
   adClickHeader.setBackground('#34A853').setFontColor('white').setFontWeight('bold');
   
   adClickSheet.setColumnWidth(1, 150);   // 时间
@@ -718,8 +729,12 @@ function addAdClickSheetToExisting(spreadsheet) {
   adClickSheet.setColumnWidth(11, 100);  // 停留时长
   adClickSheet.setColumnWidth(12, 120);  // 历史累计点击
   adClickSheet.setColumnWidth(13, 200);  // 来源参数
+  adClickSheet.setColumnWidth(14, 120);  // 点击来源
+  adClickSheet.setColumnWidth(15, 100);  // 保护状态
+  adClickSheet.setColumnWidth(16, 100);  // 保护期点击
+  adClickSheet.setColumnWidth(17, 120);  // 保护剩余时间
   
-  console.log('成功创建广告点击工作表');
+  console.log('成功创建广告点击工作表（含保护字段）');
   return adClickSheet;
 }
 
@@ -803,4 +818,16 @@ function extractSourceParams(url) {
   } catch (e) {
     return '';
   }
+}
+
+/**
+ * 格式化保护剩余时间（毫秒转为小时:分钟）
+ */
+function formatProtectionTime(milliseconds) {
+  if (!milliseconds || milliseconds <= 0) return '';
+  
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours}h${minutes}m`;
 }
