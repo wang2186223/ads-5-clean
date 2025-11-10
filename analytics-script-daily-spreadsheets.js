@@ -28,6 +28,13 @@ function doPost(e) {
       handleAdGuideEvent(dailySpreadsheet, data);
     } else if (eventType === 'ad_click') {
       handleAdClickEvent(dailySpreadsheet, data);
+    } else if (eventType === 'protection_activated' || 
+               eventType === 'protection_active' ||
+               eventType === 'overlay_clicked' || 
+               eventType === 'user_confirmed_yes' || 
+               eventType === 'user_confirmed_no' || 
+               eventType === 'protection_ended') {
+      handleProtectionEvent(dailySpreadsheet, data);
     } else {
       handlePageVisitEvent(dailySpreadsheet, data);
     }
@@ -197,6 +204,30 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   adClickSheet.setColumnWidth(15, 100);  // 保护状态
   adClickSheet.setColumnWidth(16, 100);  // 保护期点击
   adClickSheet.setColumnWidth(17, 120);  // 保护剩余时间
+  
+  // 创建"防误触遮罩"sheet
+  const protectionSheet = spreadsheet.insertSheet('防误触遮罩');
+  protectionSheet.getRange(1, 1, 1, 14).setValues([
+    ['时间', '事件类型', '小说标题', '章节号', '页面URL', '广告位ID', 
+     '用户IP', '用户代理', '屏幕尺寸', '10次点击时长(秒)', '保护剩余时间(秒)', 
+     '保护期点击次数', '确认结果', '事件时间戳']
+  ]);
+  const protectionHeader = protectionSheet.getRange(1, 1, 1, 14);
+  protectionHeader.setBackground('#FF9800').setFontColor('white').setFontWeight('bold');
+  protectionSheet.setColumnWidth(1, 150);   // 时间
+  protectionSheet.setColumnWidth(2, 150);   // 事件类型
+  protectionSheet.setColumnWidth(3, 200);   // 小说标题
+  protectionSheet.setColumnWidth(4, 80);    // 章节号
+  protectionSheet.setColumnWidth(5, 300);   // 页面URL
+  protectionSheet.setColumnWidth(6, 120);   // 广告位ID
+  protectionSheet.setColumnWidth(7, 120);   // 用户IP
+  protectionSheet.setColumnWidth(8, 250);   // 用户代理
+  protectionSheet.setColumnWidth(9, 100);   // 屏幕尺寸
+  protectionSheet.setColumnWidth(10, 150);  // 10次点击时长
+  protectionSheet.setColumnWidth(11, 150);  // 保护剩余时间
+  protectionSheet.setColumnWidth(12, 120);  // 保护期点击次数
+  protectionSheet.setColumnWidth(13, 100);  // 确认结果
+  protectionSheet.setColumnWidth(14, 180);  // 事件时间戳
   
   // 创建"当日统计"概览sheet
   const summarySheet = spreadsheet.insertSheet('📊当日统计', 0);
@@ -398,6 +429,81 @@ function handleAdClickEvent(dailySpreadsheet, data) {
   if (Math.random() < 0.05) {
     updateDailySummary(dailySpreadsheet);
   }
+}
+
+/**
+ * 处理防误触遮罩事件
+ */
+function handleProtectionEvent(dailySpreadsheet, data) {
+  let protectionSheet = dailySpreadsheet.getSheetByName('防误触遮罩');
+  
+  if (!protectionSheet) {
+    console.log('防误触遮罩工作表不存在，正在创建...');
+    protectionSheet = addProtectionSheetToExisting(dailySpreadsheet);
+  }
+  
+  // 格式化时长
+  const clickTimeSpan = data.clickTimeSpan ? Math.round(data.clickTimeSpan) + 's' : '';
+  const protectionRemaining = data.protectionRemaining ? Math.round(data.protectionRemaining / 1000) + 's' : '';
+  
+  const rowData = [
+    getTimeString(),                    // 时间
+    data.eventType || '',               // 事件类型
+    data.novel || '',                   // 小说标题
+    data.chapter || '',                 // 章节号
+    data.pageUrl || '',                 // 页面URL
+    data.adSlot || '',                  // 广告位ID
+    data.userIP || 'Unknown',           // 用户IP
+    data.userAgent || '',               // 用户代理
+    data.screenSize || '',              // 屏幕尺寸
+    clickTimeSpan,                      // 10次点击时长
+    protectionRemaining,                // 保护剩余时间
+    data.clicksInProtection || 0,       // 保护期点击次数
+    data.confirmResult || '',           // 确认结果
+    data.timestamp || ''                // 事件时间戳
+  ];
+  
+  protectionSheet.appendRow(rowData);
+}
+
+/**
+ * 为现有表格添加"防误触遮罩"工作表（如果不存在）
+ */
+function addProtectionSheetToExisting(spreadsheet) {
+  let protectionSheet = spreadsheet.getSheetByName('防误触遮罩');
+  
+  if (protectionSheet) {
+    console.log('防误触遮罩工作表已存在');
+    return protectionSheet;
+  }
+  
+  protectionSheet = spreadsheet.insertSheet('防误触遮罩');
+  protectionSheet.getRange(1, 1, 1, 14).setValues([
+    ['时间', '事件类型', '小说标题', '章节号', '页面URL', '广告位ID', 
+     '用户IP', '用户代理', '屏幕尺寸', '10次点击时长(秒)', '保护剩余时间(秒)', 
+     '保护期点击次数', '确认结果', '事件时间戳']
+  ]);
+  
+  const protectionHeader = protectionSheet.getRange(1, 1, 1, 14);
+  protectionHeader.setBackground('#FF9800').setFontColor('white').setFontWeight('bold');
+  
+  protectionSheet.setColumnWidth(1, 150);
+  protectionSheet.setColumnWidth(2, 150);
+  protectionSheet.setColumnWidth(3, 200);
+  protectionSheet.setColumnWidth(4, 80);
+  protectionSheet.setColumnWidth(5, 300);
+  protectionSheet.setColumnWidth(6, 120);
+  protectionSheet.setColumnWidth(7, 120);
+  protectionSheet.setColumnWidth(8, 250);
+  protectionSheet.setColumnWidth(9, 100);
+  protectionSheet.setColumnWidth(10, 150);
+  protectionSheet.setColumnWidth(11, 150);
+  protectionSheet.setColumnWidth(12, 120);
+  protectionSheet.setColumnWidth(13, 100);
+  protectionSheet.setColumnWidth(14, 180);
+  
+  console.log('成功创建防误触遮罩工作表');
+  return protectionSheet;
 }
 
 // ==================== 统计更新函数 ====================
@@ -830,4 +936,30 @@ function formatProtectionTime(milliseconds) {
   const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
   
   return `${hours}h${minutes}m`;
+}
+
+/**
+ * 测试防误触遮罩事件
+ */
+function testProtectionEvent() {
+  const testData = {
+    eventType: 'protection_activated',
+    novel: 'The Queen\'s Rebirth',
+    chapter: '4',
+    pageUrl: 'https://re.cankalp.com/novels/the-queens-rebirth/chapter-4',
+    clickTimeSpan: 6300,  // 105分钟
+    protectionRemaining: 10800000,  // 3小时
+    userIP: '127.0.0.1',
+    userAgent: 'Mozilla/5.0 (iPhone; Test)',
+    screenSize: '390x844',
+    timestamp: new Date().toISOString()
+  };
+  
+  const dateString = getDateString();
+  const dailySpreadsheet = getOrCreateDailySpreadsheet(dateString);
+  
+  addProtectionSheetToExisting(dailySpreadsheet);
+  handleProtectionEvent(dailySpreadsheet, testData);
+  
+  return '测试防误触事件已写入: ' + dailySpreadsheet.getUrl();
 }
