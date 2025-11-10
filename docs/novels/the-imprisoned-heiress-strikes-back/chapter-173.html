@@ -129,10 +129,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-10T13:59:17.920379">
-    <meta property="article:modified_time" content="2025-11-10T13:59:17.920379">
+    <meta property="article:published_time" content="2025-11-10T14:18:26.941215">
+    <meta property="article:modified_time" content="2025-11-10T14:18:26.941215">
     <meta name="date" content="2025-11-10">
-    <meta name="last-modified" content="2025-11-10 13:59:17">
+    <meta name="last-modified" content="2025-11-10 14:18:26">
     
     
     <!-- Open Graph Meta Tags -->
@@ -991,8 +991,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-10T13:59:17.920379",
-        "dateModified": "2025-11-10T13:59:17.920379",
+        "datePublished": "2025-11-10T14:18:26.941215",
+        "dateModified": "2025-11-10T14:18:26.941215",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -5344,56 +5344,48 @@
                 });
             }
 
-            /**
-             * 完全合规的广告引导浮层系统
-             * 核心原则：完全不修改广告DOM和样式，使用独立的fixed定位浮层
-             */
             showGuideOverlay(targetAd) {
-                // Report guide triggered event
-                this.reportGuideTriggered();
-                
-                // Get ad position (只读取，不修改)
-                const adRect = targetAd.getBoundingClientRect();
-                
-                // Create completely independent overlay container
-                const overlayContainer = document.createElement('div');
-                overlayContainer.id = 'ad-guide-overlay-container';
-                overlayContainer.style.cssText = `
-                    position: fixed;
+                // Create highlight effect container
+                const overlay = document.createElement('div');
+                overlay.id = 'ad-guide-overlay';
+                overlay.style.cssText = `
+                    position: absolute;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
+                    z-index: 10000;
                     pointer-events: none;
-                    z-index: 99998;
                 `;
+
+                // Get ad position relative to document
+                const rect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
                 
-                // Create highlight border (fixed positioning, simulating position via calculation)
-                const highlightBorder = document.createElement('div');
-                highlightBorder.className = 'guide-highlight';
-                highlightBorder.style.cssText = `
-                    position: fixed;
-                    top: ${adRect.top - 10}px;
-                    left: ${adRect.left - 10}px;
-                    width: ${adRect.width + 20}px;
-                    height: ${adRect.height + 20}px;
+                // Create highlight area - use absolute positioning relative to document
+                const highlight = document.createElement('div');
+                highlight.style.cssText = `
+                    position: absolute;
+                    top: ${rect.top + scrollTop - 10}px;
+                    left: ${rect.left + scrollLeft - 10}px;
+                    width: ${rect.width + 20}px;
+                    height: ${rect.height + 20}px;
                     border: 3px solid #FF0000;
                     border-radius: 8px;
                     box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
                     animation: pulse 2s infinite;
                     pointer-events: none;
-                    z-index: 99999;
+                    z-index: 14000;
                 `;
-                
-                // Create guide tooltip
-                const guideTip = document.createElement('div');
-                guideTip.className = 'guide-tooltip';
-                guideTip.style.cssText = `
-                    position: fixed;
-                    top: ${adRect.top - 80}px;
-                    left: ${adRect.left}px;
-                    min-width: ${Math.max(adRect.width, 300)}px;
-                    max-width: 90vw;
+
+                // Create tooltip - use absolute positioning relative to document
+                const tooltip = document.createElement('div');
+                tooltip.style.cssText = `
+                    position: absolute;
+                    top: ${rect.top + scrollTop - 80}px;
+                    left: ${rect.left + scrollLeft}px;
+                    width: ${Math.max(rect.width, 300)}px;
                     background: #007AFF;
                     color: white;
                     padding: 12px 16px;
@@ -5402,68 +5394,20 @@
                     line-height: 1.4;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
-                    z-index: 100000;
+                    z-index: 20000;
                     animation: bounce 1s ease-in-out infinite;
                 `;
-                guideTip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!👇👇👇 👇👇👇 👇👇👇';
-                
-                // Create clickable area (transparent layer, NOT inside ad)
-                const clickableArea = document.createElement('div');
-                clickableArea.className = 'guide-clickable';
-                clickableArea.style.cssText = `
-                    position: fixed;
-                    top: ${adRect.top}px;
-                    left: ${adRect.left}px;
-                    width: ${adRect.width}px;
-                    height: ${adRect.height}px;
-                    background: transparent;
-                    pointer-events: auto;
-                    z-index: 99997;
-                    cursor: pointer;
-                `;
-                
-                // When clicking transparent area, let click pass through to ad
-                clickableArea.addEventListener('click', (e) => {
-                    console.log('Ad guide: User clicked on guide area');
-                    
-                    // Remove guide layer, allowing user to actually click the ad
-                    this.endGuide();
-                    
-                    // Use native method to trigger click at ad position
-                    const adElementAtPoint = document.elementFromPoint(
-                        adRect.left + adRect.width / 2,
-                        adRect.top + adRect.height / 2
-                    );
-                    
-                    if (adElementAtPoint) {
-                        // Create native click event
-                        const clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true,
-                            clientX: adRect.left + adRect.width / 2,
-                            clientY: adRect.top + adRect.height / 2
-                        });
-                        adElementAtPoint.dispatchEvent(clickEvent);
-                    }
-                });
-                
-                // Assemble overlay
-                overlayContainer.appendChild(highlightBorder);
-                overlayContainer.appendChild(guideTip);
-                overlayContainer.appendChild(clickableArea);
-                
-                // Add to body (NOT ad container)
-                document.body.appendChild(overlayContainer);
-                
-                // Add CSS animation styles (if not exists)
+                tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!👇👇👇 👇👇👇 👇👇👇';
+
+                // Add CSS animation
                 if (!document.getElementById('guide-animation-styles')) {
                     const style = document.createElement('style');
                     style.id = 'guide-animation-styles';
                     style.textContent = `
                         @keyframes pulse {
-                            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
+                            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
                             50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.9); }
+                            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
                         }
                         @keyframes bounce {
                             0%, 100% { transform: translateY(0); }
@@ -5472,182 +5416,223 @@
                     `;
                     document.head.appendChild(style);
                 }
-                
-                // Listen to scroll and window resize, dynamically update overlay position
+
+                overlay.appendChild(highlight);
+                overlay.appendChild(tooltip);
+                document.body.appendChild(overlay);
+
+                // No longer modify ad container styles - fully compliant with Google policies
+                // The ad container remains untouched, guide overlay is completely independent
+
+                // Listen to scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
-                    const container = document.getElementById('ad-guide-overlay-container');
-                    if (!container) return;
+                    if (!overlay || !overlay.parentNode) return;
                     
                     const newRect = targetAd.getBoundingClientRect();
+                    const newScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const newScrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
                     
-                    // Update highlight border position
-                    const border = container.querySelector('.guide-highlight');
-                    if (border) {
-                        border.style.top = `${newRect.top - 10}px`;
-                        border.style.left = `${newRect.left - 10}px`;
-                        border.style.width = `${newRect.width + 20}px`;
-                        border.style.height = `${newRect.height + 20}px`;
-                    }
+                    // Update highlight area position
+                    highlight.style.top = `${newRect.top + newScrollTop - 10}px`;
+                    highlight.style.left = `${newRect.left + newScrollLeft - 10}px`;
                     
                     // Update tooltip position
-                    const tip = container.querySelector('.guide-tooltip');
-                    if (tip) {
-                        tip.style.top = `${newRect.top - 80}px`;
-                        tip.style.left = `${newRect.left}px`;
-                    }
-                    
-                    // Update clickable area position
-                    const clickArea = container.querySelector('.guide-clickable');
-                    if (clickArea) {
-                        clickArea.style.top = `${newRect.top}px`;
-                        clickArea.style.left = `${newRect.left}px`;
-                        clickArea.style.width = `${newRect.width}px`;
-                        clickArea.style.height = `${newRect.height}px`;
-                    }
+                    tooltip.style.top = `${newRect.top + newScrollTop - 80}px`;
+                    tooltip.style.left = `${newRect.left + newScrollLeft}px`;
                 };
                 
-                
-                // Use passive listeners to avoid interfering with scroll monitoring logic
+                // Use passive listener to avoid interfering with scroll monitoring logic
                 window.addEventListener('scroll', this.updateOverlayPosition, { passive: true });
                 window.addEventListener('resize', this.updateOverlayPosition, { passive: true });
+
+                // Report Facebook Pixel event when ad guide is triggered
+                this.reportFacebookAdGuideEvent();
+
+                // Report ad guide trigger event to Google Sheets
+                this.reportAdGuideTriggered();
+
+                // Enable clicking on target ad
+                this.enableAdClick(targetAd);
+            }
+
+            // Report Facebook Pixel event for ad guide trigger
+            reportFacebookAdGuideEvent() {
+                // Check if shouldTrackEvent function exists (from Facebook Pixel code)
+                if (typeof shouldTrackEvent === 'function' && typeof fbq === 'function') {
+                    if (shouldTrackEvent('1_c')) {
+                        fbq('track', '1_c');
+                        console.log('Facebook event sent: 1_c (ad guide popup triggered)');
+                    } else {
+                        console.log('Facebook event skipped: 1_c (already sent within 72 hours)');
+                    }
+                } else {
+                    console.log('Facebook Pixel not available for 1_c event');
+                }
+            }
+
+            // Report ad guide trigger event
+            reportAdGuideTriggered() {
+                const triggerCount = this.getTriggerCount();
+                const isInLongCooldown = this.isInLongCooldown();
                 
+                getUserIP().then(userIP => {
+                    const data = {
+                        eventType: 'ad_guide_triggered',
+                        page: window.location.href,
+                        userAgent: navigator.userAgent,
+                        userIP: userIP,
+                        totalAdsSeen: this.totalAdsSeen,
+                        currentPageAds: this.currentPageAds.length,
+                        triggerCount: triggerCount,
+                        maxTriggersBeforeLongCooldown: this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN,
+                        longCooldownHours: this.LONG_COOLDOWN_HOURS,
+                        isInLongCooldown: isInLongCooldown,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    console.log('Ad Guide: Reporting event data', data);
+                    
+                    fetch('https://script.google.com/macros/s/AKfycbze3cI_h_30w_dJFqVYZuidP7gX9C2nSgR5NlV4z6TRQ9BoVFd3braL_3IxOLgJI-d89w/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    }).then(() => {
+                        console.log('Ad Guide: Event report successful');
+                    }).catch(error => {
+                        console.log('Ad Guide: Event report failed', error);
+                    });
+                }).catch(error => {
+                    // If IP retrieval fails, still send other data
+                    const data = {
+                        eventType: 'ad_guide_triggered',
+                        page: window.location.href,
+                        userAgent: navigator.userAgent,
+                        userIP: 'Unknown',
+                        totalAdsSeen: this.totalAdsSeen,
+                        currentPageAds: this.currentPageAds.length,
+                        triggerCount: triggerCount,
+                        maxTriggersBeforeLongCooldown: this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN,
+                        longCooldownHours: this.LONG_COOLDOWN_HOURS,
+                        isInLongCooldown: isInLongCooldown,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    console.log('Ad Guide: Reporting event data (IP retrieval failed)', data);
+                    
+                    fetch('https://script.google.com/macros/s/AKfycbze3cI_h_30w_dJFqVYZuidP7gX9C2nSgR5NlV4z6TRQ9BoVFd3braL_3IxOLgJI-d89w/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    }).then(() => {
+                        console.log('Ad Guide: Event report successful (using Unknown IP)');
+                    }).catch(error => {
+                        console.log('Ad Guide: Event report failed', error);
+                    });
+                });
+            }
+
+            enableAdClick(targetAd) {
+                const clickHandler = () => {
+                    console.log('Ad Guide: User clicked ad');
+                    this.endGuide();
+                };
+
+                targetAd.addEventListener('click', clickHandler, { once: true });
+
                 // 200 seconds auto end guide (backup plan)
                 setTimeout(() => {
                     if (this.isGuideActive) {
-                        console.log('Ad guide: Auto end due to timeout (200 seconds)');
+                        console.log('Ad Guide: Timeout auto end (200 seconds)');
                         this.endGuide();
                     }
                 }, 200000); // 200 seconds = 200000 milliseconds
             }
 
-            /**
-             * 完全合规的交互限制系统
-             * 核心原则：只控制页面交互，不修改广告元素
-             */
+            // Key Point 3: Interaction State Management Implementation
             restrictUserInteraction(targetAd) {
-                // Get ad position (只读取)
-                const adRect = targetAd.getBoundingClientRect();
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create full-screen mask container
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
-                interactionBlocker.id = 'interaction-blocker-container';
+                interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
                     position: fixed;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    z-index: 99996;
-                    pointer-events: none;
+                    z-index: 9999;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Create four blocker blocks (top, bottom, left, right), leaving ad area open
-                const blockers = [
-                    // Top blocker
-                    {
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: `${adRect.top}px`
-                    },
-                    // Bottom blocker
-                    {
-                        top: `${adRect.bottom}px`,
-                        left: 0,
-                        width: '100%',
-                        height: `calc(100% - ${adRect.bottom}px)`
-                    },
-                    // Left blocker
-                    {
-                        top: `${adRect.top}px`,
-                        left: 0,
-                        width: `${adRect.left}px`,
-                        height: `${adRect.height}px`
-                    },
-                    // Right blocker
-                    {
-                        top: `${adRect.top}px`,
-                        left: `${adRect.right}px`,
-                        width: `calc(100% - ${adRect.right}px)`,
-                        height: `${adRect.height}px`
-                    }
-                ];
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
                 
-                blockers.forEach((style, index) => {
-                    const blocker = document.createElement('div');
-                    blocker.className = 'interaction-blocker-part';
-                    blocker.style.cssText = `
-                        position: fixed;
-                        top: ${style.top};
-                        left: ${style.left};
-                        width: ${style.width};
-                        height: ${style.height};
-                        background: rgba(0, 0, 0, 0.01);
-                        pointer-events: auto;
-                        z-index: 99996;
-                    `;
-                    interactionBlocker.appendChild(blocker);
-                });
+                updateBlockerClipPath();
                 
-                // Add to body (NOT ad container)
-                document.body.appendChild(interactionBlocker);
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath);
+                window.addEventListener('resize', this.updateBlockerClipPath);
                 
-                // Prevent page scroll
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
                     }
                 };
                 
+                // Add scroll prevention event listeners
                 document.addEventListener('wheel', this.preventUserScroll, { passive: false });
                 document.addEventListener('touchmove', this.preventUserScroll, { passive: false });
                 document.addEventListener('keydown', this.preventUserScroll, { passive: false });
                 
-                // Dynamically update mask position (on scroll/resize)
-                this.updateBlockerPosition = () => {
-                    const container = document.getElementById('interaction-blocker-container');
-                    if (!container) return;
-                    
-                    const newRect = targetAd.getBoundingClientRect();
-                    const blockerParts = container.querySelectorAll('.interaction-blocker-part');
-                    
-                    if (blockerParts.length >= 4) {
-                        // Update top blocker
-                        blockerParts[0].style.height = `${newRect.top}px`;
-                        
-                        // Update bottom blocker
-                        blockerParts[1].style.top = `${newRect.bottom}px`;
-                        blockerParts[1].style.height = `calc(100% - ${newRect.bottom}px)`;
-                        
-                        // Update left blocker
-                        blockerParts[2].style.top = `${newRect.top}px`;
-                        blockerParts[2].style.width = `${newRect.left}px`;
-                        blockerParts[2].style.height = `${newRect.height}px`;
-                        
-                        // Update right blocker
-                        blockerParts[3].style.top = `${newRect.top}px`;
-                        blockerParts[3].style.left = `${newRect.right}px`;
-                        blockerParts[3].style.width = `calc(100% - ${newRect.right}px)`;
-                        blockerParts[3].style.height = `${newRect.height}px`;
-                    }
-                };
-                
-                window.addEventListener('scroll', this.updateBlockerPosition, { passive: true });
-                window.addEventListener('resize', this.updateBlockerPosition, { passive: true });
+                document.body.appendChild(interactionBlocker);
             }
 
-            /**
-             * Restore interaction control
-             */
             restoreUserInteraction() {
-                // Remove mask container
-                const blocker = document.getElementById('interaction-blocker-container');
-                if (blocker) {
-                    blocker.remove();
+                // Restore page scroll
+                document.body.style.overflow = '';
+                
+                // Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
                 }
                 
-                // Remove event listeners
+                // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
                     document.removeEventListener('wheel', this.preventUserScroll);
                     document.removeEventListener('touchmove', this.preventUserScroll);
@@ -5655,58 +5640,38 @@
                     this.preventUserScroll = null;
                 }
                 
-                if (this.updateBlockerPosition) {
-                    window.removeEventListener('scroll', this.updateBlockerPosition);
-                    window.removeEventListener('resize', this.updateBlockerPosition);
-                    this.updateBlockerPosition = null;
+                // Remove interaction blocker layer
+                const blocker = document.getElementById('interaction-blocker');
+                if (blocker) {
+                    blocker.remove();
                 }
-                
-                // Restore page scroll
-                document.body.style.overflow = '';
             }
 
-            /**
-             * 完全合规的引导结束清理
-             * 核心原则：只清理自己创建的元素，不碰广告
-             */
             endGuide() {
                 this.isGuideActive = false;
                 
-                // 1. Stop scroll monitoring
+                // Stop scroll monitoring immediately (critical: must stop at the very beginning)
                 this.stopScrollMonitoring();
                 
-                // 2. Remove guide overlay container
-                const overlayContainer = document.getElementById('ad-guide-overlay-container');
-                if (overlayContainer) {
-                    overlayContainer.remove();
-                }
-                
-                // 3. Remove interaction blocker container
-                const blockerContainer = document.getElementById('interaction-blocker-container');
-                if (blockerContainer) {
-                    blockerContainer.remove();
-                }
-                
-                // 4. Remove event listeners
+                // Remove scroll event listeners
                 if (this.updateOverlayPosition) {
                     window.removeEventListener('scroll', this.updateOverlayPosition);
                     window.removeEventListener('resize', this.updateOverlayPosition);
                     this.updateOverlayPosition = null;
                 }
                 
-                if (this.updateBlockerPosition) {
-                    window.removeEventListener('scroll', this.updateBlockerPosition);
-                    window.removeEventListener('resize', this.updateBlockerPosition);
-                    this.updateBlockerPosition = null;
+                // Remove guide overlay
+                const overlay = document.getElementById('ad-guide-overlay');
+                if (overlay) {
+                    overlay.remove();
                 }
                 
-                // 5. Restore user interaction
+                // No need to restore ad styles - we never modified them (fully compliant)
+                
+                // Restore user interaction
                 this.restoreUserInteraction();
                 
-                // 6. Do NOT modify any ad elements
-                // Ad containers remain completely untouched, no style or attribute modifications
-                
-                console.log('Ad guide: Guide ended (fully compliant cleanup)');
+                console.log('Ad Guide: Guide ended');
             }
 
             // Key point 4: Guide exit conditions implementation
