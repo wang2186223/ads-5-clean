@@ -129,10 +129,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-10T11:28:06.836865">
-    <meta property="article:modified_time" content="2025-11-10T11:28:06.836865">
+    <meta property="article:published_time" content="2025-11-10T13:59:07.764016">
+    <meta property="article:modified_time" content="2025-11-10T13:59:07.764016">
     <meta name="date" content="2025-11-10">
-    <meta name="last-modified" content="2025-11-10 11:28:06">
+    <meta name="last-modified" content="2025-11-10 13:59:07">
     
     
     <!-- Open Graph Meta Tags -->
@@ -395,369 +395,6 @@
     }
     </script>
     
-    <!-- ===== 广告点击保护系统 ===== -->
-    <script>
-    // ==================== 广告点击保护系统 ====================
-    // 防止用户过度点击广告，保护 AdSense 账号安全
-    // 阈值：每累计5次点击触发保护，持续5小时
-    
-    (function() {
-        'use strict';
-        
-        // 配置
-        const PROTECTION_CONFIG = {
-            clickThreshold: 5,                      // 触发保护的点击次数阈值
-            protectionDuration: 2 * 60 * 60 * 1000, // 保护持续时间：2小时
-            overlayRemoveTime: 10000,               // 临时移除遮罩的时间：10秒
-            storageKeys: {
-                totalClicks: 'ad_total_clicks',
-                protectionActive: 'ad_protection_active',
-                protectionStart: 'ad_protection_start',
-                clicksInProtection: 'ad_clicks_in_protection'
-            },
-            confirmText: 'Do you want to click on this AD?',
-            yesButtonText: 'YES',
-            noButtonText: 'NO',
-            debugMode: false
-        };
-        
-        // 广告点击保护系统类
-        class AdClickProtectionSystem {
-            constructor() {
-                this.log('🛡️ 广告点击保护系统初始化');
-                this.init();
-            }
-            
-            log(...args) {
-                if (PROTECTION_CONFIG.debugMode) {
-                    console.log('[AdProtection]', ...args);
-                }
-            }
-            
-            // 初始化
-            init() {
-                // 检查并恢复保护状态
-                this.checkProtectionStatus();
-                
-                // 等待广告加载后初始化
-                setTimeout(() => {
-                    if (this.isProtectionActive()) {
-                        this.addOverlaysToAllAds();
-                        this.log('✅ 保护模式已激活，遮罩已添加');
-                    }
-                }, 3000); // 等待3秒确保广告加载
-            }
-            
-            // 检查保护状态
-            checkProtectionStatus() {
-                try {
-                    const active = localStorage.getItem(PROTECTION_CONFIG.storageKeys.protectionActive) === 'true';
-                    const startTime = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.protectionStart) || '0');
-                    
-                    if (active && startTime) {
-                        const elapsed = Date.now() - startTime;
-                        
-                        if (elapsed >= PROTECTION_CONFIG.protectionDuration) {
-                            // 保护期已过，清除状态
-                            this.deactivateProtection();
-                            this.log('⏰ 保护期已过，已自动解除');
-                        } else {
-                            this.log(`🛡️ 保护期剩余: ${Math.round((PROTECTION_CONFIG.protectionDuration - elapsed) / 1000 / 60)} 分钟`);
-                        }
-                    }
-                } catch (e) {
-                    this.log('❌ 检查保护状态失败:', e);
-                }
-            }
-            
-            // 是否处于保护状态
-            isProtectionActive() {
-                try {
-                    const active = localStorage.getItem(PROTECTION_CONFIG.storageKeys.protectionActive) === 'true';
-                    const startTime = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.protectionStart) || '0');
-                    
-                    if (!active) return false;
-                    
-                    const elapsed = Date.now() - startTime;
-                    return elapsed < PROTECTION_CONFIG.protectionDuration;
-                } catch (e) {
-                    return false;
-                }
-            }
-            
-            // 激活保护
-            activateProtection() {
-                try {
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.protectionActive, 'true');
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.protectionStart, Date.now().toString());
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.clicksInProtection, '0');
-                    
-                    this.addOverlaysToAllAds();
-                    this.log('🛡️ 保护已激活');
-                } catch (e) {
-                    this.log('❌ 激活保护失败:', e);
-                }
-            }
-            
-            // 解除保护
-            deactivateProtection() {
-                try {
-                    localStorage.removeItem(PROTECTION_CONFIG.storageKeys.protectionActive);
-                    localStorage.removeItem(PROTECTION_CONFIG.storageKeys.protectionStart);
-                    localStorage.removeItem(PROTECTION_CONFIG.storageKeys.clicksInProtection);
-                    
-                    this.removeAllOverlays();
-                    this.log('✅ 保护已解除');
-                } catch (e) {
-                    this.log('❌ 解除保护失败:', e);
-                }
-            }
-            
-            // 重置保护计时器
-            resetProtectionTimer() {
-                try {
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.protectionStart, Date.now().toString());
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.clicksInProtection, '0');
-                    this.log('🔄 保护计时器已重置');
-                } catch (e) {
-                    this.log('❌ 重置计时器失败:', e);
-                }
-            }
-            
-            // 在所有广告上添加遮罩
-            addOverlaysToAllAds() {
-                const adContainers = document.querySelectorAll('.adsbygoogle');
-                
-                adContainers.forEach(adContainer => {
-                    // 避免重复添加
-                    if (adContainer.querySelector('.ad-protection-overlay')) return;
-                    
-                    const overlay = this.createOverlay();
-                    adContainer.style.position = 'relative';
-                    adContainer.appendChild(overlay);
-                    
-                    // 绑定点击事件
-                    overlay.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.handleOverlayClick(adContainer, overlay);
-                    });
-                });
-                
-                this.log(`📍 已为 ${adContainers.length} 个广告添加遮罩`);
-            }
-            
-            // 创建遮罩元素
-            createOverlay() {
-                const overlay = document.createElement('div');
-                overlay.className = 'ad-protection-overlay';
-                overlay.style.cssText = `
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(255, 255, 255, 0.01);
-                    z-index: 9999;
-                    cursor: pointer;
-                `;
-                return overlay;
-            }
-            
-            // 处理遮罩点击
-            handleOverlayClick(adContainer, overlay) {
-                this.showConfirmDialog((confirmed) => {
-                    if (confirmed) {
-                        // 用户点击 YES
-                        this.handleUserConfirmed(adContainer, overlay);
-                    } else {
-                        // 用户点击 NO，不做任何操作
-                        this.log('❌ 用户取消点击');
-                    }
-                });
-            }
-            
-            // 用户确认点击
-            handleUserConfirmed(adContainer, overlay) {
-                // 增加保护期内点击计数
-                const clicksInProtection = this.incrementProtectionClicks();
-                
-                // 临时移除遮罩
-                overlay.style.display = 'none';
-                this.log(`✅ 遮罩已临时移除 (保护期内第 ${clicksInProtection} 次点击)`);
-                
-                // 检查是否需要重置计时器
-                if (clicksInProtection >= PROTECTION_CONFIG.clickThreshold) {
-                    this.resetProtectionTimer();
-                    this.log('🔄 达到5次点击，计时器已重置');
-                }
-                
-                // 2秒后恢复遮罩
-                setTimeout(() => {
-                    overlay.style.display = 'block';
-                    this.log('🔒 遮罩已恢复');
-                }, PROTECTION_CONFIG.overlayRemoveTime);
-            }
-            
-            // 显示确认对话框
-            showConfirmDialog(callback) {
-                // 创建模态框背景
-                const modalBg = document.createElement('div');
-                modalBg.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    z-index: 99999;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                `;
-                
-                // 创建对话框
-                const dialog = document.createElement('div');
-                dialog.style.cssText = `
-                    background: white;
-                    padding: 30px;
-                    border-radius: 10px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                    max-width: 90%;
-                    width: 350px;
-                    text-align: center;
-                `;
-                
-                dialog.innerHTML = `
-                    <div style="font-size: 18px; color: #333; margin-bottom: 25px; line-height: 1.5;">
-                        ${PROTECTION_CONFIG.confirmText}
-                    </div>
-                    <div style="display: flex; gap: 15px; justify-content: center;">
-                        <button class="confirm-yes" style="
-                            padding: 12px 40px;
-                            background: #4CAF50;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            font-size: 16px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            transition: background 0.3s;
-                        ">${PROTECTION_CONFIG.yesButtonText}</button>
-                        <button class="confirm-no" style="
-                            padding: 12px 40px;
-                            background: #f44336;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            font-size: 16px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            transition: background 0.3s;
-                        ">${PROTECTION_CONFIG.noButtonText}</button>
-                    </div>
-                `;
-                
-                modalBg.appendChild(dialog);
-                document.body.appendChild(modalBg);
-                
-                // 绑定按钮事件
-                const yesBtn = dialog.querySelector('.confirm-yes');
-                const noBtn = dialog.querySelector('.confirm-no');
-                
-                const closeDialog = () => {
-                    document.body.removeChild(modalBg);
-                };
-                
-                yesBtn.addEventListener('click', () => {
-                    closeDialog();
-                    callback(true);
-                });
-                
-                noBtn.addEventListener('click', () => {
-                    closeDialog();
-                    callback(false);
-                });
-                
-                // 悬停效果
-                yesBtn.addEventListener('mouseenter', () => yesBtn.style.background = '#45a049');
-                yesBtn.addEventListener('mouseleave', () => yesBtn.style.background = '#4CAF50');
-                noBtn.addEventListener('mouseenter', () => noBtn.style.background = '#da190b');
-                noBtn.addEventListener('mouseleave', () => noBtn.style.background = '#f44336');
-            }
-            
-            // 增加保护期内点击计数
-            incrementProtectionClicks() {
-                try {
-                    let clicks = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.clicksInProtection) || '0');
-                    clicks++;
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.clicksInProtection, clicks.toString());
-                    return clicks;
-                } catch (e) {
-                    this.log('❌ 增加计数失败:', e);
-                    return 0;
-                }
-            }
-            
-            // 移除所有遮罩
-            removeAllOverlays() {
-                const overlays = document.querySelectorAll('.ad-protection-overlay');
-                overlays.forEach(overlay => overlay.remove());
-                this.log('🗑️ 所有遮罩已移除');
-            }
-            
-            // 记录广告点击（由外部调用）
-            recordAdClick() {
-                try {
-                    // 增加总点击计数
-                    let totalClicks = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.totalClicks) || '0');
-                    totalClicks++;
-                    localStorage.setItem(PROTECTION_CONFIG.storageKeys.totalClicks, totalClicks.toString());
-                    
-                    this.log(`📊 总点击: ${totalClicks}`);
-                    
-                    // 检查是否需要激活保护
-                    if (!this.isProtectionActive() && totalClicks % PROTECTION_CONFIG.clickThreshold === 0) {
-                        this.activateProtection();
-                        this.log(`🛡️ 达到 ${PROTECTION_CONFIG.clickThreshold} 次点击，保护已激活`);
-                    }
-                    
-                    return totalClicks;
-                } catch (e) {
-                    this.log('❌ 记录点击失败:', e);
-                    return 0;
-                }
-            }
-            
-            // 获取当前状态（供追踪系统使用）
-            getStatus() {
-                try {
-                    const active = this.isProtectionActive();
-                    const clicksInProtection = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.clicksInProtection) || '0');
-                    const startTime = parseInt(localStorage.getItem(PROTECTION_CONFIG.storageKeys.protectionStart) || '0');
-                    const remainingTime = active ? Math.max(0, PROTECTION_CONFIG.protectionDuration - (Date.now() - startTime)) : 0;
-                    
-                    return {
-                        active: active,
-                        clicksInProtection: clicksInProtection,
-                        remainingTime: remainingTime
-                    };
-                } catch (e) {
-                    return {
-                        active: false,
-                        clicksInProtection: 0,
-                        remainingTime: 0
-                    };
-                }
-            }
-        }
-        
-        // 创建全局实例
-        window.AdProtectionSystem = new AdClickProtectionSystem();
-        
-    })();
-    </script>
-    
     <!-- ===== 广告点击监控系统（纯独立模块）===== -->
     <script>
     // ==================== 广告点击追踪系统 ====================
@@ -901,12 +538,7 @@
             // 递增并返回历史累计点击次数
             incrementTotalClicks() {
                 try {
-                    // 如果保护系统存在，使用保护系统的计数
-                    if (typeof window.AdProtectionSystem !== 'undefined') {
-                        return window.AdProtectionSystem.recordAdClick();
-                    }
-                    
-                    // 否则使用本地计数
+                    // 使用本地计数
                     let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
                     totalClicks++;
                     localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
@@ -923,28 +555,6 @@
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const adPosition = Math.round(rect.top + scrollTop);
                 const stayDuration = Math.round((Date.now() - this.pageLoadTime) / 1000);
-                
-                // 获取保护系统状态（如果保护系统存在）
-                let clickSource = 'normal';
-                let protectionActive = false;
-                let clicksInProtection = 0;
-                let protectionRemaining = 0;
-                
-                if (typeof window.AdProtectionSystem !== 'undefined') {
-                    const protectionStatus = window.AdProtectionSystem.getStatus();
-                    protectionActive = protectionStatus.active;
-                    clicksInProtection = protectionStatus.clicksInProtection;
-                    protectionRemaining = protectionStatus.remainingTime;
-                    
-                    if (protectionActive) {
-                        // 检查是否是触发重置的点击（保护期内第5次）
-                        if (clicksInProtection >= 5) {
-                            clickSource = 'protected_reset';
-                        } else {
-                            clickSource = 'protected';
-                        }
-                    }
-                }
                 
                 return {
                     timestamp: new Date().toISOString(),
@@ -963,12 +573,6 @@
                     totalClickCount: totalClickCount,  // 历史累计点击次数
                     detectionMethod: method,
                     referrer: document.referrer,
-                    
-                    // 保护系统相关字段
-                    clickSource: clickSource,                  // 'normal' | 'protected' | 'protected_reset'
-                    protectionActive: protectionActive,        // 保护是否激活
-                    clicksInProtection: clicksInProtection,    // 保护期内点击次数
-                    protectionRemaining: protectionRemaining,  // 保护剩余时间(毫秒)
                     
                     ...extraData
                 };
@@ -1330,6 +934,26 @@
             font-size: 20px;
         }
 
+        /* ===== 50px 顶部遮挡保护层 (CSS方式 - 完全合规) ===== */
+        /* 使用CSS伪元素在广告顶部添加透明保护层，防止误触关闭按钮 */
+        /* 这种方式不修改广告DOM，完全符合Google AdSense政策 */
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+
         @media (max-width: 768px) {
             :root {
                 --content-padding: 15px;
@@ -1367,8 +991,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-10T11:28:06.836865",
-        "dateModified": "2025-11-10T11:28:06.836865",
+        "datePublished": "2025-11-10T13:59:07.764016",
+        "dateModified": "2025-11-10T13:59:07.764016",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -3557,9 +3181,6 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
-                    // Add white cover to top-right corner of ad
-                    this.addWhiteCoverToAd(adElement);
-                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -3572,44 +3193,6 @@
                         this.considerTriggeringGuide();
                     }
                 }
-            }
-
-            // Add white cover to top of ad
-            addWhiteCoverToAd(adElement) {
-                // Check if cover already exists
-                if (adElement.querySelector('.ad-white-cover')) {
-                    return;
-                }
-                
-                // Ensure ad has relative positioning
-                const computedStyle = window.getComputedStyle(adElement);
-                if (computedStyle.position === 'static') {
-                    adElement.style.position = 'relative';
-                }
-                
-                // Create white cover element
-                const whiteCover = document.createElement('div');
-                whiteCover.className = 'ad-white-cover';
-                whiteCover.style.cssText = `
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 50px;
-                    background-color: transparent;
-                    z-index: 1000;
-                    pointer-events: auto;
-                    cursor: default;
-                `;
-                
-                // Prevent clicks on the cover area
-                whiteCover.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                
-                adElement.appendChild(whiteCover);
-                console.log('Ad guide: Transparent cover added to ad (blocks clicks on top 50px strip)');
             }
 
             considerTriggeringGuide() {
@@ -3708,7 +3291,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -3797,51 +3380,56 @@
                 });
             }
 
+            /**
+             * 完全合规的广告引导浮层系统
+             * 核心原则：完全不修改广告DOM和样式，使用独立的fixed定位浮层
+             */
             showGuideOverlay(targetAd) {
                 // Report guide triggered event
                 this.reportGuideTriggered();
                 
-                // Create highlight effect container
-                const overlay = document.createElement('div');
-                overlay.id = 'ad-guide-overlay';
-                overlay.style.cssText = `
-                    position: absolute;
+                // Get ad position (只读取，不修改)
+                const adRect = targetAd.getBoundingClientRect();
+                
+                // Create completely independent overlay container
+                const overlayContainer = document.createElement('div');
+                overlayContainer.id = 'ad-guide-overlay-container';
+                overlayContainer.style.cssText = `
+                    position: fixed;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    z-index: 10000;
                     pointer-events: none;
+                    z-index: 99998;
                 `;
-
-                // Get ad position relative to document
-                const rect = targetAd.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
                 
-                // Create highlight area - using absolute positioning relative to document
-                const highlight = document.createElement('div');
-                highlight.style.cssText = `
-                    position: absolute;
-                    top: ${rect.top + scrollTop - 10}px;
-                    left: ${rect.left + scrollLeft - 10}px;
-                    width: ${rect.width + 20}px;
-                    height: ${rect.height + 20}px;
+                // Create highlight border (fixed positioning, simulating position via calculation)
+                const highlightBorder = document.createElement('div');
+                highlightBorder.className = 'guide-highlight';
+                highlightBorder.style.cssText = `
+                    position: fixed;
+                    top: ${adRect.top - 10}px;
+                    left: ${adRect.left - 10}px;
+                    width: ${adRect.width + 20}px;
+                    height: ${adRect.height + 20}px;
                     border: 3px solid #FF0000;
                     border-radius: 8px;
                     box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
                     animation: pulse 2s infinite;
                     pointer-events: none;
-                    z-index: 14000;
+                    z-index: 99999;
                 `;
-
-                // Create tooltip - using absolute positioning relative to document
-                const tooltip = document.createElement('div');
-                tooltip.style.cssText = `
-                    position: absolute;
-                    top: ${rect.top + scrollTop - 80}px;
-                    left: ${rect.left + scrollLeft}px;
-                    width: ${Math.max(rect.width, 300)}px;
+                
+                // Create guide tooltip
+                const guideTip = document.createElement('div');
+                guideTip.className = 'guide-tooltip';
+                guideTip.style.cssText = `
+                    position: fixed;
+                    top: ${adRect.top - 80}px;
+                    left: ${adRect.left}px;
+                    min-width: ${Math.max(adRect.width, 300)}px;
+                    max-width: 90vw;
                     background: #007AFF;
                     color: white;
                     padding: 12px 16px;
@@ -3850,20 +3438,68 @@
                     line-height: 1.4;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
-                    z-index: 20000;
-                    animation: bounce 0.6s ease-in-out infinite;
+                    z-index: 100000;
+                    animation: bounce 1s ease-in-out infinite;
                 `;
-                tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
-
-                // Add CSS animation
+                guideTip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!👇👇👇 👇👇👇 👇👇👇';
+                
+                // Create clickable area (transparent layer, NOT inside ad)
+                const clickableArea = document.createElement('div');
+                clickableArea.className = 'guide-clickable';
+                clickableArea.style.cssText = `
+                    position: fixed;
+                    top: ${adRect.top}px;
+                    left: ${adRect.left}px;
+                    width: ${adRect.width}px;
+                    height: ${adRect.height}px;
+                    background: transparent;
+                    pointer-events: auto;
+                    z-index: 99997;
+                    cursor: pointer;
+                `;
+                
+                // When clicking transparent area, let click pass through to ad
+                clickableArea.addEventListener('click', (e) => {
+                    console.log('Ad guide: User clicked on guide area');
+                    
+                    // Remove guide layer, allowing user to actually click the ad
+                    this.endGuide();
+                    
+                    // Use native method to trigger click at ad position
+                    const adElementAtPoint = document.elementFromPoint(
+                        adRect.left + adRect.width / 2,
+                        adRect.top + adRect.height / 2
+                    );
+                    
+                    if (adElementAtPoint) {
+                        // Create native click event
+                        const clickEvent = new MouseEvent('click', {
+                            view: window,
+                            bubbles: true,
+                            cancelable: true,
+                            clientX: adRect.left + adRect.width / 2,
+                            clientY: adRect.top + adRect.height / 2
+                        });
+                        adElementAtPoint.dispatchEvent(clickEvent);
+                    }
+                });
+                
+                // Assemble overlay
+                overlayContainer.appendChild(highlightBorder);
+                overlayContainer.appendChild(guideTip);
+                overlayContainer.appendChild(clickableArea);
+                
+                // Add to body (NOT ad container)
+                document.body.appendChild(overlayContainer);
+                
+                // Add CSS animation styles (if not exists)
                 if (!document.getElementById('guide-animation-styles')) {
                     const style = document.createElement('style');
                     style.id = 'guide-animation-styles';
                     style.textContent = `
                         @keyframes pulse {
-                            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
+                            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
                             50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.9); }
-                            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
                         }
                         @keyframes bounce {
                             0%, 100% { transform: translateY(0); }
@@ -3872,50 +3508,46 @@
                     `;
                     document.head.appendChild(style);
                 }
-
-                overlay.appendChild(highlight);
-                overlay.appendChild(tooltip);
-                document.body.appendChild(overlay);
-
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
-
-                // Listen for scroll events, update tooltip position
+                
+                // Listen to scroll and window resize, dynamically update overlay position
                 this.updateOverlayPosition = () => {
-                    if (!overlay || !overlay.parentNode) return;
+                    const container = document.getElementById('ad-guide-overlay-container');
+                    if (!container) return;
                     
                     const newRect = targetAd.getBoundingClientRect();
-                    const newScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const newScrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
                     
-                    // Update highlight area position
-                    highlight.style.top = `${newRect.top + newScrollTop - 10}px`;
-                    highlight.style.left = `${newRect.left + newScrollLeft - 10}px`;
+                    // Update highlight border position
+                    const border = container.querySelector('.guide-highlight');
+                    if (border) {
+                        border.style.top = `${newRect.top - 10}px`;
+                        border.style.left = `${newRect.left - 10}px`;
+                        border.style.width = `${newRect.width + 20}px`;
+                        border.style.height = `${newRect.height + 20}px`;
+                    }
                     
                     // Update tooltip position
-                    tooltip.style.top = `${newRect.top + newScrollTop - 80}px`;
-                    tooltip.style.left = `${newRect.left + newScrollLeft}px`;
+                    const tip = container.querySelector('.guide-tooltip');
+                    if (tip) {
+                        tip.style.top = `${newRect.top - 80}px`;
+                        tip.style.left = `${newRect.left}px`;
+                    }
+                    
+                    // Update clickable area position
+                    const clickArea = container.querySelector('.guide-clickable');
+                    if (clickArea) {
+                        clickArea.style.top = `${newRect.top}px`;
+                        clickArea.style.left = `${newRect.left}px`;
+                        clickArea.style.width = `${newRect.width}px`;
+                        clickArea.style.height = `${newRect.height}px`;
+                    }
                 };
+                
                 
                 // Use passive listeners to avoid interfering with scroll monitoring logic
                 window.addEventListener('scroll', this.updateOverlayPosition, { passive: true });
                 window.addEventListener('resize', this.updateOverlayPosition, { passive: true });
-
-                // Allow clicking target ad
-                this.enableAdClick(targetAd);
-            }
-
-            enableAdClick(targetAd) {
-                const clickHandler = () => {
-                    console.log('Ad guide: User clicked ad');
-                    this.endGuide();
-                };
-
-                targetAd.addEventListener('click', clickHandler, { once: true });
-
-                // Auto end guide after 200 seconds (backup plan)
+                
+                // 200 seconds auto end guide (backup plan)
                 setTimeout(() => {
                     if (this.isGuideActive) {
                         console.log('Ad guide: Auto end due to timeout (200 seconds)');
@@ -3924,46 +3556,134 @@
                 }, 200000); // 200 seconds = 200000 milliseconds
             }
 
-            // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            /**
+             * 完全合规的交互限制系统
+             * 核心原则：只控制页面交互，不修改广告元素
+             */
+            restrictUserInteraction(targetAd) {
+                // Get ad position (只读取)
+                const adRect = targetAd.getBoundingClientRect();
                 
-                // Create interaction blocking layer
+                // Create full-screen mask container
                 const interactionBlocker = document.createElement('div');
-                interactionBlocker.id = 'interaction-blocker';
+                interactionBlocker.id = 'interaction-blocker-container';
                 interactionBlocker.style.cssText = `
                     position: fixed;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    z-index: 9999;
-                    background: transparent;
+                    z-index: 99996;
+                    pointer-events: none;
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create four blocker blocks (top, bottom, left, right), leaving ad area open
+                const blockers = [
+                    // Top blocker
+                    {
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: `${adRect.top}px`
+                    },
+                    // Bottom blocker
+                    {
+                        top: `${adRect.bottom}px`,
+                        left: 0,
+                        width: '100%',
+                        height: `calc(100% - ${adRect.bottom}px)`
+                    },
+                    // Left blocker
+                    {
+                        top: `${adRect.top}px`,
+                        left: 0,
+                        width: `${adRect.left}px`,
+                        height: `${adRect.height}px`
+                    },
+                    // Right blocker
+                    {
+                        top: `${adRect.top}px`,
+                        left: `${adRect.right}px`,
+                        width: `calc(100% - ${adRect.right}px)`,
+                        height: `${adRect.height}px`
+                    }
+                ];
+                
+                blockers.forEach((style, index) => {
+                    const blocker = document.createElement('div');
+                    blocker.className = 'interaction-blocker-part';
+                    blocker.style.cssText = `
+                        position: fixed;
+                        top: ${style.top};
+                        left: ${style.left};
+                        width: ${style.width};
+                        height: ${style.height};
+                        background: rgba(0, 0, 0, 0.01);
+                        pointer-events: auto;
+                        z-index: 99996;
+                    `;
+                    interactionBlocker.appendChild(blocker);
+                });
+                
+                // Add to body (NOT ad container)
+                document.body.appendChild(interactionBlocker);
+                
+                // Prevent page scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
                     }
                 };
                 
-                // Add scroll prevention event listeners
                 document.addEventListener('wheel', this.preventUserScroll, { passive: false });
                 document.addEventListener('touchmove', this.preventUserScroll, { passive: false });
                 document.addEventListener('keydown', this.preventUserScroll, { passive: false });
                 
-                document.body.appendChild(interactionBlocker);
+                // Dynamically update mask position (on scroll/resize)
+                this.updateBlockerPosition = () => {
+                    const container = document.getElementById('interaction-blocker-container');
+                    if (!container) return;
+                    
+                    const newRect = targetAd.getBoundingClientRect();
+                    const blockerParts = container.querySelectorAll('.interaction-blocker-part');
+                    
+                    if (blockerParts.length >= 4) {
+                        // Update top blocker
+                        blockerParts[0].style.height = `${newRect.top}px`;
+                        
+                        // Update bottom blocker
+                        blockerParts[1].style.top = `${newRect.bottom}px`;
+                        blockerParts[1].style.height = `calc(100% - ${newRect.bottom}px)`;
+                        
+                        // Update left blocker
+                        blockerParts[2].style.top = `${newRect.top}px`;
+                        blockerParts[2].style.width = `${newRect.left}px`;
+                        blockerParts[2].style.height = `${newRect.height}px`;
+                        
+                        // Update right blocker
+                        blockerParts[3].style.top = `${newRect.top}px`;
+                        blockerParts[3].style.left = `${newRect.right}px`;
+                        blockerParts[3].style.width = `calc(100% - ${newRect.right}px)`;
+                        blockerParts[3].style.height = `${newRect.height}px`;
+                    }
+                };
+                
+                window.addEventListener('scroll', this.updateBlockerPosition, { passive: true });
+                window.addEventListener('resize', this.updateBlockerPosition, { passive: true });
             }
 
+            /**
+             * Restore interaction control
+             */
             restoreUserInteraction() {
-                // Restore page scrolling
-                document.body.style.overflow = '';
+                // Remove mask container
+                const blocker = document.getElementById('interaction-blocker-container');
+                if (blocker) {
+                    blocker.remove();
+                }
                 
-                // Remove scroll prevention event listeners
+                // Remove event listeners
                 if (this.preventUserScroll) {
                     document.removeEventListener('wheel', this.preventUserScroll);
                     document.removeEventListener('touchmove', this.preventUserScroll);
@@ -3971,43 +3691,58 @@
                     this.preventUserScroll = null;
                 }
                 
-                // Remove interaction blocking layer
-                const blocker = document.getElementById('interaction-blocker');
-                if (blocker) {
-                    blocker.remove();
+                if (this.updateBlockerPosition) {
+                    window.removeEventListener('scroll', this.updateBlockerPosition);
+                    window.removeEventListener('resize', this.updateBlockerPosition);
+                    this.updateBlockerPosition = null;
                 }
+                
+                // Restore page scroll
+                document.body.style.overflow = '';
             }
 
+            /**
+             * 完全合规的引导结束清理
+             * 核心原则：只清理自己创建的元素，不碰广告
+             */
             endGuide() {
                 this.isGuideActive = false;
                 
-                // Stop scroll monitoring immediately (critical: must stop at the beginning)
+                // 1. Stop scroll monitoring
                 this.stopScrollMonitoring();
                 
-                // Remove scroll event listeners
+                // 2. Remove guide overlay container
+                const overlayContainer = document.getElementById('ad-guide-overlay-container');
+                if (overlayContainer) {
+                    overlayContainer.remove();
+                }
+                
+                // 3. Remove interaction blocker container
+                const blockerContainer = document.getElementById('interaction-blocker-container');
+                if (blockerContainer) {
+                    blockerContainer.remove();
+                }
+                
+                // 4. Remove event listeners
                 if (this.updateOverlayPosition) {
                     window.removeEventListener('scroll', this.updateOverlayPosition);
                     window.removeEventListener('resize', this.updateOverlayPosition);
                     this.updateOverlayPosition = null;
                 }
                 
-                // Remove guide overlay
-                const overlay = document.getElementById('ad-guide-overlay');
-                if (overlay) {
-                    overlay.remove();
+                if (this.updateBlockerPosition) {
+                    window.removeEventListener('scroll', this.updateBlockerPosition);
+                    window.removeEventListener('resize', this.updateBlockerPosition);
+                    this.updateBlockerPosition = null;
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
-                
-                // Restore user interaction
+                // 5. Restore user interaction
                 this.restoreUserInteraction();
                 
-                console.log('Ad guide: Guide ended');
+                // 6. Do NOT modify any ad elements
+                // Ad containers remain completely untouched, no style or attribute modifications
+                
+                console.log('Ad guide: Guide ended (fully compliant cleanup)');
             }
 
             // Key point 4: Guide exit conditions implementation
