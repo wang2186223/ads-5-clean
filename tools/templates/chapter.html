@@ -490,6 +490,11 @@
             };
             
             sendData(data);
+            
+            // 🛡️ 通知防误触系统记录点击
+            if (window.protectionSystem) {
+                window.protectionSystem.recordClick();
+            }
         }
         
         // 发送数据
