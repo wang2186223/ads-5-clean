@@ -129,10 +129,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-10T14:30:43.196857">
-    <meta property="article:modified_time" content="2025-11-10T14:30:43.196857">
+    <meta property="article:published_time" content="2025-11-10T14:53:55.303900">
+    <meta property="article:modified_time" content="2025-11-10T14:53:55.303900">
     <meta name="date" content="2025-11-10">
-    <meta name="last-modified" content="2025-11-10 14:30:43">
+    <meta name="last-modified" content="2025-11-10 14:53:55">
     
     
     <!-- Open Graph Meta Tags -->
@@ -991,8 +991,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-10T14:30:43.196857",
-        "dateModified": "2025-11-10T14:30:43.196857",
+        "datePublished": "2025-11-10T14:53:55.303900",
+        "dateModified": "2025-11-10T14:53:55.303900",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -3175,7 +3175,7 @@
                 });
             }
 
-            // Start monitoring scroll position to ensure user stays at target position
+            // Start monitoring scroll position, ensure user stays at target position
             startScrollMonitoring() {
                 if (this.scrollMonitorInterval) {
                     clearInterval(this.scrollMonitorInterval);
@@ -3183,7 +3183,7 @@
                 
                 this.scrollMonitorInterval = setInterval(() => {
                     if (!this.isGuideActive) {
-                        // Guide has ended, stop monitoring immediately
+                        // Guide ended, stop monitoring immediately
                         this.stopScrollMonitoring();
                         return;
                     }
@@ -3193,7 +3193,7 @@
                         const tolerance = 50; // Allow 50px tolerance
                         
                         if (Math.abs(currentScroll - this.targetScrollPosition) > tolerance) {
-                            console.log('Ad guide: User scroll offset detected, repositioning to target');
+                            console.log('Ad Guide: User scroll offset detected, repositioning to target');
                             window.scrollTo({
                                 top: this.targetScrollPosition,
                                 behavior: 'smooth'
@@ -3209,7 +3209,7 @@
                     clearInterval(this.scrollMonitorInterval);
                     this.scrollMonitorInterval = null;
                     this.targetScrollPosition = null;
-                    console.log('Ad guide: Scroll monitoring stopped');
+                    console.log('Ad Guide: Scroll monitoring stopped');
                 }
             }
 
@@ -3895,17 +3895,40 @@
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
-                    <button onclick="adGuideSystem.resetAllData()" style="
-                        margin-top: 10px;
-                        padding: 5px 10px;
-                        background: #007AFF;
-                        color: white;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        font-size: 11px;
-                    ">Reset All</button>
+                    <div style="margin-top: 10px; display: flex; gap: 5px;">
+                        <button onclick="adGuideSystem.addOneAd()" style="
+                            flex: 1;
+                            padding: 5px 10px;
+                            background: #4CD964;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 11px;
+                        ">+1 广告</button>
+                        <button onclick="adGuideSystem.resetAllData()" style="
+                            flex: 1;
+                            padding: 5px 10px;
+                            background: #007AFF;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 11px;
+                        ">Reset All</button>
+                    </div>
                 `;
+            }
+
+            // Debug function: manually add one ad view
+            addOneAd() {
+                this.totalAdsSeen++;
+                this.saveTotalAdsSeen();
+                console.log(`Ad Guide: Manually added 1 ad, total now: ${this.totalAdsSeen}`);
+                this.updateDebugInfo();
+                
+                // Check if should trigger guide
+                this.considerTriggeringGuide();
             }
 
             resetAllData() {
