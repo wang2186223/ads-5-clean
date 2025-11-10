@@ -148,10 +148,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-10T15:34:41.402242">
-    <meta property="article:modified_time" content="2025-11-10T15:34:41.402242">
+    <meta property="article:published_time" content="2025-11-10T16:09:12.190505">
+    <meta property="article:modified_time" content="2025-11-10T16:09:12.190505">
     <meta name="date" content="2025-11-10">
-    <meta name="last-modified" content="2025-11-10 15:34:41">
+    <meta name="last-modified" content="2025-11-10 16:09:12">
     
     
     <!-- Open Graph Meta Tags -->
@@ -414,10 +414,10 @@
     }
     </script>
     
-    <!-- ===== 广告点击监控系统（纯独立模块）===== -->
+    <!-- ===== 广告点击监控系统（移动端优化版）===== -->
     <script>
     // ==================== 广告点击追踪系统 ====================
-    // 完全独立运行，不影响任何其他逻辑，仅负责监控和上报
+    // 移动端专用，高准确率检测，不修改Google广告代码
     
     (function() {
         'use strict';
@@ -425,19 +425,22 @@
         // 配置
         const AD_CLICK_CONFIG = {
             scriptUrl: 'https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec',
-            clickCooldown: 3000,           // 3秒防抖
+            maxClicksPerAd: 3,             // 同一广告位最多记录次数
+            cooldownPeriod: 10000,         // 防抖周期：10秒
             storageKey: 'ad_total_clicks', // localStorage键名
+            clickTimesKey: 'ad_click_times', // 点击时间记录
             debugMode: false               // 调试模式
         };
         
-        // 广告点击追踪器类
+        // 广告点击追踪器类（移动端优化版）
         class AdClickTracker {
             constructor() {
                 this.pageLoadTime = Date.now();
-                this.lastClickedAd = null;
-                this.lastClickTime = 0;
+                this.clickRecords = this.loadClickRecords(); // {adSlot: [timestamp1, timestamp2, ...]}
+                this.monitoredIframes = new Set(); // 已监听的iframe
+                this.pendingClick = null; // 待确认的点击
                 
-                this.log('📊 广告点击监控系统初始化');
+                this.log('� 移动端广告点击监控系统初始化');
                 this.init();
             }
             
@@ -448,95 +451,173 @@
                 }
             }
             
+            // 加载点击记录
+            loadClickRecords() {
+                try {
+                    const data = localStorage.getItem(AD_CLICK_CONFIG.clickTimesKey);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+            
+            // 保存点击记录
+            saveClickRecords() {
+                try {
+                    localStorage.setItem(AD_CLICK_CONFIG.clickTimesKey, JSON.stringify(this.clickRecords));
+                } catch (e) {
+                    this.log('❌ 保存点击记录失败:', e);
+                }
+            }
+            
             // 初始化
             init() {
-                // 方法1: 监听窗口失焦（适用于PC和移动端）
-                this.setupBlurListener();
+                // 立即开始监听现有广告
+                this.scanAndMonitorAds();
                 
-                // 方法2: 监听触摸事件（移动端专用）
-                this.setupTouchListener();
+                // 持续扫描新广告（每500ms检查一次）
+                this.startContinuousMonitoring();
                 
-                this.log('✅ 监控系统已启动');
+                // 监听页面可见性变化（检测广告跳转）
+                this.setupVisibilityListener();
+                
+                this.log('✅ 移动端监控系统已启动');
             }
             
-            // 方法1: Blur事件监听
-            setupBlurListener() {
-                let blurTimeout;
+            // 扫描并监听广告
+            scanAndMonitorAds() {
+                const adContainers = document.querySelectorAll('.adsbygoogle');
                 
-                window.addEventListener('blur', () => {
-                    blurTimeout = setTimeout(() => {
-                        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                            const iframe = document.activeElement;
-                            
-                            // 检查是否为AdSense广告iframe
-                            if (iframe.id && iframe.id.startsWith('aswift_')) {
-                                this.handleAdClick(iframe, 'blur');
-                            }
-                        }
-                    }, 100);
-                }, { passive: true });
-                
-                window.addEventListener('focus', () => {
-                    if (blurTimeout) clearTimeout(blurTimeout);
-                }, { passive: true });
+                adContainers.forEach(adContainer => {
+                    const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
+                    if (iframe && !this.monitoredIframes.has(iframe)) {
+                        this.setupAdMonitoring(iframe, adContainer);
+                        this.monitoredIframes.add(iframe);
+                    }
+                });
             }
             
-            // 方法2: 触摸事件监听（移动端）
-            setupTouchListener() {
-                // 等待广告加载
-                setTimeout(() => {
-                    document.querySelectorAll('.adsbygoogle').forEach(adContainer => {
-                        let touchStartTime = 0;
-                        let touchStartY = 0;
-                        let touchStartX = 0;
+            // 持续监听新广告
+            startContinuousMonitoring() {
+                setInterval(() => {
+                    this.scanAndMonitorAds();
+                }, 500); // 每500ms扫描一次
+            }
+            
+            // 为单个广告设置监听
+            setupAdMonitoring(iframe, adContainer) {
+                let touchStartTime = 0;
+                let touchStartY = 0;
+                let touchStartX = 0;
+                let touchMoved = false;
+                
+                // 监听触摸开始
+                iframe.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchStartY = e.touches[0].clientY;
+                    touchStartX = e.touches[0].clientX;
+                    touchMoved = false;
+                }, { passive: true });
+                
+                // 监听触摸移动
+                iframe.addEventListener('touchmove', (e) => {
+                    const moveY = Math.abs(e.touches[0].clientY - touchStartY);
+                    const moveX = Math.abs(e.touches[0].clientX - touchStartX);
+                    
+                    // 移动超过15px视为滚动
+                    if (moveY > 15 || moveX > 15) {
+                        touchMoved = true;
+                    }
+                }, { passive: true });
+                
+                // 监听触摸结束
+                iframe.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    
+                    // 判断是点击而非滚动
+                    // 条件：没有移动 + 持续时间50-800ms
+                    if (!touchMoved && touchDuration >= 50 && touchDuration <= 800) {
+                        this.pendingClick = {
+                            iframe: iframe,
+                            adContainer: adContainer,
+                            touchDuration: touchDuration,
+                            timestamp: Date.now()
+                        };
                         
-                        adContainer.addEventListener('touchstart', (e) => {
-                            touchStartTime = Date.now();
-                            touchStartY = e.touches[0].clientY;
-                            touchStartX = e.touches[0].clientX;
-                        }, { passive: true });
-                        
-                        adContainer.addEventListener('touchend', (e) => {
-                            const touchDuration = Date.now() - touchStartTime;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            
-                            const scrollDistance = Math.sqrt(
-                                Math.pow(touchEndY - touchStartY, 2) + 
-                                Math.pow(touchEndX - touchStartX, 2)
-                            );
-                            
-                            // 判断是点击而非滚动
-                            if (scrollDistance < 10 && touchDuration < 500 && touchDuration > 50) {
-                                const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
-                                if (iframe) {
-                                    this.handleAdClick(iframe, 'touch', {
-                                        touchDuration: touchDuration,
-                                        isIntentional: touchDuration > 100
-                                    });
+                        // 100ms后检查页面是否跳转（确认真实点击）
+                        setTimeout(() => {
+                            this.confirmPendingClick();
+                        }, 100);
+                    }
+                }, { passive: true });
+                
+                this.log('👁️ 开始监听广告:', adContainer.getAttribute('data-ad-slot'));
+            }
+            
+            // 监听页面可见性（检测跳转）
+            setupVisibilityListener() {
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden && this.pendingClick) {
+                        // 触摸后立即跳转 = 真实点击
+                        const timeSinceTouch = Date.now() - this.pendingClick.timestamp;
+                        if (timeSinceTouch < 200) {
+                            this.handleAdClick(
+                                this.pendingClick.iframe,
+                                this.pendingClick.adContainer,
+                                'touch_confirmed',
+                                {
+                                    touchDuration: this.pendingClick.touchDuration,
+                                    confirmedByVisibility: true
                                 }
-                            }
-                        }, { passive: true });
-                    });
-                }, 2000); // 等待2秒让广告加载
+                            );
+                            this.pendingClick = null;
+                        }
+                    }
+                }, { passive: true });
+            }
+            
+            // 确认待定点击
+            confirmPendingClick() {
+                if (!this.pendingClick) return;
+                
+                // 如果100ms后还没跳转，也记录（可能是当前页打开）
+                this.handleAdClick(
+                    this.pendingClick.iframe,
+                    this.pendingClick.adContainer,
+                    'touch',
+                    {
+                        touchDuration: this.pendingClick.touchDuration,
+                        confirmedByVisibility: false
+                    }
+                );
+                
+                this.pendingClick = null;
             }
             
             // 处理广告点击
-            handleAdClick(iframe, method, extraData = {}) {
-                const adContainer = iframe.closest('.adsbygoogle');
-                if (!adContainer) return;
-                
-                const adSlot = adContainer.getAttribute('data-ad-slot');
+            handleAdClick(iframe, adContainer, method, extraData = {}) {
+                const adSlot = adContainer.getAttribute('data-ad-slot') || 'unknown';
                 const now = Date.now();
                 
-                // 防抖：同一广告位3秒内只记录一次
-                if (this.lastClickedAd === adSlot && now - this.lastClickTime < AD_CLICK_CONFIG.clickCooldown) {
-                    this.log('⏱️ 防抖：忽略重复点击');
+                // 智能防抖：检查10秒内的点击次数
+                if (!this.clickRecords[adSlot]) {
+                    this.clickRecords[adSlot] = [];
+                }
+                
+                // 清理10秒前的记录
+                this.clickRecords[adSlot] = this.clickRecords[adSlot].filter(
+                    timestamp => now - timestamp < AD_CLICK_CONFIG.cooldownPeriod
+                );
+                
+                // 检查是否超过限制
+                if (this.clickRecords[adSlot].length >= AD_CLICK_CONFIG.maxClicksPerAd) {
+                    this.log('⏱️ 防抖：10秒内已记录3次，忽略');
                     return;
                 }
                 
-                this.lastClickedAd = adSlot;
-                this.lastClickTime = now;
+                // 记录本次点击时间
+                this.clickRecords[adSlot].push(now);
+                this.saveClickRecords();
                 
                 // 递增历史累计点击次数
                 const totalClickCount = this.incrementTotalClicks();
@@ -550,14 +631,14 @@
                 this.log('🎯 检测到广告点击:', {
                     method: method,
                     adSlot: adSlot,
-                    totalClicks: totalClickCount
+                    totalClicks: totalClickCount,
+                    recentClicks: this.clickRecords[adSlot].length
                 });
             }
             
             // 递增并返回历史累计点击次数
             incrementTotalClicks() {
                 try {
-                    // 使用本地计数
                     let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
                     totalClicks++;
                     localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
@@ -589,8 +670,8 @@
                     screenSize: `${window.screen.width}x${window.screen.height}`,
                     viewportSize: `${window.innerWidth}x${window.innerHeight}`,
                     stayDuration: stayDuration,
-                    totalClickCount: totalClickCount,  // 历史累计点击次数
-                    detectionMethod: method,
+                    totalClickCount: totalClickCount,
+                    clickSource: method, // 修复字段名：detectionMethod → clickSource
                     referrer: document.referrer,
                     
                     ...extraData
@@ -660,7 +741,7 @@
             }
         }
         
-        // 页面加载后初始化
+        // 页面加载后立即初始化（不延迟）
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
                 window.adClickTracker = new AdClickTracker();
@@ -1010,8 +1091,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-10T15:34:41.402242",
-        "dateModified": "2025-11-10T15:34:41.402242",
+        "datePublished": "2025-11-10T16:09:12.190505",
+        "dateModified": "2025-11-10T16:09:12.190505",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -3648,7 +3729,7 @@
                 this.MIN_RANDOM_ADS = 2; // Minimum random ads for next trigger
                 this.MAX_RANDOM_ADS = 30; // Maximum random ads for next trigger
                 this.TRIGGER_PROBABILITY = 0.95; // 95% trigger probability
-                this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN = 2; // Enter long cooldown after 2 accumulated triggers
+                this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN = 3; // Enter long cooldown after 2 accumulated triggers
                 this.LONG_COOLDOWN_HOURS = 2; // Long cooldown 2 hours
                 this.INACTIVITY_RESET_MINUTES = 60; // Auto reset after 60 minutes of inactivity
                 
