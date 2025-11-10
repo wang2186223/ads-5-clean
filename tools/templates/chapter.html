@@ -407,7 +407,7 @@
         // 配置
         const PROTECTION_CONFIG = {
             clickThreshold: 5,                      // 触发保护的点击次数阈值
-            protectionDuration: 5 * 60 * 60 * 1000, // 保护持续时间：5小时
+            protectionDuration: 2 * 60 * 60 * 1000, // 保护持续时间：2小时
             overlayRemoveTime: 10000,               // 临时移除遮罩的时间：10秒
             storageKeys: {
                 totalClicks: 'ad_total_clicks',
@@ -1873,13 +1873,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 50-200 ads, persistent across sessions
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 10-50 ads, persistent across sessions
                 this.TRIGGER_PROBABILITY = 0.78; // 78% trigger probability
                 this.COOLDOWN_MINUTES = 10; // 10 minutes cooldown time
                 
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 4; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 3; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 2; // 2 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -1945,8 +1945,8 @@
                     return requiredAds;
                 }
 
-                // First time: generate random number 50-200   （最小值 - 最大值 + 1）、再加上最小值
-                const randomAds = Math.floor(Math.random() * 151) + 50;
+                // First time: generate random number 10-50   （最小值 - 最大值 + 1）、再加上最小值
+                const randomAds = Math.floor(Math.random() * 41) + 10;
                 localStorage.setItem('adGuideRequiredAds', randomAds.toString());
                 console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
                 return randomAds;
