@@ -148,10 +148,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-23T11:49:16.795119">
-    <meta property="article:modified_time" content="2025-11-23T11:49:16.795119">
+    <meta property="article:published_time" content="2025-11-23T11:59:01.178577">
+    <meta property="article:modified_time" content="2025-11-23T11:59:01.178577">
     <meta name="date" content="2025-11-23">
-    <meta name="last-modified" content="2025-11-23 11:49:16">
+    <meta name="last-modified" content="2025-11-23 11:59:01">
     
     
     <!-- Open Graph Meta Tags -->
@@ -570,6 +570,12 @@
                 let total = parseInt(localStorage.getItem(CONFIG.storageKey) || '0');
                 total++;
                 localStorage.setItem(CONFIG.storageKey, total.toString());
+                
+                // 立即检查是否需要触发休息
+                if (typeof window.checkRestRequirement === 'function') {
+                    window.checkRestRequirement();
+                }
+                
                 return total;
             } catch (e) {
                 return 0;
@@ -617,40 +623,60 @@
         // 检查是否需要强制休息
         function checkRestRequirement() {
             try {
-                // 1. 检查是否在休息期
+                // ===== 关键逻辑: 优先检查休息期,确保5小时冷却必须展示遮罩 =====
                 const restEndTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
+                
                 if (restEndTime) {
                     const endTime = parseInt(restEndTime);
-                    if (Date.now() < endTime) {
-                        // 仍在休息期,显示弹窗
-                        showRestModal(endTime);
-                        return;
-                    } else {
-                        // 休息结束,清除记录
-                        localStorage.removeItem(REST_CONFIG.restEndTimeKey);
-                        if (REST_CONFIG.debugMode) console.log('[Rest] ✅ 休息时间结束');
-                    }
-                }
-                
-                // 2. 检查累计点击数
-                const totalClicks = parseInt(localStorage.getItem(REST_CONFIG.storageKey) || '0');
-                if (REST_CONFIG.debugMode) console.log(`[Rest] 当前累计点击数: ${totalClicks}`);
-                
-                // 3. 判断是否需要休息 (每10次)
-                if (totalClicks > 0 && totalClicks % REST_CONFIG.clickThreshold === 0) {
-                    // 需要休息
-                    const endTime = Date.now() + REST_CONFIG.restDuration;
-                    localStorage.setItem(REST_CONFIG.restEndTimeKey, endTime.toString());
-                    showRestModal(endTime);
+                    const now = Date.now();
                     
-                    if (REST_CONFIG.debugMode) {
-                        console.log(`[Rest] 🛑 达到${totalClicks}次点击,强制休息5小时`);
+                    if (now < endTime) {
+                        // ✅ 仍在5小时冷却期内,必须显示遮罩
+                        const remainingMs = endTime - now;
+                        const remainingMinutes = Math.floor(remainingMs / (60 * 1000));
+                        console.log(`[Rest] 🛑 休息期生效中,剩余 ${remainingMinutes} 分钟,显示遮罩`);
+                        showRestModal(endTime);
+                        return true;  // 返回true表示已触发遮罩
+                    } else {
+                        // 休息时间已结束,清除记录
+                        localStorage.removeItem(REST_CONFIG.restEndTimeKey);
+                        console.log('[Rest] ✅ 休息时间已结束,清除记录');
                     }
                 }
+                
+                // ===== 如果不在休息期,检查是否需要触发新的休息 =====
+                const totalClicks = parseInt(localStorage.getItem(REST_CONFIG.storageKey) || '0');
+                console.log(`[Rest] 📊 当前累计点击数: ${totalClicks}`);
+                
+                // 判断是否达到休息阈值 (每10次)
+                if (totalClicks > 0 && totalClicks % REST_CONFIG.clickThreshold === 0) {
+                    // 检查是否刚触发过(防止重复触发)
+                    const lastTriggerClick = localStorage.getItem('last_trigger_click');
+                    
+                    if (lastTriggerClick !== totalClicks.toString()) {
+                        // 新的触发,开始5小时休息
+                        const endTime = Date.now() + REST_CONFIG.restDuration;
+                        localStorage.setItem(REST_CONFIG.restEndTimeKey, endTime.toString());
+                        localStorage.setItem('last_trigger_click', totalClicks.toString());
+                        
+                        console.log(`[Rest] 🛑 达到 ${totalClicks} 次点击,触发5小时强制休息`);
+                        showRestModal(endTime);
+                        return true;
+                    } else {
+                        console.log(`[Rest] ⏭️ 已触发过 ${totalClicks} 次的休息,跳过`);
+                    }
+                }
+                
+                return false;  // 未触发遮罩
+                
             } catch (e) {
-                console.error('[Rest] 检查失败:', e);
+                console.error('[Rest] ❌ 检查失败:', e);
+                return false;
             }
         }
+        
+        // 暴露到全局供广告点击系统调用
+        window.checkRestRequirement = checkRestRequirement;
         
         // 显示强制休息弹窗
         function showRestModal(endTime) {
@@ -813,11 +839,22 @@
             }
         }
         
-        // 页面加载时检查
+        // ===== 页面加载时立即检查休息状态 =====
+        // 这样确保用户每次进入页面都会检测5小时冷却是否生效
+        function initRestSystem() {
+            console.log('[Rest] 🚀 强制休息系统启动,检查冷却状态...');
+            const isResting = checkRestRequirement();
+            
+            if (!isResting) {
+                console.log('[Rest] ✅ 当前无休息限制,用户可正常浏览');
+            }
+        }
+        
+        // 立即执行检查(不等待DOM加载)
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkRestRequirement);
+            document.addEventListener('DOMContentLoaded', initRestSystem);
         } else {
-            checkRestRequirement();
+            initRestSystem();
         }
         
     })();
@@ -1162,8 +1199,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-23T11:49:16.795119",
-        "dateModified": "2025-11-23T11:49:16.795119",
+        "datePublished": "2025-11-23T11:59:01.178577",
+        "dateModified": "2025-11-23T11:59:01.178577",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
