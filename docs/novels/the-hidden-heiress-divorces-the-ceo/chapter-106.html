@@ -148,10 +148,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-11-22T11:04:10.697450">
-    <meta property="article:modified_time" content="2025-11-22T11:04:10.697450">
-    <meta name="date" content="2025-11-22">
-    <meta name="last-modified" content="2025-11-22 11:04:10">
+    <meta property="article:published_time" content="2025-11-23T11:49:12.906302">
+    <meta property="article:modified_time" content="2025-11-23T11:49:12.906302">
+    <meta name="date" content="2025-11-23">
+    <meta name="last-modified" content="2025-11-23 11:49:12">
     
     
     <!-- Open Graph Meta Tags -->
@@ -423,12 +423,47 @@
             scriptUrl: 'https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec',
             returnWindow: 50000,  // 50秒返回窗口
             storageKey: 'ad_total_clicks',
-            debugMode: true
+            lastResetDateKey: 'ad_clicks_last_reset_date',  // 记录上次重置日期
+            debugMode: false  // 已统一到可视化面板
+        };
+        
+        // 暴露全局接口供debug面板调用
+        window.adClickMonitor = {
+            getClickCount: () => parseInt(localStorage.getItem(CONFIG.storageKey) || '0'),
+            getLastResetDate: () => localStorage.getItem(CONFIG.lastResetDateKey) || 'Never',
+            hasAds: () => hasAds,
+            getLeaveTime: () => leaveTime
         };
         
         let pageLoadTime = Date.now();
         let leaveTime = null;
         let hasAds = false;
+        
+        // 检查并在0点重置累计点击数
+        function checkAndResetDailyClicks() {
+            try {
+                const today = new Date().toDateString();  // 例如: "Sat Nov 23 2025"
+                const lastResetDate = localStorage.getItem(CONFIG.lastResetDateKey);
+                
+                if (lastResetDate !== today) {
+                    // 新的一天,重置累计点击数
+                    const oldCount = localStorage.getItem(CONFIG.storageKey) || '0';
+                    localStorage.setItem(CONFIG.storageKey, '0');
+                    localStorage.setItem(CONFIG.lastResetDateKey, today);
+                    
+                    if (CONFIG.debugMode) {
+                        console.log(`[AdClick] 🔄 新的一天 (${today}), 累计点击数已重置 (旧值: ${oldCount})`);
+                    }
+                } else {
+                    if (CONFIG.debugMode) {
+                        const currentCount = localStorage.getItem(CONFIG.storageKey) || '0';
+                        console.log(`[AdClick] ✅ 今日累计点击数: ${currentCount}`);
+                    }
+                }
+            } catch (e) {
+                if (CONFIG.debugMode) console.log('[AdClick] ❌ 重置检查失败:', e);
+            }
+        }
         
         // 检查广告是否存在
         function checkAds() {
@@ -542,8 +577,248 @@
         }
         
         // 初始化
+        checkAndResetDailyClicks();  // 首先检查是否需要重置
         checkAds();
         if (CONFIG.debugMode) console.log('[AdClick] 🚀 监控启动：离开60秒内返回 = 广告点击');
+        
+    })();
+    </script>
+
+    <!-- ===== 强制休息系统 ===== -->
+    <script>
+    (function() {
+        'use strict';
+        
+        const REST_CONFIG = {
+            clickThreshold: 10,              // 每10次点击触发休息
+            restDuration: 5 * 60 * 60 * 1000, // 5小时 (毫秒)
+            storageKey: 'ad_total_clicks',
+            restEndTimeKey: 'rest_end_time',
+            debugMode: false  // 已统一到可视化面板
+        };
+        
+        // 暴露全局接口供debug面板调用
+        window.restSystem = {
+            getRestEndTime: () => localStorage.getItem(REST_CONFIG.restEndTimeKey),
+            getRemainingTime: () => {
+                const endTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
+                if (!endTime) return null;
+                const remaining = parseInt(endTime) - Date.now();
+                return remaining > 0 ? remaining : null;
+            },
+            getClickThreshold: () => REST_CONFIG.clickThreshold,
+            isResting: () => {
+                const endTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
+                if (!endTime) return false;
+                return Date.now() < parseInt(endTime);
+            }
+        };
+        
+        // 检查是否需要强制休息
+        function checkRestRequirement() {
+            try {
+                // 1. 检查是否在休息期
+                const restEndTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
+                if (restEndTime) {
+                    const endTime = parseInt(restEndTime);
+                    if (Date.now() < endTime) {
+                        // 仍在休息期,显示弹窗
+                        showRestModal(endTime);
+                        return;
+                    } else {
+                        // 休息结束,清除记录
+                        localStorage.removeItem(REST_CONFIG.restEndTimeKey);
+                        if (REST_CONFIG.debugMode) console.log('[Rest] ✅ 休息时间结束');
+                    }
+                }
+                
+                // 2. 检查累计点击数
+                const totalClicks = parseInt(localStorage.getItem(REST_CONFIG.storageKey) || '0');
+                if (REST_CONFIG.debugMode) console.log(`[Rest] 当前累计点击数: ${totalClicks}`);
+                
+                // 3. 判断是否需要休息 (每10次)
+                if (totalClicks > 0 && totalClicks % REST_CONFIG.clickThreshold === 0) {
+                    // 需要休息
+                    const endTime = Date.now() + REST_CONFIG.restDuration;
+                    localStorage.setItem(REST_CONFIG.restEndTimeKey, endTime.toString());
+                    showRestModal(endTime);
+                    
+                    if (REST_CONFIG.debugMode) {
+                        console.log(`[Rest] 🛑 达到${totalClicks}次点击,强制休息5小时`);
+                    }
+                }
+            } catch (e) {
+                console.error('[Rest] 检查失败:', e);
+            }
+        }
+        
+        // 显示强制休息弹窗
+        function showRestModal(endTime) {
+            // 检查弹窗是否已存在
+            if (document.getElementById('rest-modal')) return;
+            
+            // 创建全屏遮罩
+            const modal = document.createElement('div');
+            modal.id = 'rest-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 999999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            `;
+            
+            // 创建内容容器
+            const content = document.createElement('div');
+            content.style.cssText = `
+                text-align: center;
+                color: white;
+                padding: 40px;
+                max-width: 500px;
+            `;
+            
+            // 休息图标
+            const icon = document.createElement('div');
+            icon.innerHTML = '☕';
+            icon.style.cssText = `
+                font-size: 80px;
+                margin-bottom: 20px;
+                animation: pulse 2s ease-in-out infinite;
+            `;
+            
+            // 标题
+            const title = document.createElement('h2');
+            title.textContent = 'Time to Take a Break';
+            title.style.cssText = `
+                font-size: 32px;
+                margin-bottom: 20px;
+                font-weight: bold;
+            `;
+            
+            // 提示文字
+            const message = document.createElement('p');
+            message.textContent = 'Please take a break and come back in 5 hours to continue reading';
+            message.style.cssText = `
+                font-size: 18px;
+                margin-bottom: 30px;
+                line-height: 1.6;
+                opacity: 0.9;
+            `;
+            
+            // 倒计时显示
+            const countdown = document.createElement('div');
+            countdown.id = 'rest-countdown';
+            countdown.style.cssText = `
+                font-size: 48px;
+                font-weight: bold;
+                font-family: 'Courier New', monospace;
+                margin-bottom: 20px;
+                color: #00ff88;
+                text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            `;
+            
+            // 剩余时间文字说明
+            const remainingText = document.createElement('p');
+            remainingText.id = 'rest-remaining-text';
+            remainingText.style.cssText = `
+                font-size: 16px;
+                opacity: 0.7;
+                margin-top: 10px;
+            `;
+            
+            // 组装元素
+            content.appendChild(icon);
+            content.appendChild(title);
+            content.appendChild(message);
+            content.appendChild(countdown);
+            content.appendChild(remainingText);
+            modal.appendChild(content);
+            
+            // 添加动画样式
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.1); opacity: 0.8; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 插入到页面
+            document.body.appendChild(modal);
+            
+            // 禁止页面滚动
+            document.body.style.overflow = 'hidden';
+            
+            // 启动倒计时更新
+            updateCountdown(endTime);
+            const timer = setInterval(() => {
+                updateCountdown(endTime);
+            }, 1000);
+            
+            // 阻止所有交互
+            modal.addEventListener('click', (e) => e.stopPropagation(), true);
+            modal.addEventListener('touchstart', (e) => e.stopPropagation(), true);
+            modal.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+            document.addEventListener('keydown', preventKeyboard, true);
+            
+            function preventKeyboard(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }
+        
+        // 更新倒计时显示
+        function updateCountdown(endTime) {
+            const now = Date.now();
+            const remaining = endTime - now;
+            
+            if (remaining <= 0) {
+                // 休息时间结束
+                localStorage.removeItem(REST_CONFIG.restEndTimeKey);
+                const modal = document.getElementById('rest-modal');
+                if (modal) {
+                    modal.remove();
+                    document.body.style.overflow = '';
+                }
+                if (REST_CONFIG.debugMode) console.log('[Rest] ✅ 休息结束,刷新页面');
+                window.location.reload();
+                return;
+            }
+            
+            // 计算时分秒
+            const hours = Math.floor(remaining / (60 * 60 * 1000));
+            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+            
+            // 格式化显示 HH:MM:SS
+            const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            const countdownEl = document.getElementById('rest-countdown');
+            const remainingTextEl = document.getElementById('rest-remaining-text');
+            
+            if (countdownEl) {
+                countdownEl.textContent = timeString;
+            }
+            
+            if (remainingTextEl) {
+                remainingTextEl.textContent = `${hours} hours ${minutes} minutes ${seconds} seconds remaining`;
+            }
+        }
+        
+        // 页面加载时检查
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkRestRequirement);
+        } else {
+            checkRestRequirement();
+        }
         
     })();
     </script>
@@ -887,8 +1162,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-11-22T11:04:10.697450",
-        "dateModified": "2025-11-22T11:04:10.697450",
+        "datePublished": "2025-11-23T11:49:12.906302",
+        "dateModified": "2025-11-23T11:49:12.906302",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -4641,20 +4916,71 @@
                 // Calculate ads needed for next trigger
                 const adsNeeded = Math.max(0, this.nextTriggerThreshold - (this.totalAdsSeen || 0));
                 
+                // 获取广告点击监控数据
+                let adClickInfo = '';
+                if (window.adClickMonitor) {
+                    const clickCount = window.adClickMonitor.getClickCount();
+                    const lastReset = window.adClickMonitor.getLastResetDate();
+                    const hasAds = window.adClickMonitor.hasAds();
+                    adClickInfo = `
+                        <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #00ff88;">📊 Ad Click Monitor</div>
+                        <div>Total Clicks Today: ${clickCount}</div>
+                        <div>Has Ads: ${hasAds ? 'Yes ✅' : 'No ❌'}</div>
+                        <div>Last Reset: ${lastReset}</div>
+                    `;
+                }
+                
+                // 获取强制休息系统数据
+                let restInfo = '';
+                if (window.restSystem) {
+                    const isResting = window.restSystem.isResting();
+                    const clickThreshold = window.restSystem.getClickThreshold();
+                    const clickCount = window.adClickMonitor ? window.adClickMonitor.getClickCount() : 0;
+                    const nextRestAt = Math.ceil(clickCount / clickThreshold) * clickThreshold;
+                    const clicksToRest = nextRestAt - clickCount;
+                    
+                    let restStatus = 'Active';
+                    let restCountdown = '';
+                    
+                    if (isResting) {
+                        const remaining = window.restSystem.getRemainingTime();
+                        if (remaining) {
+                            const hours = Math.floor(remaining / (60 * 60 * 1000));
+                            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+                            const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+                            restStatus = '🛑 RESTING';
+                            restCountdown = `<div style="color: #ff3b30; font-weight: bold;">${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</div>`;
+                        }
+                    }
+                    
+                    restInfo = `
+                        <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #ff9500;">☕ Rest System</div>
+                        <div>Status: ${restStatus}</div>
+                        ${restCountdown}
+                        <div>Trigger Every: ${clickThreshold} clicks</div>
+                        <div>Next Rest At: ${nextRestAt} clicks</div>
+                        <div>Clicks to Rest: ${clicksToRest}</div>
+                    `;
+                }
+                
                 this.debugPanel.innerHTML = `
-                    <div style="font-weight: bold; margin-bottom: 10px;">Ad Guide Debug Panel</div>
+                    <div style="font-weight: bold; margin-bottom: 10px; font-size: 14px;">🔍 Debug Panel</div>
+                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #5ac8fa;">📱 Ad Guide System</div>
                     <div>Browser: ${this.isPCBrowser ? 'PC (Disabled)' : 'Mobile'}</div>
                     <div>Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads: ${this.totalAdsSeen || 0}</div>
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">Next Trigger Threshold</div>
+                    <div style="margin-top: 5px;">Next Trigger Threshold</div>
                     <div>Target: ${this.nextTriggerThreshold} ads</div>
                     <div>Need: ${adsNeeded} more ads</div>
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">Long Cooldown (${this.LONG_COOLDOWN_HOURS}h)</div>
+                    <div style="margin-top: 5px;">Long Cooldown (${this.LONG_COOLDOWN_HOURS}h)</div>
                     <div>Trigger Count: ${triggerCount}/${this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN}</div>
                     <div>Long Countdown: ${longCooldownDisplay}</div>
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">Inactivity Reset (${this.INACTIVITY_RESET_MINUTES}min)</div>
+                    <div style="margin-top: 5px;">Inactivity Reset (${this.INACTIVITY_RESET_MINUTES}min)</div>
                     <div>Countdown: ${inactivityDisplay}</div>
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
+                    <div style="margin-top: 5px;">Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
+                    ${adClickInfo}
+                    ${restInfo}
+                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">⚡ Quick Actions</div>
                     <div style="display: flex; gap: 5px; margin-top: 10px;">
                         <button onclick="adGuideSystem.addOneAd()" style="
                             flex: 1;
