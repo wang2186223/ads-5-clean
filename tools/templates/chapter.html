@@ -596,7 +596,7 @@
         'use strict';
         
         const REST_CONFIG = {
-            clickThreshold: 10,              // 每10次点击触发休息
+            clickThreshold: 20,              // 每20次点击触发休息
             restDuration: 5 * 60 * 60 * 1000, // 5小时 (毫秒)
             storageKey: 'ad_total_clicks',
             restEndTimeKey: 'rest_end_time',
@@ -1710,7 +1710,7 @@
                 this.MIN_RANDOM_ADS = 2; // Minimum random ads for next trigger
                 this.MAX_RANDOM_ADS = 30; // Maximum random ads for next trigger
                 this.TRIGGER_PROBABILITY = 0.95; // 95% trigger probability
-                this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN = 3; // Enter long cooldown after 2 accumulated triggers
+                this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN = 5; // Enter long cooldown after 5 accumulated triggers
                 this.LONG_COOLDOWN_HOURS = 2; // Long cooldown 2 hours
                 this.INACTIVITY_RESET_MINUTES = 60; // Auto reset after 60 minutes of inactivity
                 
