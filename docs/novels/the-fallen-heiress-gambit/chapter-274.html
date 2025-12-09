@@ -148,10 +148,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-02T11:14:35.252171">
-    <meta property="article:modified_time" content="2025-12-02T11:14:35.252171">
-    <meta name="date" content="2025-12-02">
-    <meta name="last-modified" content="2025-12-02 11:14:35">
+    <meta property="article:published_time" content="2025-12-09T13:04:05.007855">
+    <meta property="article:modified_time" content="2025-12-09T13:04:05.007855">
+    <meta name="date" content="2025-12-09">
+    <meta name="last-modified" content="2025-12-09 13:04:05">
     
     
     <!-- Open Graph Meta Tags -->
@@ -1145,6 +1145,7 @@
         /* ===== 50px 顶部遮挡保护层 (CSS方式 - 完全合规) ===== */
         /* 使用CSS伪元素在广告顶部添加透明保护层，防止误触关闭按钮 */
         /* 这种方式不修改广告DOM，完全符合Google AdSense政策 */
+        /* 排除全屏激励视频广告（它们通过body下的fixed元素显示） */
         .adsbygoogle {
             position: relative !important;
         }
@@ -1160,6 +1161,20 @@
             pointer-events: auto;
             z-index: 999999 !important;
             display: block !important;
+        }
+        
+        /* 排除全屏激励视频广告的遮罩 */
+        /* 检测标志: 包含google-rewarded-video或ad-video类 */
+        .adsbygoogle:has(#google-rewarded-video)::before,
+        .adsbygoogle:has(.ad-video)::before {
+            display: none !important;
+        }
+        
+        /* 如果广告容器高度超过80vh(接近全屏),也不显示遮罩 */
+        @media (min-height: 600px) {
+            .adsbygoogle:has(iframe[style*="height: 100%"])::before {
+                display: none !important;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1199,8 +1214,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-02T11:14:35.252171",
-        "dateModified": "2025-12-02T11:14:35.252171",
+        "datePublished": "2025-12-09T13:04:05.007855",
+        "dateModified": "2025-12-09T13:04:05.007855",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
