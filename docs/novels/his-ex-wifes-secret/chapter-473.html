@@ -148,10 +148,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-09T13:04:16.551423">
-    <meta property="article:modified_time" content="2025-12-09T13:04:16.551423">
+    <meta property="article:published_time" content="2025-12-09T13:25:34.974783">
+    <meta property="article:modified_time" content="2025-12-09T13:25:34.974783">
     <meta name="date" content="2025-12-09">
-    <meta name="last-modified" content="2025-12-09 13:04:16">
+    <meta name="last-modified" content="2025-12-09 13:25:34">
     
     
     <!-- Open Graph Meta Tags -->
@@ -279,7 +279,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -298,7 +298,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -360,7 +360,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -391,7 +391,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -420,7 +420,7 @@
         'use strict';
         
         const CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec',
+            scriptUrl: 'https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec',
             returnWindow: 50000,  // 50秒返回窗口
             storageKey: 'ad_total_clicks',
             lastResetDateKey: 'ad_clicks_last_reset_date',  // 记录上次重置日期
@@ -586,6 +586,171 @@
         checkAndResetDailyClicks();  // 首先检查是否需要重置
         checkAds();
         if (CONFIG.debugMode) console.log('[AdClick] 🚀 监控启动：离开60秒内返回 = 广告点击');
+        
+    })();
+    </script>
+
+    <!-- ===== 激励视频广告监控系统 ===== -->
+    <script>
+    (function() {
+        'use strict';
+        
+        const REWARDED_VIDEO_CONFIG = {
+            scriptUrl: 'https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec',
+            checkInterval: 500,  // 每500ms检测一次
+            debugMode: false
+        };
+        
+        let dialogShown = false;      // 是否已检测到弹窗
+        let videoPlaying = false;     // 是否已检测到视频播放
+        let videoClosed = false;      // 是否已检测到正常关闭
+        
+        // 暴露全局接口供debug面板调用
+        window.rewardedVideoMonitor = {
+            getDialogStatus: () => dialogShown,
+            getPlayingStatus: () => videoPlaying,
+            getClosedStatus: () => videoClosed
+        };
+        
+        // 获取用户IP地址
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const ipData = await response.json();
+                return ipData.ip;
+            } catch (error1) {
+                try {
+                    const response = await fetch('https://httpbin.org/ip');
+                    const ipData = await response.json();
+                    return ipData.origin.split(',')[0].trim();
+                } catch (error2) {
+                    console.warn('[RewardedVideo] 无法获取IP地址');
+                    return 'Unknown';
+                }
+            }
+        }
+        
+        // 上报激励视频事件
+        async function reportRewardedVideoEvent(eventType) {
+            try {
+                const userIP = await getUserIP();
+                
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    page: window.location.href,
+                    userAgent: navigator.userAgent,
+                    ipAddress: userIP,
+                    chapter: document.querySelector('.chapter-title')?.textContent || 'Unknown Chapter',
+                    adEvent: eventType,  // 'video_dialog', 'video_exposure', 'video_closed'
+                    eventType: 'rewarded_video'
+                };
+                
+                if (REWARDED_VIDEO_CONFIG.debugMode) {
+                    console.log('[RewardedVideo] 上报事件:', eventType, data);
+                }
+                
+                await fetch(REWARDED_VIDEO_CONFIG.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (REWARDED_VIDEO_CONFIG.debugMode) {
+                    console.log('[RewardedVideo] ✅ 事件上报成功:', eventType);
+                }
+            } catch (error) {
+                console.error('[RewardedVideo] 上报失败:', error);
+            }
+        }
+        
+        // 检测激励视频广告状态
+        function checkRewardedVideoState() {
+            // 阶段1: 检测弹窗对话框 (fc-monetization-dialog)
+            if (!dialogShown) {
+                const dialog = document.querySelector('.fc-monetization-dialog') || 
+                              document.querySelector('[class*="monetization-dialog"]') ||
+                              document.querySelector('[class*="rewarded-ad-dialog"]');
+                
+                if (dialog) {
+                    dialogShown = true;
+                    if (REWARDED_VIDEO_CONFIG.debugMode) {
+                        console.log('[RewardedVideo] 🎯 检测到激励视频弹窗');
+                    }
+                    reportRewardedVideoEvent('video_dialog');
+                }
+            }
+            
+            // 阶段2: 检测视频播放 (google-rewarded-video with video element)
+            if (!videoPlaying) {
+                const rewardedContainer = document.getElementById('google-rewarded-video');
+                const videoElement = rewardedContainer?.querySelector('video') ||
+                                   document.querySelector('.ad-video video') ||
+                                   document.querySelector('video[src*="ad"]');
+                
+                if (videoElement && rewardedContainer) {
+                    videoPlaying = true;
+                    if (REWARDED_VIDEO_CONFIG.debugMode) {
+                        console.log('[RewardedVideo] ▶️ 检测到视频开始播放');
+                    }
+                    reportRewardedVideoEvent('video_exposure');
+                }
+            }
+            
+            // 阶段3: 检测正常关闭 (弹窗和视频元素都消失)
+            if (dialogShown && !videoClosed) {
+                const dialog = document.querySelector('.fc-monetization-dialog') || 
+                              document.querySelector('[class*="monetization-dialog"]');
+                const rewardedContainer = document.getElementById('google-rewarded-video');
+                
+                // 如果之前检测到弹窗或视频，但现在都不存在了，说明已关闭
+                if (!dialog && !rewardedContainer) {
+                    videoClosed = true;
+                    if (REWARDED_VIDEO_CONFIG.debugMode) {
+                        console.log('[RewardedVideo] ✅ 检测到视频正常关闭');
+                    }
+                    reportRewardedVideoEvent('video_closed');
+                    
+                    // 重置状态，准备下一次检测
+                    setTimeout(() => {
+                        dialogShown = false;
+                        videoPlaying = false;
+                        videoClosed = false;
+                    }, 2000);
+                }
+            }
+        }
+        
+        // 启动监控
+        function startMonitoring() {
+            if (REWARDED_VIDEO_CONFIG.debugMode) {
+                console.log('[RewardedVideo] 🚀 激励视频监控系统启动');
+            }
+            
+            // 定期检测
+            setInterval(checkRewardedVideoState, REWARDED_VIDEO_CONFIG.checkInterval);
+            
+            // 使用 MutationObserver 监听 DOM 变化
+            const observer = new MutationObserver(() => {
+                checkRewardedVideoState();
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['class', 'id', 'style']
+            });
+        }
+        
+        // 页面加载后启动
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startMonitoring);
+        } else {
+            startMonitoring();
+        }
         
     })();
     </script>
@@ -1163,16 +1328,18 @@
             display: block !important;
         }
         
-        /* 排除全屏激励视频广告的遮罩 */
-        /* 检测标志: 包含google-rewarded-video或ad-video类 */
-        .adsbygoogle:has(#google-rewarded-video)::before,
-        .adsbygoogle:has(.ad-video)::before {
+        /* 排除正在播放的全屏激励视频广告的遮罩 */
+        /* 只排除真正全屏播放的视频,不排除选择弹窗 */
+        /* 检测标志: video元素存在 + 高度100% (表示正在播放) */
+        .adsbygoogle:has(#google-rewarded-video video)::before,
+        .adsbygoogle:has(.ad-video video)::before {
             display: none !important;
         }
         
-        /* 如果广告容器高度超过80vh(接近全屏),也不显示遮罩 */
+        /* 如果广告iframe高度为100%(全屏),不显示遮罩 */
         @media (min-height: 600px) {
-            .adsbygoogle:has(iframe[style*="height: 100%"])::before {
+            .adsbygoogle:has(iframe[style*="height: 100%"])::before,
+            .adsbygoogle:has(iframe[style*="height:100%"])::before {
                 display: none !important;
             }
         }
@@ -1214,8 +1381,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-09T13:04:16.551423",
-        "dateModified": "2025-12-09T13:04:16.551423",
+        "datePublished": "2025-12-09T13:25:34.974783",
+        "dateModified": "2025-12-09T13:25:34.974783",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
