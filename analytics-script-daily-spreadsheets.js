@@ -28,6 +28,8 @@ function doPost(e) {
       handleAdGuideEvent(dailySpreadsheet, data);
     } else if (eventType === 'ad_click') {
       handleAdClickEvent(dailySpreadsheet, data);
+    } else if (eventType === 'rewarded_video') {
+      handleRewardedVideoEvent(dailySpreadsheet, data);
     } else if (eventType === 'protection_activated' || 
                eventType === 'protection_active' ||
                eventType === 'overlay_clicked' || 
@@ -228,6 +230,20 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   protectionSheet.setColumnWidth(12, 120);  // 保护期点击次数
   protectionSheet.setColumnWidth(13, 100);  // 确认结果
   protectionSheet.setColumnWidth(14, 180);  // 事件时间戳
+  
+  // 创建"激励视频广告"sheet
+  const rewardedVideoSheet = spreadsheet.insertSheet('激励视频广告');
+  rewardedVideoSheet.getRange(1, 1, 1, 6).setValues([
+    ['时间', '访问页面', '用户属性', 'IP地址', '当前章节', '广告参数']
+  ]);
+  const rewardedVideoHeader = rewardedVideoSheet.getRange(1, 1, 1, 6);
+  rewardedVideoHeader.setBackground('#9C27B0').setFontColor('white').setFontWeight('bold');
+  rewardedVideoSheet.setColumnWidth(1, 150);   // 时间
+  rewardedVideoSheet.setColumnWidth(2, 300);   // 访问页面
+  rewardedVideoSheet.setColumnWidth(3, 200);   // 用户属性
+  rewardedVideoSheet.setColumnWidth(4, 120);   // IP地址
+  rewardedVideoSheet.setColumnWidth(5, 200);   // 当前章节
+  rewardedVideoSheet.setColumnWidth(6, 150);   // 广告参数
   
   // 创建"当日统计"概览sheet
   const summarySheet = spreadsheet.insertSheet('📊当日统计', 0);
@@ -432,6 +448,29 @@ function handleAdClickEvent(dailySpreadsheet, data) {
 }
 
 /**
+ * 处理激励视频广告事件
+ */
+function handleRewardedVideoEvent(dailySpreadsheet, data) {
+  let rewardedVideoSheet = dailySpreadsheet.getSheetByName('激励视频广告');
+  
+  if (!rewardedVideoSheet) {
+    console.log('激励视频广告工作表不存在，正在创建...');
+    rewardedVideoSheet = addRewardedVideoSheetToExisting(dailySpreadsheet);
+  }
+  
+  const rowData = [
+    getTimeString(),                    // 时间
+    data.page || '',                    // 访问页面
+    data.userAgent || '',               // 用户属性
+    data.ipAddress || 'Unknown',        // IP地址
+    data.chapter || '',                 // 当前章节
+    data.adEvent || ''                  // 广告参数 (video_dialog/video_exposure/video_closed)
+  ];
+  
+  rewardedVideoSheet.appendRow(rowData);
+}
+
+/**
  * 处理防误触遮罩事件
  */
 function handleProtectionEvent(dailySpreadsheet, data) {
@@ -464,6 +503,36 @@ function handleProtectionEvent(dailySpreadsheet, data) {
   ];
   
   protectionSheet.appendRow(rowData);
+}
+
+/**
+ * 为现有表格添加"激励视频广告"工作表（如果不存在）
+ */
+function addRewardedVideoSheetToExisting(spreadsheet) {
+  let rewardedVideoSheet = spreadsheet.getSheetByName('激励视频广告');
+  
+  if (rewardedVideoSheet) {
+    console.log('激励视频广告工作表已存在');
+    return rewardedVideoSheet;
+  }
+  
+  rewardedVideoSheet = spreadsheet.insertSheet('激励视频广告');
+  rewardedVideoSheet.getRange(1, 1, 1, 6).setValues([
+    ['时间', '访问页面', '用户属性', 'IP地址', '当前章节', '广告参数']
+  ]);
+  
+  const rewardedVideoHeader = rewardedVideoSheet.getRange(1, 1, 1, 6);
+  rewardedVideoHeader.setBackground('#9C27B0').setFontColor('white').setFontWeight('bold');
+  
+  rewardedVideoSheet.setColumnWidth(1, 150);   // 时间
+  rewardedVideoSheet.setColumnWidth(2, 300);   // 访问页面
+  rewardedVideoSheet.setColumnWidth(3, 200);   // 用户属性
+  rewardedVideoSheet.setColumnWidth(4, 120);   // IP地址
+  rewardedVideoSheet.setColumnWidth(5, 200);   // 当前章节
+  rewardedVideoSheet.setColumnWidth(6, 150);   // 广告参数
+  
+  console.log('成功创建激励视频广告工作表');
+  return rewardedVideoSheet;
 }
 
 /**
@@ -962,4 +1031,47 @@ function testProtectionEvent() {
   handleProtectionEvent(dailySpreadsheet, testData);
   
   return '测试防误触事件已写入: ' + dailySpreadsheet.getUrl();
+}
+
+/**
+ * 测试激励视频广告事件
+ */
+function testRewardedVideoEvent() {
+  const testEvents = [
+    {
+      eventType: 'rewarded_video',
+      page: 'https://re.cankalp.com/novels/test/chapter-1',
+      userAgent: 'Mozilla/5.0 (iPhone; Test)',
+      ipAddress: '127.0.0.1',
+      chapter: 'Chapter 1: The Beginning',
+      adEvent: 'video_dialog'
+    },
+    {
+      eventType: 'rewarded_video',
+      page: 'https://re.cankalp.com/novels/test/chapter-1',
+      userAgent: 'Mozilla/5.0 (iPhone; Test)',
+      ipAddress: '127.0.0.1',
+      chapter: 'Chapter 1: The Beginning',
+      adEvent: 'video_exposure'
+    },
+    {
+      eventType: 'rewarded_video',
+      page: 'https://re.cankalp.com/novels/test/chapter-1',
+      userAgent: 'Mozilla/5.0 (iPhone; Test)',
+      ipAddress: '127.0.0.1',
+      chapter: 'Chapter 1: The Beginning',
+      adEvent: 'video_closed'
+    }
+  ];
+  
+  const dateString = getDateString();
+  const dailySpreadsheet = getOrCreateDailySpreadsheet(dateString);
+  
+  addRewardedVideoSheetToExisting(dailySpreadsheet);
+  
+  testEvents.forEach(data => {
+    handleRewardedVideoEvent(dailySpreadsheet, data);
+  });
+  
+  return '测试激励视频事件已写入（3个阶段）: ' + dailySpreadsheet.getUrl();
 }
