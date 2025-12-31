@@ -10,10 +10,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-21T11:57:45.029504">
-    <meta property="article:modified_time" content="2025-12-21T11:57:45.029504">
-    <meta name="date" content="2025-12-21">
-    <meta name="last-modified" content="2025-12-21 11:57:45">
+    <meta property="article:published_time" content="2025-12-31T10:05:47.821550">
+    <meta property="article:modified_time" content="2025-12-31T10:05:47.821550">
+    <meta name="date" content="2025-12-31">
+    <meta name="last-modified" content="2025-12-31 10:05:47">
     
     
     <!-- Open Graph Meta Tags -->
@@ -31,14 +31,13 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://novel.oalfa.com/novels/the-fallen-heiress-gambit/chapter-234.html">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P368ETJ09X"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKK2QRZ5GC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-P368ETJ09X');
+      gtag('config', 'G-YKK2QRZ5GC');
     </script>
     
     <!-- Google AdSense -->
@@ -56,7 +55,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '1355356909503023');
+    fbq('init', '747225277772713');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -123,7 +122,7 @@
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1355356909503023&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -141,7 +140,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -160,7 +159,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -222,7 +221,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -253,7 +252,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -274,262 +273,6 @@
     } else {
         sendPageVisit();
     }
-    </script>
-    
-    <!-- ===== 广告点击监控系统（纯独立模块）===== -->
-    <script>
-    // ==================== 广告点击追踪系统 ====================
-    // 完全独立运行，不影响任何其他逻辑，仅负责监控和上报
-    
-    (function() {
-        'use strict';
-        
-        // 配置
-        const AD_CLICK_CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec',
-            clickCooldown: 3000,           // 3秒防抖
-            storageKey: 'ad_total_clicks', // localStorage键名
-            debugMode: false               // 调试模式
-        };
-        
-        // 广告点击追踪器类
-        class AdClickTracker {
-            constructor() {
-                this.pageLoadTime = Date.now();
-                this.lastClickedAd = null;
-                this.lastClickTime = 0;
-                
-                this.log('📊 广告点击监控系统初始化');
-                this.init();
-            }
-            
-            // 日志输出（仅调试模式）
-            log(...args) {
-                if (AD_CLICK_CONFIG.debugMode) {
-                    console.log('[AdClickTracker]', ...args);
-                }
-            }
-            
-            // 初始化
-            init() {
-                // 方法1: 监听窗口失焦（适用于PC和移动端）
-                this.setupBlurListener();
-                
-                // 方法2: 监听触摸事件（移动端专用）
-                this.setupTouchListener();
-                
-                this.log('✅ 监控系统已启动');
-            }
-            
-            // 方法1: Blur事件监听
-            setupBlurListener() {
-                let blurTimeout;
-                
-                window.addEventListener('blur', () => {
-                    blurTimeout = setTimeout(() => {
-                        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                            const iframe = document.activeElement;
-                            
-                            // 检查是否为AdSense广告iframe
-                            if (iframe.id && iframe.id.startsWith('aswift_')) {
-                                this.handleAdClick(iframe, 'blur');
-                            }
-                        }
-                    }, 100);
-                }, { passive: true });
-                
-                window.addEventListener('focus', () => {
-                    if (blurTimeout) clearTimeout(blurTimeout);
-                }, { passive: true });
-            }
-            
-            // 方法2: 触摸事件监听（移动端）
-            setupTouchListener() {
-                // 等待广告加载
-                setTimeout(() => {
-                    document.querySelectorAll('.adsbygoogle').forEach(adContainer => {
-                        let touchStartTime = 0;
-                        let touchStartY = 0;
-                        let touchStartX = 0;
-                        
-                        adContainer.addEventListener('touchstart', (e) => {
-                            touchStartTime = Date.now();
-                            touchStartY = e.touches[0].clientY;
-                            touchStartX = e.touches[0].clientX;
-                        }, { passive: true });
-                        
-                        adContainer.addEventListener('touchend', (e) => {
-                            const touchDuration = Date.now() - touchStartTime;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            
-                            const scrollDistance = Math.sqrt(
-                                Math.pow(touchEndY - touchStartY, 2) + 
-                                Math.pow(touchEndX - touchStartX, 2)
-                            );
-                            
-                            // 判断是点击而非滚动
-                            if (scrollDistance < 10 && touchDuration < 500 && touchDuration > 50) {
-                                const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
-                                if (iframe) {
-                                    this.handleAdClick(iframe, 'touch', {
-                                        touchDuration: touchDuration,
-                                        isIntentional: touchDuration > 100
-                                    });
-                                }
-                            }
-                        }, { passive: true });
-                    });
-                }, 2000); // 等待2秒让广告加载
-            }
-            
-            // 处理广告点击
-            handleAdClick(iframe, method, extraData = {}) {
-                const adContainer = iframe.closest('.adsbygoogle');
-                if (!adContainer) return;
-                
-                const adSlot = adContainer.getAttribute('data-ad-slot');
-                const now = Date.now();
-                
-                // 防抖：同一广告位3秒内只记录一次
-                if (this.lastClickedAd === adSlot && now - this.lastClickTime < AD_CLICK_CONFIG.clickCooldown) {
-                    this.log('⏱️ 防抖：忽略重复点击');
-                    return;
-                }
-                
-                this.lastClickedAd = adSlot;
-                this.lastClickTime = now;
-                
-                // 递增历史累计点击次数
-                const totalClickCount = this.incrementTotalClicks();
-                
-                // 收集数据
-                const clickData = this.collectClickData(iframe, adContainer, totalClickCount, method, extraData);
-                
-                // 发送到服务器
-                this.sendClickData(clickData);
-                
-                this.log('🎯 检测到广告点击:', {
-                    method: method,
-                    adSlot: adSlot,
-                    totalClicks: totalClickCount
-                });
-            }
-            
-            // 递增并返回历史累计点击次数
-            incrementTotalClicks() {
-                try {
-                    let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
-                    totalClicks++;
-                    localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
-                    return totalClicks;
-                } catch (e) {
-                    this.log('❌ localStorage 错误:', e);
-                    return 0;
-                }
-            }
-            
-            // 收集点击数据
-            collectClickData(iframe, adContainer, totalClickCount, method, extraData) {
-                const rect = iframe.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const adPosition = Math.round(rect.top + scrollTop);
-                const stayDuration = Math.round((Date.now() - this.pageLoadTime) / 1000);
-                
-                return {
-                    timestamp: new Date().toISOString(),
-                    eventType: 'ad_click',
-                    novel: 'The Fallen Heiress&#39; Gambit',
-                    chapter: '234',
-                    pageUrl: window.location.href,
-                    adSlot: adContainer.getAttribute('data-ad-slot') || 'unknown',
-                    adPosition: adPosition,
-                    scrollDepth: Math.round(window.scrollY),
-                    userIP: '', // 将在发送时获取
-                    userAgent: navigator.userAgent,
-                    screenSize: `${window.screen.width}x${window.screen.height}`,
-                    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-                    stayDuration: stayDuration,
-                    totalClickCount: totalClickCount,  // 历史累计点击次数
-                    detectionMethod: method,
-                    referrer: document.referrer,
-                    ...extraData
-                };
-            }
-            
-            // 发送点击数据
-            async sendClickData(clickData) {
-                try {
-                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
-                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
-                    clickData.userIP = userIP;
-                    
-                    // 发送到 Google Apps Script
-                    fetch(AD_CLICK_CONFIG.scriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(clickData)
-                    }).then(() => {
-                        this.log('✅ 数据已发送');
-                    }).catch(error => {
-                        this.log('❌ 发送失败:', error);
-                    });
-                    
-                    // 同时发送到 GA4（如果存在）
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'ad_click', {
-                            'ad_slot': clickData.adSlot,
-                            'total_clicks': clickData.totalClickCount,
-                            'novel': clickData.novel,
-                            'chapter': clickData.chapter
-                        });
-                    }
-                    
-                    // 同时发送到 Facebook Pixel（如果存在）
-                    if (typeof fbq !== 'undefined') {
-                        fbq('trackCustom', 'AdClick', {
-                            ad_slot: clickData.adSlot,
-                            total_clicks: clickData.totalClickCount,
-                            novel: clickData.novel
-                        });
-                    }
-                    
-                } catch (error) {
-                    this.log('❌ 发送数据异常:', error);
-                }
-            }
-            
-            // 获取用户IP
-            async getUserIP() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    try {
-                        const response = await fetch('https://httpbin.org/ip');
-                        const data = await response.json();
-                        return data.origin.split(',')[0].trim();
-                    } catch (error2) {
-                        return 'Unknown';
-                    }
-                }
-            }
-        }
-        
-        // 页面加载后初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                window.adClickTracker = new AdClickTracker();
-            });
-        } else {
-            window.adClickTracker = new AdClickTracker();
-        }
-        
-    })();
     </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -850,8 +593,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-21T11:57:45.029504",
-        "dateModified": "2025-12-21T11:57:45.029504",
+        "datePublished": "2025-12-31T10:05:47.821550",
+        "dateModified": "2025-12-31T10:05:47.821550",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -932,13 +675,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Her phone buzzed, and Lillian Graves’ name flashed on the screen. &#34;Evelyn, Preston Whitmore wants to meet you at the studio in an hour. He says it’s urgent.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -948,34 +685,12 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan Blackwood leaned against the polished mahogany desk in his office, his sharp blue eyes scanning the financial reports in front of him. The numbers were solid, but his mind kept drifting elsewhere—specifically, to the woman who had occupied his thoughts more than he cared to admit.</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>A knock interrupted his musings. &#34;Mr. Blackwood, your sister is here to see you,&#34; his assistant announced.</p>
-                
-                
-                <!-- AdSense In-Article Ad after fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
-                
                 
                 
                 
@@ -985,13 +700,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan exhaled. &#34;I’ve been busy.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1001,13 +710,7 @@
                 
                 
                 
-                
-                
-                
                 <p>His jaw tightened. &#34;That’s none of your concern.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1017,13 +720,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan shot her a glare, but before he could retort, his phone rang. It was Donovan Sharpe.</p>
-                
-                
-                
                 
                 
                 
@@ -1033,13 +730,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan’s grip on the phone tightened. Of all the actresses in Hollywood, why did it have to be her?</p>
-                
-                
-                
                 
                 
                 
@@ -1049,26 +740,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Evelyn,&#34; Preston greeted, his expression unreadable. &#34;Thanks for coming on such short notice.&#34;</p>
-                
-                
-                
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="7249978241"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
                 
                 
                 
@@ -1078,13 +750,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Donovan cleared his throat. &#34;We want you for Midnight Echoes.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1094,13 +760,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;The very one,&#34; Preston confirmed.</p>
-                
-                
-                
                 
                 
                 
@@ -1110,13 +770,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Before she could respond, the studio doors swung open, and Nathan himself strode in, his presence commanding the room.</p>
-                
-                
-                
                 
                 
                 
@@ -1126,13 +780,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Evelyn,&#34; he said, his voice low.</p>
-                
-                
-                
                 
                 
                 
@@ -1142,26 +790,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Donovan glanced between them, sensing the tension. &#34;So… do we have a deal?&#34;</p>
-                
-                
-                
-                
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
                 
                 
                 
@@ -1171,13 +800,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan’s gaze darkened, but he said nothing.</p>
-                
-                
-                
                 
                 
                 
@@ -1187,13 +810,7 @@
                 
                 
                 
-                
-                
-                
                 <p>When Nathan announced his intention to find Daniel, Evelyn didn’t need any prompting—she eagerly followed.</p>
-                
-                
-                
                 
                 
                 
@@ -1203,13 +820,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan’s expression twisted in disgust. He had interacted with Amelia a handful of times, but this just proved you could never judge someone by appearances.</p>
-                
-                
-                
                 
                 
                 
@@ -1219,13 +830,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Meanwhile, the pre-wedding festivities were in full swing. A professional emcee held the microphone, working the crowd into a celebratory mood.</p>
-                
-                
-                
                 
                 
                 
@@ -1235,13 +840,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Victor stood at the center of the gathering, but Serena was nowhere in sight.</p>
-                
-                
-                
                 
                 
                 
@@ -1251,13 +850,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Where is he? Oh, right—the garden. He must be cooling off. Starting to have doubts, isn’t he? He’s sensing something’s off. And yet, he still hasn’t called off the wedding. Is he really that afraid of wronging Amelia? A woman who plays the victim is like poison to a man’s common sense!</p>
-                
-                
-                
                 
                 
                 
@@ -1267,13 +860,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The ringing came from nearby.</p>
-                
-                
-                
                 
                 
                 
@@ -1283,13 +870,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Huh? Why does Serena have Daniel’s phone? Oh—Stephanie picked it up and gave it to her. Wait… isn’t she heading toward the restroom where those two are…?</p>
-                
-                
-                
                 
                 
                 
@@ -1299,13 +880,7 @@
                 
                 
                 
-                
-                
-                
                 <p>No way. Serena saw the surveillance footage on Daniel’s phone and went looking for Amelia. When she couldn’t find her, she checked the cameras and saw Amelia and Mason slipping into the same restroom one after the other. This is explosive! Hah, those two are in deep trouble now. Do we even need to find Daniel anymore? I’d rather just follow Serena and watch the fireworks.</p>
-                
-                
-                
                 
                 
                 
@@ -1315,13 +890,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Turning to Evelyn, he said, “Mrs. Reed is probably just trying to return Daniel’s phone. Evelyn, go tell her I’ll bring Daniel to her. She can wait here.”</p>
-                
-                
-                
                 
                 
                 
@@ -1331,13 +900,7 @@
                 
                 
                 
-                
-                
-                
                 <p>This request aligned perfectly with Evelyn&#39;s intentions, so she nodded without hesitation.</p>
-                
-                
-                
                 
                 
                 
@@ -1347,13 +910,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Daniel&#39;s expression darkened when he saw Nathan. &#34;Any updates?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1363,13 +920,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Ignoring Daniel&#39;s grim demeanor, Nathan cut straight to the point. &#34;Your mother seems to be frantically searching for you—with your phone in hand.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1379,13 +930,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Meanwhile, Nathan caught fragments of Evelyn&#39;s thoughts through their connection.</p>
-                
-                
-                
                 
                 
                 
@@ -1395,13 +940,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan frowned, concerned for Serena’s state.</p>
-                
-                
-                
                 
                 
                 
@@ -1411,13 +950,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan hesitated. Perhaps Serena wanted to preserve the family’s dignity, but Daniel needed to see the betrayal for himself. If he didn’t, he might remain blind to the deception forever.</p>
-                
-                
-                
                 
                 
                 
@@ -1427,13 +960,7 @@
                 
                 
                 
-                
-                
-                
                 <p>They had just re-entered the ballroom, intending to take the quickest route to Evelyn, when they spotted Serena weaving through the crowd near the wedding staff.</p>
-                
-                
-                
                 
                 
                 
@@ -1443,13 +970,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan caught another wave of Evelyn’s thoughts.</p>
-                
-                
-                
                 
                 
                 
@@ -1459,13 +980,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Before Daniel could chase after his mother again, Nathan grabbed his arm.</p>
-                
-                
-                
                 
                 
                 
@@ -1475,13 +990,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Even now, doubt gnawed at him, but he couldn’t abandon his mother in the middle of such a public event.</p>
-                
-                
-                
                 
                 
                 
@@ -1491,13 +1000,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The massive screen, which had been displaying romantic wedding photos, flickered—then split into eight separate surveillance feeds.</p>
-                
-                
-                
                 
                 
                 
@@ -1507,13 +1010,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The truth was about to be exposed.</p>
-                
-                
-                
                 
                 
                 
@@ -1523,13 +1020,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The once lively ballroom fell into stunned silence as guests gradually noticed the scandal unfolding before their eyes.</p>
-                
-                
-                
                 
                 
                 
@@ -1539,13 +1030,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Then, all eyes landed on Daniel Wright.</p>
-                
-                
-                
                 
                 
                 
@@ -1555,13 +1040,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Isn&#39;t that his fiancée?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1571,13 +1050,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Were they really going to a hotel room together?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1587,13 +1060,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Do you think she was forced? She doesn’t look willing.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1603,13 +1070,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Hold on—they said they got married because she was pregnant. So… whose child is it?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1619,13 +1080,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Who leaked this? Is Mason trying to ruin Daniel?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1635,13 +1090,7 @@
                 
                 
                 
-                
-                
-                
                 <p>At that moment, the crowd remembered the other key player in this scandal.</p>
-                
-                
-                
                 
                 
                 
@@ -1651,13 +1100,7 @@
                 
                 
                 
-                
-                
-                
                 <p>First, she’d learned that her boyfriend had been a bully in his youth. Now, this.</p>
-                
-                
-                
                 
                 
                 
@@ -1667,13 +1110,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Slowly, she approached Daniel, who stood frozen in shock.</p>
-                
-                
-                
                 
                 
                 
@@ -1683,13 +1120,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Despite everything, Sophia still wanted to believe the girl was innocent.</p>
-                
-                
-                
                 
                 
                 

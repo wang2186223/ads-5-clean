@@ -10,10 +10,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-21T11:57:44.833535">
-    <meta property="article:modified_time" content="2025-12-21T11:57:44.833535">
-    <meta name="date" content="2025-12-21">
-    <meta name="last-modified" content="2025-12-21 11:57:44">
+    <meta property="article:published_time" content="2025-12-31T10:05:47.589233">
+    <meta property="article:modified_time" content="2025-12-31T10:05:47.589233">
+    <meta name="date" content="2025-12-31">
+    <meta name="last-modified" content="2025-12-31 10:05:47">
     
     
     <!-- Open Graph Meta Tags -->
@@ -31,14 +31,13 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://novel.oalfa.com/novels/the-fallen-heiress-gambit/chapter-156.html">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P368ETJ09X"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKK2QRZ5GC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-P368ETJ09X');
+      gtag('config', 'G-YKK2QRZ5GC');
     </script>
     
     <!-- Google AdSense -->
@@ -56,7 +55,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '1355356909503023');
+    fbq('init', '747225277772713');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -123,7 +122,7 @@
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1355356909503023&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -141,7 +140,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -160,7 +159,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -222,7 +221,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -253,7 +252,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -274,262 +273,6 @@
     } else {
         sendPageVisit();
     }
-    </script>
-    
-    <!-- ===== 广告点击监控系统（纯独立模块）===== -->
-    <script>
-    // ==================== 广告点击追踪系统 ====================
-    // 完全独立运行，不影响任何其他逻辑，仅负责监控和上报
-    
-    (function() {
-        'use strict';
-        
-        // 配置
-        const AD_CLICK_CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec',
-            clickCooldown: 3000,           // 3秒防抖
-            storageKey: 'ad_total_clicks', // localStorage键名
-            debugMode: false               // 调试模式
-        };
-        
-        // 广告点击追踪器类
-        class AdClickTracker {
-            constructor() {
-                this.pageLoadTime = Date.now();
-                this.lastClickedAd = null;
-                this.lastClickTime = 0;
-                
-                this.log('📊 广告点击监控系统初始化');
-                this.init();
-            }
-            
-            // 日志输出（仅调试模式）
-            log(...args) {
-                if (AD_CLICK_CONFIG.debugMode) {
-                    console.log('[AdClickTracker]', ...args);
-                }
-            }
-            
-            // 初始化
-            init() {
-                // 方法1: 监听窗口失焦（适用于PC和移动端）
-                this.setupBlurListener();
-                
-                // 方法2: 监听触摸事件（移动端专用）
-                this.setupTouchListener();
-                
-                this.log('✅ 监控系统已启动');
-            }
-            
-            // 方法1: Blur事件监听
-            setupBlurListener() {
-                let blurTimeout;
-                
-                window.addEventListener('blur', () => {
-                    blurTimeout = setTimeout(() => {
-                        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                            const iframe = document.activeElement;
-                            
-                            // 检查是否为AdSense广告iframe
-                            if (iframe.id && iframe.id.startsWith('aswift_')) {
-                                this.handleAdClick(iframe, 'blur');
-                            }
-                        }
-                    }, 100);
-                }, { passive: true });
-                
-                window.addEventListener('focus', () => {
-                    if (blurTimeout) clearTimeout(blurTimeout);
-                }, { passive: true });
-            }
-            
-            // 方法2: 触摸事件监听（移动端）
-            setupTouchListener() {
-                // 等待广告加载
-                setTimeout(() => {
-                    document.querySelectorAll('.adsbygoogle').forEach(adContainer => {
-                        let touchStartTime = 0;
-                        let touchStartY = 0;
-                        let touchStartX = 0;
-                        
-                        adContainer.addEventListener('touchstart', (e) => {
-                            touchStartTime = Date.now();
-                            touchStartY = e.touches[0].clientY;
-                            touchStartX = e.touches[0].clientX;
-                        }, { passive: true });
-                        
-                        adContainer.addEventListener('touchend', (e) => {
-                            const touchDuration = Date.now() - touchStartTime;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            
-                            const scrollDistance = Math.sqrt(
-                                Math.pow(touchEndY - touchStartY, 2) + 
-                                Math.pow(touchEndX - touchStartX, 2)
-                            );
-                            
-                            // 判断是点击而非滚动
-                            if (scrollDistance < 10 && touchDuration < 500 && touchDuration > 50) {
-                                const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
-                                if (iframe) {
-                                    this.handleAdClick(iframe, 'touch', {
-                                        touchDuration: touchDuration,
-                                        isIntentional: touchDuration > 100
-                                    });
-                                }
-                            }
-                        }, { passive: true });
-                    });
-                }, 2000); // 等待2秒让广告加载
-            }
-            
-            // 处理广告点击
-            handleAdClick(iframe, method, extraData = {}) {
-                const adContainer = iframe.closest('.adsbygoogle');
-                if (!adContainer) return;
-                
-                const adSlot = adContainer.getAttribute('data-ad-slot');
-                const now = Date.now();
-                
-                // 防抖：同一广告位3秒内只记录一次
-                if (this.lastClickedAd === adSlot && now - this.lastClickTime < AD_CLICK_CONFIG.clickCooldown) {
-                    this.log('⏱️ 防抖：忽略重复点击');
-                    return;
-                }
-                
-                this.lastClickedAd = adSlot;
-                this.lastClickTime = now;
-                
-                // 递增历史累计点击次数
-                const totalClickCount = this.incrementTotalClicks();
-                
-                // 收集数据
-                const clickData = this.collectClickData(iframe, adContainer, totalClickCount, method, extraData);
-                
-                // 发送到服务器
-                this.sendClickData(clickData);
-                
-                this.log('🎯 检测到广告点击:', {
-                    method: method,
-                    adSlot: adSlot,
-                    totalClicks: totalClickCount
-                });
-            }
-            
-            // 递增并返回历史累计点击次数
-            incrementTotalClicks() {
-                try {
-                    let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
-                    totalClicks++;
-                    localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
-                    return totalClicks;
-                } catch (e) {
-                    this.log('❌ localStorage 错误:', e);
-                    return 0;
-                }
-            }
-            
-            // 收集点击数据
-            collectClickData(iframe, adContainer, totalClickCount, method, extraData) {
-                const rect = iframe.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const adPosition = Math.round(rect.top + scrollTop);
-                const stayDuration = Math.round((Date.now() - this.pageLoadTime) / 1000);
-                
-                return {
-                    timestamp: new Date().toISOString(),
-                    eventType: 'ad_click',
-                    novel: 'The Fallen Heiress&#39; Gambit',
-                    chapter: '156',
-                    pageUrl: window.location.href,
-                    adSlot: adContainer.getAttribute('data-ad-slot') || 'unknown',
-                    adPosition: adPosition,
-                    scrollDepth: Math.round(window.scrollY),
-                    userIP: '', // 将在发送时获取
-                    userAgent: navigator.userAgent,
-                    screenSize: `${window.screen.width}x${window.screen.height}`,
-                    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-                    stayDuration: stayDuration,
-                    totalClickCount: totalClickCount,  // 历史累计点击次数
-                    detectionMethod: method,
-                    referrer: document.referrer,
-                    ...extraData
-                };
-            }
-            
-            // 发送点击数据
-            async sendClickData(clickData) {
-                try {
-                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
-                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
-                    clickData.userIP = userIP;
-                    
-                    // 发送到 Google Apps Script
-                    fetch(AD_CLICK_CONFIG.scriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(clickData)
-                    }).then(() => {
-                        this.log('✅ 数据已发送');
-                    }).catch(error => {
-                        this.log('❌ 发送失败:', error);
-                    });
-                    
-                    // 同时发送到 GA4（如果存在）
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'ad_click', {
-                            'ad_slot': clickData.adSlot,
-                            'total_clicks': clickData.totalClickCount,
-                            'novel': clickData.novel,
-                            'chapter': clickData.chapter
-                        });
-                    }
-                    
-                    // 同时发送到 Facebook Pixel（如果存在）
-                    if (typeof fbq !== 'undefined') {
-                        fbq('trackCustom', 'AdClick', {
-                            ad_slot: clickData.adSlot,
-                            total_clicks: clickData.totalClickCount,
-                            novel: clickData.novel
-                        });
-                    }
-                    
-                } catch (error) {
-                    this.log('❌ 发送数据异常:', error);
-                }
-            }
-            
-            // 获取用户IP
-            async getUserIP() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    try {
-                        const response = await fetch('https://httpbin.org/ip');
-                        const data = await response.json();
-                        return data.origin.split(',')[0].trim();
-                    } catch (error2) {
-                        return 'Unknown';
-                    }
-                }
-            }
-        }
-        
-        // 页面加载后初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                window.adClickTracker = new AdClickTracker();
-            });
-        } else {
-            window.adClickTracker = new AdClickTracker();
-        }
-        
-    })();
     </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -850,8 +593,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-21T11:57:44.833535",
-        "dateModified": "2025-12-21T11:57:44.833535",
+        "datePublished": "2025-12-31T10:05:47.589233",
+        "dateModified": "2025-12-31T10:05:47.589233",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -932,13 +675,7 @@
                 
                 
                 
-                
-                
-                
                 <p>With a smirk, Evelyn sipped her coffee, letting the bitter warmth wake her fully. Her psychic ability had always been a double-edged sword, but moments like these made it worth the chaos. She tuned into the mental chatter around her, filtering through the mundane until she struck gold.</p>
-                
-                
-                
                 
                 
                 
@@ -948,34 +685,12 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn nearly choked on her coffee. Oh, please. Nathan wouldn’t send a late-night text unless it was a business emergency—or if he’d been drugged. She dug deeper, curiosity piqued.</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>Victoria’s mental monologue continued, dripping with delusion. &#34;Once I’m Mrs. Blackwood, I’ll fire that insufferable assistant of his. Lillian Graves has always been too cozy with Evelyn anyway.&#34;</p>
-                
-                
-                <!-- AdSense In-Article Ad after fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
-                
                 
                 
                 
@@ -985,13 +700,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Then, another voice cut in—smooth, amused, and unmistakably Nathan’s. &#34;Victoria’s delusions are almost entertaining. If only she knew I only keep her around because she’s predictable.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1001,13 +710,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She switched channels, landing on Serena Whitmore’s frantic brainstorming. &#34;If I can just get Evelyn to sign that endorsement deal, maybe the studio will finally greenlight her series. But she’s so damn picky!&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1017,13 +720,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Then—bam. A new voice, sharp and venomous. &#34;Evelyn thinks she’s untouchable. But everyone has a weakness. And I will find hers.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1033,13 +730,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Who the hell was that?</p>
-                
-                
-                
                 
                 
                 
@@ -1049,26 +740,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn groaned. Of course he knew.</p>
-                
-                
-                
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="7249978241"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
                 
                 
                 
@@ -1078,13 +750,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Gabriel and Vivienne had once been the golden couple, adored by everyone who knew them. Their breakup, never publicly explained, led most to assume it was due to the overbearing influence of Claire, Gabriel&#39;s notoriously meddlesome mother. The general consensus was that Vivienne had walked away, unwilling to navigate the complexities of such a controlling family dynamic.</p>
-                
-                
-                
                 
                 
                 
@@ -1094,13 +760,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Some time ago, Gabriel had reconnected with the production team of the show, hoping to use their platform to stage a grand marriage proposal. Since his appearance was only meant to announce the theme—not for a live broadcast—the production team agreed, eager for the positive buzz it might bring to their program.</p>
-                
-                
-                
                 
                 
                 
@@ -1110,13 +770,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Everyone involved in the production—except the one person who mattered—was informed of Gabriel’s plan to avoid any potential disruption to the show’s carefully curated atmosphere.</p>
-                
-                
-                
                 
                 
                 
@@ -1126,13 +780,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Preston nodded. &#34;Yes. She seemed serious, but she didn’t object.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1142,26 +790,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Damn. No opposition? Mrs. Harrison must have warmed up to Vivienne and is open to her becoming part of the family. She didn’t outright reject the proposal, but she clearly thought it was premature—Gabriel hadn’t even fixed things with Vivienne yet. Still, seeing her son take initiative, she chose not to stand in his way.</p>
-                
-                
-                
-                
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
                 
                 
                 
@@ -1171,13 +800,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian and Genevieve shared the same thought. They couldn’t fathom why Gabriel would even consider proposing when they hadn’t reconciled. Did he really think Vivienne would say yes? Was he living in a fantasy?</p>
-                
-                
-                
                 
                 
                 
@@ -1187,13 +810,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian and Genevieve barely suppressed their laughter.</p>
-                
-                
-                
                 
                 
                 
@@ -1203,13 +820,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Isabelle, however, seemed less than thrilled, sighing heavily.</p>
-                
-                
-                
                 
                 
                 
@@ -1219,13 +830,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;I was thinking about poaching Vivienne,&#34; Isabelle admitted, her expression thoughtful.</p>
-                
-                
-                
                 
                 
                 
@@ -1235,13 +840,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;That amateur operation?&#34; Isabelle Laurent scoffed, her manicured nails tapping against her champagne flute. &#34;No offense to mom-and-pop agencies, but let&#39;s be realistic here.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1251,13 +850,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;She&#39;s practically a marionette,&#34; Julian Blackwood observed dryly. &#34;No way you&#39;ll change her mind when family&#39;s pulling the strings.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1267,13 +860,7 @@
                 
                 
                 
-                
-                
-                
                 <p>A slow smile spread across Isabelle&#39;s face. &#34;This reality show? That&#39;s her rebellion. Notice she&#39;s barely booked anything else this year? First time in her career she&#39;s not chasing paychecks. The family leash is slipping.&#34; She snapped her fingers. &#34;That&#39;s when we strike. She&#39;ll realize she needs real management—not relatives playing agent.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1283,13 +870,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Vivienne fascinated her. Twenty-six years old with more range than actresses twice her age. Their interactions on set confirmed it—this wasn&#39;t some fame-hungry influencer. The girl burned for the craft. With Vivienne and Seraphina Delacroix under her wing? Isabelle could practically hear the Emmy speeches already.</p>
-                
-                
-                
                 
                 
                 
@@ -1299,13 +880,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;For talent with drive? Always.&#34; Isabelle&#39;s gaze flicked meaningfully toward Evelyn Sinclair. &#34;Give me someone who&#39;ll crawl through broken glass for a role over nepo babies any day.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1315,13 +890,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian and Genevieve exchanged amused glances. They knew Isabelle was already drafting press releases about Evelyn—the heiress who traded boardrooms for backlots, whose real-life Cinderella story (complete with obscenely handsome husband) would send TMZ into a frenzy.</p>
-                
-                
-                
                 
                 
                 
@@ -1331,13 +900,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The dazzling lights of Hollywood never sleep—constant filming, endless endorsements... It seemed the harder you worked, the more rewards came your way...</p>
-                
-                
-                
                 
                 
                 
@@ -1347,13 +910,7 @@
                 
                 
                 
-                
-                
-                
                 <p>No matter how skillfully you cracked that invisible whip, I wouldn&#39;t budge. Because my philosophy was simple: gain without the pain! When Evelyn made this bold but silent declaration, Julian and Genevieve finally burst into laughter.</p>
-                
-                
-                
                 
                 
                 
@@ -1363,13 +920,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn threw a curious glance over her shoulder, prompting Julian to quickly divert the conversation. &#34;Weren&#39;t you determined to poach Vivienne earlier? Changed your mind?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1379,13 +930,7 @@
                 
                 
                 
-                
-                
-                
                 <p>At this, Evelyn and the others exchanged knowing smiles.</p>
-                
-                
-                
                 
                 
                 
@@ -1395,13 +940,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Unable to contain herself any longer, Genevieve blurted, &#34;Vivienne would never agree to it.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1411,13 +950,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn was genuinely surprised—this was information she&#39;d assumed only she possessed.</p>
-                
-                
-                
                 
                 
                 
@@ -1427,13 +960,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;What?&#34; Both Isabelle and Evelyn leaned in, curiosity piqued.</p>
-                
-                
-                
                 
                 
                 
@@ -1443,13 +970,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Isabelle&#39;s jaw dropped at the revelation, rendered speechless.</p>
-                
-                
-                
                 
                 
                 
@@ -1459,13 +980,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian and Genevieve recoiled in horror at her train of thought. Please, for the love of god, don&#39;t put that image in our heads!</p>
-                
-                
-                
                 
                 
                 
@@ -1475,13 +990,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Their gazes inadvertently drifted downward, landing precisely where they shouldn&#39;t have, as they caught sight of the man&#39;s... posterior while he directed the decorators.</p>
-                
-                
-                
                 
                 
                 

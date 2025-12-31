@@ -123,35 +123,16 @@
     })();
     </script>
     
-    <!-- Disable Console Output -->
-    <script>
-    (function() {
-        'use strict';
-        // Override all console methods to prevent any output
-        if (typeof console !== 'undefined') {
-            const noop = function() {};
-            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
-                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
-                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
-            methods.forEach(function(method) {
-                if (console[method]) {
-                    console[method] = noop;
-                }
-            });
-        }
-    })();
-    </script>
-    
     <title>Chapter 146 - Runaway Heiress Reborn： Crushing CEO Ex | NovelVibe</title>
     <meta name="description" content="Read Runaway Heiress Reborn： Crushing CEO Ex Chapter 146 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="ceo, billionaire, contemporary">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-21T11:57:43.137125">
-    <meta property="article:modified_time" content="2025-12-21T11:57:43.137125">
-    <meta name="date" content="2025-12-21">
-    <meta name="last-modified" content="2025-12-21 11:57:43">
+    <meta property="article:published_time" content="2025-12-31T10:05:45.979213">
+    <meta property="article:modified_time" content="2025-12-31T10:05:45.979213">
+    <meta name="date" content="2025-12-31">
+    <meta name="last-modified" content="2025-12-31 10:05:45">
     
     
     <!-- Open Graph Meta Tags -->
@@ -169,19 +150,19 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://novel.oalfa.com/novels/runaway-heiress-reborn-crushing-ceo-ex/chapter-146.html">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P368ETJ09X"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKK2QRZ5GC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-P368ETJ09X');
+      gtag('config', 'G-YKK2QRZ5GC');
     </script>
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
+
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -194,7 +175,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '1355356909503023');
+    fbq('init', '747225277772713');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -230,21 +211,29 @@
         const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
         
         if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('1m_web')) {
-                fbq('track', '1m_web');
-                console.log('Facebook事件已发送: 1m_web (用户阅读1分钟)');
+            if (shouldTrackEvent('ReadOneMinute')) {
+                fbq('trackCustom', 'ReadOneMinute', {
+                    content_name: 'Runaway Heiress Reborn： Crushing CEO Ex',
+                    content_category: 'Novel',
+                    reading_time: 1
+                });
+                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
             } else {
-                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
             }
             oneMinuteSent = true;
         }
         
         if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('10m_web')) {
-                fbq('track', '10m_web');
-                console.log('Facebook事件已发送: 10m_web (用户阅读10分钟)');
+            if (shouldTrackEvent('ReadTenMinutes')) {
+                fbq('trackCustom', 'ReadTenMinutes', {
+                    content_name: 'Runaway Heiress Reborn： Crushing CEO Ex',
+                    content_category: 'Novel',
+                    reading_time: 10
+                });
+                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
             } else {
-                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
             }
             tenMinutesSent = true;
         }
@@ -261,7 +250,7 @@
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1355356909503023&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -279,7 +268,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -298,7 +287,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -360,7 +349,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -391,7 +380,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -414,618 +403,6 @@
     }
     </script>
     
-    <!-- ===== 广告点击监控（返回检测版）===== -->
-    <script>
-    (function() {
-        'use strict';
-        
-        const CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec',
-            returnWindow: 50000,  // 50秒返回窗口
-            storageKey: 'ad_total_clicks',
-            lastResetDateKey: 'ad_clicks_last_reset_date',  // 记录上次重置日期
-            debugMode: false  // 已统一到可视化面板
-        };
-        
-        // 暴露全局接口供debug面板调用
-        window.adClickMonitor = {
-            getClickCount: () => parseInt(localStorage.getItem(CONFIG.storageKey) || '0'),
-            getLastResetDate: () => localStorage.getItem(CONFIG.lastResetDateKey) || 'Never',
-            hasAds: () => hasAds,
-            getLeaveTime: () => leaveTime
-        };
-        
-        let pageLoadTime = Date.now();
-        let leaveTime = null;
-        let hasAds = false;
-        
-        // 检查并在0点重置累计点击数
-        function checkAndResetDailyClicks() {
-            try {
-                const today = new Date().toDateString();  // 例如: "Sat Nov 23 2025"
-                const lastResetDate = localStorage.getItem(CONFIG.lastResetDateKey);
-                
-                if (lastResetDate !== today) {
-                    // 新的一天,重置累计点击数
-                    const oldCount = localStorage.getItem(CONFIG.storageKey) || '0';
-                    localStorage.setItem(CONFIG.storageKey, '0');
-                    localStorage.setItem(CONFIG.lastResetDateKey, today);
-                    
-                    if (CONFIG.debugMode) {
-                        console.log(`[AdClick] 🔄 新的一天 (${today}), 累计点击数已重置 (旧值: ${oldCount})`);
-                    }
-                } else {
-                    if (CONFIG.debugMode) {
-                        const currentCount = localStorage.getItem(CONFIG.storageKey) || '0';
-                        console.log(`[AdClick] ✅ 今日累计点击数: ${currentCount}`);
-                    }
-                }
-            } catch (e) {
-                if (CONFIG.debugMode) console.log('[AdClick] ❌ 重置检查失败:', e);
-            }
-        }
-        
-        // 检查广告是否存在
-        function checkAds() {
-            const checkInterval = setInterval(() => {
-                const ads = document.querySelectorAll('.adsbygoogle iframe[id^="aswift_"]');
-                if (ads.length > 0) {
-                    hasAds = true;
-                    if (CONFIG.debugMode) console.log('[AdClick] ✅ 找到广告');
-                    clearInterval(checkInterval);
-                }
-            }, 500);
-            setTimeout(() => clearInterval(checkInterval), 10000);
-        }
-        
-        // 页面隐藏时记录离开时间
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                leaveTime = Date.now();
-                if (CONFIG.debugMode) console.log('[AdClick] � 用户离开页面');
-            } else {
-                // 页面可见时检查是否应该上报
-                if (leaveTime && hasAds) {
-                    const awayDuration = Date.now() - leaveTime;
-                    if (awayDuration <= CONFIG.returnWindow) {
-                        if (CONFIG.debugMode) console.log(`[AdClick] ✅ 用户返回（离开${Math.round(awayDuration/1000)}秒），记录点击`);
-                        reportClick();
-                    } else {
-                        if (CONFIG.debugMode) console.log(`[AdClick] ⏭️ 离开超过60秒（${Math.round(awayDuration/1000)}秒），忽略`);
-                    }
-                    leaveTime = null;
-                }
-            }
-        });
-        
-        // 上报广告点击
-        function reportClick() {
-            const totalClicks = incrementClicks();
-            const stayDuration = Math.round((Date.now() - pageLoadTime) / 1000);
-            
-            const firstAd = document.querySelector('.adsbygoogle');
-            const adSlot = firstAd ? firstAd.getAttribute('data-ad-slot') : 'unknown';
-            const adPosition = firstAd ? Math.round(firstAd.getBoundingClientRect().top + window.scrollY) : 0;
-            
-            const data = {
-                timestamp: new Date().toISOString(),
-                eventType: 'ad_click',
-                novel: 'Runaway Heiress Reborn： Crushing CEO Ex',
-                chapter: '146',
-                pageUrl: window.location.href,
-                adSlot: adSlot,
-                adPosition: adPosition,
-                scrollDepth: Math.round(window.scrollY),
-                userIP: '',
-                userAgent: navigator.userAgent,
-                screenSize: `${window.screen.width}x${window.screen.height}`,
-                stayDuration: stayDuration,
-                totalClickCount: totalClicks,
-                clickSource: 'return_60s'
-            };
-            
-            sendData(data);
-        }
-        
-        // 发送数据
-        async function sendData(data) {
-            try {
-                if (typeof getUserIP === 'function') {
-                    data.userIP = await getUserIP();
-                } else {
-                    try {
-                        const res = await fetch('https://api.ipify.org?format=json');
-                        const json = await res.json();
-                        data.userIP = json.ip;
-                    } catch (e) {
-                        data.userIP = 'Unknown';
-                    }
-                }
-                
-                const payload = JSON.stringify(data);
-                
-                fetch(CONFIG.scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {'Content-Type': 'application/json'},
-                    body: payload
-                });
-                
-                if (CONFIG.debugMode) console.log('[AdClick] 📡 已上报');
-                
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'ad_click', {
-                        ad_slot: data.adSlot,
-                        total_clicks: data.totalClickCount
-                    });
-                }
-            } catch (error) {
-                if (CONFIG.debugMode) console.log('[AdClick] ❌ 发送失败:', error);
-            }
-        }
-        
-        // 累计点击次数
-        function incrementClicks() {
-            try {
-                let total = parseInt(localStorage.getItem(CONFIG.storageKey) || '0');
-                total++;
-                localStorage.setItem(CONFIG.storageKey, total.toString());
-                
-                // 立即检查是否需要触发休息
-                if (typeof window.checkRestRequirement === 'function') {
-                    window.checkRestRequirement();
-                }
-                
-                return total;
-            } catch (e) {
-                return 0;
-            }
-        }
-        
-        // 初始化
-        checkAndResetDailyClicks();  // 首先检查是否需要重置
-        checkAds();
-        if (CONFIG.debugMode) console.log('[AdClick] 🚀 监控启动：离开60秒内返回 = 广告点击');
-        
-    })();
-    </script>
-
-    <!-- ===== 激励视频广告监控系统 ===== -->
-    <script>
-    (function() {
-        'use strict';
-        
-        const REWARDED_VIDEO_CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbwbdlSTXkBn4mN0HpOhRjrLR4Hr7TXDCSg5vIxmO1acIBsm8lRsup1F-29-bQwYZ08/exec',
-            checkInterval: 500,  // 每500ms检测一次
-            debugMode: false
-        };
-        
-        let dialogShown = false;      // 是否已检测到弹窗
-        let videoPlaying = false;     // 是否已检测到视频播放
-        let videoClosed = false;      // 是否已检测到正常关闭
-        
-        // 暴露全局接口供debug面板调用
-        window.rewardedVideoMonitor = {
-            getDialogStatus: () => dialogShown,
-            getPlayingStatus: () => videoPlaying,
-            getClosedStatus: () => videoClosed
-        };
-        
-        // 获取用户IP地址
-        async function getUserIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const ipData = await response.json();
-                return ipData.ip;
-            } catch (error1) {
-                try {
-                    const response = await fetch('https://httpbin.org/ip');
-                    const ipData = await response.json();
-                    return ipData.origin.split(',')[0].trim();
-                } catch (error2) {
-                    console.warn('[RewardedVideo] 无法获取IP地址');
-                    return 'Unknown';
-                }
-            }
-        }
-        
-        // 上报激励视频事件
-        async function reportRewardedVideoEvent(eventType) {
-            try {
-                const userIP = await getUserIP();
-                
-                const data = {
-                    timestamp: new Date().toISOString(),
-                    page: window.location.href,
-                    userAgent: navigator.userAgent,
-                    ipAddress: userIP,
-                    chapter: document.querySelector('.chapter-title')?.textContent || 'Unknown Chapter',
-                    adEvent: eventType,  // 'video_dialog', 'video_exposure', 'video_closed'
-                    eventType: 'rewarded_video'
-                };
-                
-                if (REWARDED_VIDEO_CONFIG.debugMode) {
-                    console.log('[RewardedVideo] 上报事件:', eventType, data);
-                }
-                
-                await fetch(REWARDED_VIDEO_CONFIG.scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (REWARDED_VIDEO_CONFIG.debugMode) {
-                    console.log('[RewardedVideo] ✅ 事件上报成功:', eventType);
-                }
-            } catch (error) {
-                console.error('[RewardedVideo] 上报失败:', error);
-            }
-        }
-        
-        // 检测激励视频广告状态
-        function checkRewardedVideoState() {
-            // 阶段1: 检测弹窗对话框 (fc-monetization-dialog)
-            if (!dialogShown) {
-                const dialog = document.querySelector('.fc-monetization-dialog') || 
-                              document.querySelector('[class*="monetization-dialog"]') ||
-                              document.querySelector('[class*="rewarded-ad-dialog"]');
-                
-                if (dialog) {
-                    dialogShown = true;
-                    if (REWARDED_VIDEO_CONFIG.debugMode) {
-                        console.log('[RewardedVideo] 🎯 检测到激励视频弹窗');
-                    }
-                    reportRewardedVideoEvent('video_dialog');
-                }
-            }
-            
-            // 阶段2: 检测视频播放 (google-rewarded-video with video element)
-            if (!videoPlaying) {
-                const rewardedContainer = document.getElementById('google-rewarded-video');
-                const videoElement = rewardedContainer?.querySelector('video') ||
-                                   document.querySelector('.ad-video video') ||
-                                   document.querySelector('video[src*="ad"]');
-                
-                if (videoElement && rewardedContainer) {
-                    videoPlaying = true;
-                    if (REWARDED_VIDEO_CONFIG.debugMode) {
-                        console.log('[RewardedVideo] ▶️ 检测到视频开始播放');
-                    }
-                    reportRewardedVideoEvent('video_exposure');
-                }
-            }
-            
-            // 阶段3: 检测正常关闭 (弹窗和视频元素都消失)
-            if (dialogShown && !videoClosed) {
-                const dialog = document.querySelector('.fc-monetization-dialog') || 
-                              document.querySelector('[class*="monetization-dialog"]');
-                const rewardedContainer = document.getElementById('google-rewarded-video');
-                
-                // 如果之前检测到弹窗或视频，但现在都不存在了，说明已关闭
-                if (!dialog && !rewardedContainer) {
-                    videoClosed = true;
-                    if (REWARDED_VIDEO_CONFIG.debugMode) {
-                        console.log('[RewardedVideo] ✅ 检测到视频正常关闭');
-                    }
-                    reportRewardedVideoEvent('video_closed');
-                    
-                    // 重置状态，准备下一次检测
-                    setTimeout(() => {
-                        dialogShown = false;
-                        videoPlaying = false;
-                        videoClosed = false;
-                    }, 2000);
-                }
-            }
-        }
-        
-        // 启动监控
-        function startMonitoring() {
-            if (REWARDED_VIDEO_CONFIG.debugMode) {
-                console.log('[RewardedVideo] 🚀 激励视频监控系统启动');
-            }
-            
-            // 定期检测
-            setInterval(checkRewardedVideoState, REWARDED_VIDEO_CONFIG.checkInterval);
-            
-            // 使用 MutationObserver 监听 DOM 变化
-            const observer = new MutationObserver(() => {
-                checkRewardedVideoState();
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['class', 'id', 'style']
-            });
-        }
-        
-        // 页面加载后启动
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startMonitoring);
-        } else {
-            startMonitoring();
-        }
-        
-    })();
-    </script>
-
-    <!-- ===== 强制休息系统 ===== -->
-    <script>
-    (function() {
-        'use strict';
-        
-        const REST_CONFIG = {
-            clickThreshold: 20,              // 每20次点击触发休息
-            restDuration: 5 * 60 * 60 * 1000, // 5小时 (毫秒)
-            storageKey: 'ad_total_clicks',
-            restEndTimeKey: 'rest_end_time',
-            debugMode: false  // 已统一到可视化面板
-        };
-        
-        // 暴露全局接口供debug面板调用
-        window.restSystem = {
-            getRestEndTime: () => localStorage.getItem(REST_CONFIG.restEndTimeKey),
-            getRemainingTime: () => {
-                const endTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
-                if (!endTime) return null;
-                const remaining = parseInt(endTime) - Date.now();
-                return remaining > 0 ? remaining : null;
-            },
-            getClickThreshold: () => REST_CONFIG.clickThreshold,
-            isResting: () => {
-                const endTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
-                if (!endTime) return false;
-                return Date.now() < parseInt(endTime);
-            }
-        };
-        
-        // 检查是否需要强制休息
-        function checkRestRequirement() {
-            try {
-                // ===== 关键逻辑: 优先检查休息期,确保5小时冷却必须展示遮罩 =====
-                const restEndTime = localStorage.getItem(REST_CONFIG.restEndTimeKey);
-                
-                if (restEndTime) {
-                    const endTime = parseInt(restEndTime);
-                    const now = Date.now();
-                    
-                    if (now < endTime) {
-                        // ✅ 仍在5小时冷却期内,必须显示遮罩
-                        const remainingMs = endTime - now;
-                        const remainingMinutes = Math.floor(remainingMs / (60 * 1000));
-                        console.log(`[Rest] 🛑 休息期生效中,剩余 ${remainingMinutes} 分钟,显示遮罩`);
-                        showRestModal(endTime);
-                        return true;  // 返回true表示已触发遮罩
-                    } else {
-                        // 休息时间已结束,清除记录
-                        localStorage.removeItem(REST_CONFIG.restEndTimeKey);
-                        console.log('[Rest] ✅ 休息时间已结束,清除记录');
-                    }
-                }
-                
-                // ===== 如果不在休息期,检查是否需要触发新的休息 =====
-                const totalClicks = parseInt(localStorage.getItem(REST_CONFIG.storageKey) || '0');
-                console.log(`[Rest] 📊 当前累计点击数: ${totalClicks}`);
-                
-                // 判断是否达到休息阈值 (每10次)
-                if (totalClicks > 0 && totalClicks % REST_CONFIG.clickThreshold === 0) {
-                    // 检查是否刚触发过(防止重复触发)
-                    const lastTriggerClick = localStorage.getItem('last_trigger_click');
-                    
-                    if (lastTriggerClick !== totalClicks.toString()) {
-                        // 新的触发,开始5小时休息
-                        const endTime = Date.now() + REST_CONFIG.restDuration;
-                        localStorage.setItem(REST_CONFIG.restEndTimeKey, endTime.toString());
-                        localStorage.setItem('last_trigger_click', totalClicks.toString());
-                        
-                        console.log(`[Rest] 🛑 达到 ${totalClicks} 次点击,触发5小时强制休息`);
-                        showRestModal(endTime);
-                        return true;
-                    } else {
-                        console.log(`[Rest] ⏭️ 已触发过 ${totalClicks} 次的休息,跳过`);
-                    }
-                }
-                
-                return false;  // 未触发遮罩
-                
-            } catch (e) {
-                console.error('[Rest] ❌ 检查失败:', e);
-                return false;
-            }
-        }
-        
-        // 暴露到全局供广告点击系统调用
-        window.checkRestRequirement = checkRestRequirement;
-        
-        // 显示强制休息弹窗
-        function showRestModal(endTime) {
-            // 检查弹窗是否已存在
-            if (document.getElementById('rest-modal')) return;
-            
-            // 创建全屏遮罩
-            const modal = document.createElement('div');
-            modal.id = 'rest-modal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.95);
-                z-index: 999999;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            `;
-            
-            // 创建内容容器
-            const content = document.createElement('div');
-            content.style.cssText = `
-                text-align: center;
-                color: white;
-                padding: 40px;
-                max-width: 500px;
-            `;
-            
-            // 休息图标
-            const icon = document.createElement('div');
-            icon.innerHTML = '☕';
-            icon.style.cssText = `
-                font-size: 80px;
-                margin-bottom: 20px;
-                animation: pulse 2s ease-in-out infinite;
-            `;
-            
-            // 标题
-            const title = document.createElement('h2');
-            title.textContent = 'Time to Take a Break';
-            title.style.cssText = `
-                font-size: 32px;
-                margin-bottom: 20px;
-                font-weight: bold;
-            `;
-            
-            // 提示文字
-            const message = document.createElement('p');
-            message.textContent = 'Please take a break and come back in 5 hours to continue reading';
-            message.style.cssText = `
-                font-size: 18px;
-                margin-bottom: 30px;
-                line-height: 1.6;
-                opacity: 0.9;
-            `;
-            
-            // 倒计时显示
-            const countdown = document.createElement('div');
-            countdown.id = 'rest-countdown';
-            countdown.style.cssText = `
-                font-size: 48px;
-                font-weight: bold;
-                font-family: 'Courier New', monospace;
-                margin-bottom: 20px;
-                color: #00ff88;
-                text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-            `;
-            
-            // 剩余时间文字说明
-            const remainingText = document.createElement('p');
-            remainingText.id = 'rest-remaining-text';
-            remainingText.style.cssText = `
-                font-size: 16px;
-                opacity: 0.7;
-                margin-top: 10px;
-            `;
-            
-            // 组装元素
-            content.appendChild(icon);
-            content.appendChild(title);
-            content.appendChild(message);
-            content.appendChild(countdown);
-            content.appendChild(remainingText);
-            modal.appendChild(content);
-            
-            // 添加动画样式
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes pulse {
-                    0%, 100% { transform: scale(1); opacity: 1; }
-                    50% { transform: scale(1.1); opacity: 0.8; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // 插入到页面
-            document.body.appendChild(modal);
-            
-            // 禁止页面滚动
-            document.body.style.overflow = 'hidden';
-            
-            // 启动倒计时更新
-            updateCountdown(endTime);
-            const timer = setInterval(() => {
-                updateCountdown(endTime);
-            }, 1000);
-            
-            // 阻止所有交互
-            modal.addEventListener('click', (e) => e.stopPropagation(), true);
-            modal.addEventListener('touchstart', (e) => e.stopPropagation(), true);
-            modal.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-            document.addEventListener('keydown', preventKeyboard, true);
-            
-            function preventKeyboard(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }
-        }
-        
-        // 更新倒计时显示
-        function updateCountdown(endTime) {
-            const now = Date.now();
-            const remaining = endTime - now;
-            
-            if (remaining <= 0) {
-                // 休息时间结束
-                localStorage.removeItem(REST_CONFIG.restEndTimeKey);
-                const modal = document.getElementById('rest-modal');
-                if (modal) {
-                    modal.remove();
-                    document.body.style.overflow = '';
-                }
-                if (REST_CONFIG.debugMode) console.log('[Rest] ✅ 休息结束,刷新页面');
-                window.location.reload();
-                return;
-            }
-            
-            // 计算时分秒
-            const hours = Math.floor(remaining / (60 * 60 * 1000));
-            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-            const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-            
-            // 格式化显示 HH:MM:SS
-            const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            
-            const countdownEl = document.getElementById('rest-countdown');
-            const remainingTextEl = document.getElementById('rest-remaining-text');
-            
-            if (countdownEl) {
-                countdownEl.textContent = timeString;
-            }
-            
-            if (remainingTextEl) {
-                remainingTextEl.textContent = `${hours} hours ${minutes} minutes ${seconds} seconds remaining`;
-            }
-        }
-        
-        // ===== 页面加载时立即检查休息状态 =====
-        // 这样确保用户每次进入页面都会检测5小时冷却是否生效
-        function initRestSystem() {
-            console.log('[Rest] 🚀 强制休息系统启动,检查冷却状态...');
-            const isResting = checkRestRequirement();
-            
-            if (!isResting) {
-                console.log('[Rest] ✅ 当前无休息限制,用户可正常浏览');
-            }
-        }
-        
-        // 立即执行检查(不等待DOM加载)
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initRestSystem);
-        } else {
-            initRestSystem();
-        }
-        
-    })();
-    </script>
-    
-  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -1344,8 +721,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-21T11:57:43.137125",
-        "dateModified": "2025-12-21T11:57:43.137125",
+        "datePublished": "2025-12-31T10:05:45.979213",
+        "dateModified": "2025-12-31T10:05:45.979213",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -1426,13 +803,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Her mind felt clearer after the intense mental exercise. The tension had eased considerably.</p>
-                
-                
-                
                 
                 
                 
@@ -1442,34 +813,12 @@
                 
                 
                 
-                
-                
-                
                 <p>Thirty minutes later, she walked into The Velvet Lounge.</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>Nathaniel greeted her at the entrance. &#34;Whiskey sour or something lighter?&#34;</p>
-                
-                
-                <!-- AdSense In-Article Ad after fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
-                
                 
                 
                 
@@ -1479,13 +828,7 @@
                 
                 
                 
-                
-                
-                
                 <p>His sharp eyes studied her face. &#34;Rough day?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1495,13 +838,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathaniel didn&#39;t push. He signaled the bartender for a peach bellini.</p>
-                
-                
-                
                 
                 
                 
@@ -1511,13 +848,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Simon Fairchild smirked. &#34;So that&#39;s Nathaniel&#39;s new pet project.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1527,13 +858,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Simon nudged him. &#34;Your type?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1543,26 +868,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Dominic&#39;s almost-conquest,&#34; Simon drawled. &#34;The one who slipped through his fingers.&#34;</p>
-                
-                
-                
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="7249978241"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
                 
                 
                 
@@ -1572,13 +878,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She didn&#39;t belong here. Yet her very incongruence made her magnetic.</p>
-                
-                
-                
                 
                 
                 
@@ -1588,13 +888,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;I don&#39;t know how,&#34; she admitted.</p>
-                
-                
-                
                 
                 
                 
@@ -1604,13 +898,7 @@
                 
                 
                 
-                
-                
-                
                 <p>On the dance floor, she mirrored his awkward movements. Gradually, the rhythm found her. Her shoulders loosened. A faint smile touched her lips.</p>
-                
-                
-                
                 
                 
                 
@@ -1620,13 +908,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Simon whistled low. &#34;Damn. Ms. Kensington&#39;s got that ice queen act, but this one... she&#39;s fire wrapped in silk.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1636,26 +918,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Isabella&#39;s phone buzzed against her thigh. She checked the screen mid-step. Every muscle locked.</p>
-                
-                
-                
-                
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
                 
                 
                 
@@ -1665,13 +928,7 @@
                 
                 
                 
-                
-                
-                
                 <p>They scrambled off the dance floor.</p>
-                
-                
-                
                 
                 
                 
@@ -1681,13 +938,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Outside, she answered with trembling fingers. &#34;Mr. Aldridge.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1697,13 +948,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She stared at her phone. &#34;What just happened?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1713,13 +958,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;He wants me to drive him somewhere tomorrow.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1729,13 +968,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The night air carried the bar&#39;s pulsating energy. Despite everything, Isabella felt lighter.</p>
-                
-                
-                
                 
                 
                 
@@ -1745,21 +978,12 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Not until you pay my therapy bills,&#34; he grumbled.</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>&#34;Put it on my tab.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -3934,6 +3158,31 @@
             }
         }
 
+        // Facebook Pixel: Track first Next button click
+        let nextClickTracked = false;
+        const nextChapterBtn = document.getElementById('next-chapter');
+        
+        if (nextChapterBtn && !nextChapterBtn.disabled) {
+            nextChapterBtn.addEventListener('click', function(e) {
+                // Track first click event
+                if (!nextClickTracked) {
+                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
+                        if (typeof fbq !== 'undefined') {
+                            fbq('trackCustom', 'FirstNextClick', {
+                                content_name: 'Runaway Heiress Reborn： Crushing CEO Ex',
+                                content_category: 'Novel',
+                                chapter_number: 146
+                            });
+                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
+                        }
+                    } else {
+                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
+                    }
+                    nextClickTracked = true;
+                }
+            });
+        }
+
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -3944,6 +3193,21 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
+                    // Track first next click via keyboard
+                    if (!nextClickTracked) {
+                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
+                            if (typeof fbq !== 'undefined') {
+                                fbq('trackCustom', 'FirstNextClick', {
+                                    content_name: 'Runaway Heiress Reborn： Crushing CEO Ex',
+                                    content_category: 'Novel',
+                                    chapter_number: 146,
+                                    click_type: 'keyboard'
+                                });
+                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
+                            }
+                        }
+                        nextClickTracked = true;
+                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -4155,24 +3419,20 @@
                 // Detect PC browser environment
                 this.isPCBrowser = this.detectPCBrowser();
                 
-                // If PC browser, return directly without initializing system
+                // If PC browser, return without initializing system
                 if (this.isPCBrowser) {
-                    console.log('Ad Guide: PC browser detected, system will not activate');
+                    console.log('Ad guide: PC browser detected, system will not activate');
                     return;
                 }
                 
-                // Key Point 1: Guide Trigger Mechanism
-                this.MIN_INITIAL_ADS = 10; // Minimum ads for first trigger (only used on very first visit)
-                this.MAX_INITIAL_ADS = 30; // Maximum ads for first trigger (only used on very first visit)
-                this.MIN_RANDOM_ADS = 20; // Minimum random ads for next trigger
-                this.MAX_RANDOM_ADS = 100; // Maximum random ads for next trigger
-                this.TRIGGER_PROBABILITY = 0.95; // 95% trigger probability
-                this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN = 2; // Enter long cooldown after 2 accumulated triggers
-                this.LONG_COOLDOWN_HOURS = 2; // Long cooldown 2 hours
-                this.INACTIVITY_RESET_MINUTES = 60; // Auto reset after 60 minutes of inactivity
-                
-                // Dynamic trigger threshold - get existing threshold or generate new one
-                this.nextTriggerThreshold = this.getNextTriggerThreshold();
+                // Key point 1: Guide trigger mechanism
+                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
+                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
+                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
+
+                // New: Trigger count limit mechanism
+                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -4181,14 +3441,15 @@
                 this.observer = null;
                 this.debugPanel = null;
                 
-                // Cross-page accumulated data
+                // Cross-page cumulative data
                 this.totalAdsSeen = this.getTotalAdsSeen();
+                this.triggerCount = this.getTriggerCount();
                 
                 // Scroll monitoring during guide
                 this.scrollMonitorInterval = null;
                 this.targetScrollPosition = null;
                 
-                // Key Point 5: Debug mode related
+                // Key point 5: Debug mode related
                 this.themeClickCount = 0;
                 this.themeClickTimer = null;
                 
@@ -4199,7 +3460,7 @@
             detectPCBrowser() {
                 const userAgent = navigator.userAgent.toLowerCase();
                 
-                // Detect mobile device identifiers
+                // Detect mobile device keywords
                 const mobileKeywords = [
                     'mobile', 'android', 'iphone', 'ipad', 'ipod',
                     'blackberry', 'iemobile', 'opera mini', 'webos'
@@ -4207,16 +3468,16 @@
                 
                 const isMobile = mobileKeywords.some(keyword => userAgent.includes(keyword));
                 
-                // Detect touchscreen support
+                // Detect touch screen support
                 const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
                 
-                // Detect screen size (width less than 1024px usually indicates mobile device)
+                // Detect screen size (less than 1024px width usually means mobile device)
                 const isSmallScreen = window.screen.width < 1024;
                 
-                // If mobile device, has touchscreen, or small screen, it is not a PC browser
+                // If mobile device or has touch screen or small screen, not PC browser
                 const isPCBrowser = !isMobile && !hasTouchScreen && !isSmallScreen;
                 
-                console.log('Ad Guide: Browser environment detection', {
+                console.log('Ad guide: Browser environment detection', {
                     userAgent: userAgent,
                     isMobile: isMobile,
                     hasTouchScreen: hasTouchScreen,
@@ -4228,132 +3489,77 @@
                 return isPCBrowser;
             }
 
-            // Get cross-page accumulated ad count
+            // Get cross-page cumulative ad count
             getTotalAdsSeen() {
                 const stored = localStorage.getItem('adGuideTotalSeen');
                 return stored ? parseInt(stored) : 0;
             }
 
-            // Save cross-page accumulated ad count
+            // Save cross-page cumulative ad count
             saveTotalAdsSeen() {
                 localStorage.setItem('adGuideTotalSeen', this.totalAdsSeen.toString());
             }
 
-            // Get next trigger threshold (dynamic)
-            getNextTriggerThreshold() {
-                const stored = localStorage.getItem('adGuideNextThreshold');
-                if (stored) {
-                    return parseInt(stored);
-                }
-                // First time, generate random initial threshold (2-10)
-                return Math.floor(Math.random() * (this.MAX_INITIAL_ADS - this.MIN_INITIAL_ADS + 1)) + this.MIN_INITIAL_ADS;
-            }
-
-            // Save next trigger threshold
-            saveNextTriggerThreshold(threshold) {
-                localStorage.setItem('adGuideNextThreshold', threshold.toString());
-            }
-
-            // Generate random ads count for next trigger (2-30)
-            generateRandomAdsCount() {
-                return Math.floor(Math.random() * (this.MAX_RANDOM_ADS - this.MIN_RANDOM_ADS + 1)) + this.MIN_RANDOM_ADS;
-            }
-
-            // Get accumulated trigger count
+            // Get trigger count
             getTriggerCount() {
                 const stored = localStorage.getItem('adGuideTriggerCount');
                 return stored ? parseInt(stored) : 0;
             }
 
-            // Save accumulated trigger count
-            saveTriggerCount(count) {
-                localStorage.setItem('adGuideTriggerCount', count.toString());
+            // Save trigger count
+            saveTriggerCount() {
+                localStorage.setItem('adGuideTriggerCount', this.triggerCount.toString());
             }
 
-            // Get long cooldown start time
-            getLongCooldownStart() {
-                const stored = localStorage.getItem('adGuideLongCooldownStart');
+            // Get trigger cooldown reset time
+            getTriggerCooldownReset() {
+                const stored = localStorage.getItem('adGuideTriggerCooldownReset');
                 return stored ? parseInt(stored) : 0;
             }
 
-            // Save long cooldown start time
-            saveLongCooldownStart(timestamp) {
-                localStorage.setItem('adGuideLongCooldownStart', timestamp.toString());
+            // Save trigger cooldown reset time
+            saveTriggerCooldownReset(timestamp) {
+                localStorage.setItem('adGuideTriggerCooldownReset', timestamp.toString());
             }
 
-            // Check if in long cooldown period
-            isInLongCooldown() {
-                const longCooldownStart = this.getLongCooldownStart();
-                if (!longCooldownStart) return false;
-                
-                const longCooldownMs = this.LONG_COOLDOWN_HOURS * 60 * 60 * 1000;
-                const timeSinceLongCooldown = Date.now() - longCooldownStart;
-                
-                if (timeSinceLongCooldown >= longCooldownMs) {
-                    // Long cooldown ended, reset trigger count and long cooldown time
-                    this.saveTriggerCount(0);
-                    localStorage.removeItem('adGuideLongCooldownStart');
-                    return false;
-                }
-                
-                return true;
-            }
-
-            // Update last activity time
-            updateLastActivityTime() {
-                localStorage.setItem('adGuideLastActivity', Date.now().toString());
-            }
-
-            // Get last activity time
-            getLastActivityTime() {
-                const stored = localStorage.getItem('adGuideLastActivity');
-                return stored ? parseInt(stored) : 0;
-            }
-
-            // Check inactivity and auto reset
-            checkInactivityReset() {
-                const lastActivity = this.getLastActivityTime();
-                if (!lastActivity) {
-                    // First visit, record time
-                    this.updateLastActivityTime();
-                    return;
-                }
-
-                const inactivityMs = this.INACTIVITY_RESET_MINUTES * 60 * 1000;
-                const timeSinceLastActivity = Date.now() - lastActivity;
-
-                if (timeSinceLastActivity >= inactivityMs) {
-                    console.log(`Ad Guide: User left for more than ${this.INACTIVITY_RESET_MINUTES} minutes, auto reset all data`);
-                    this.resetAllData();
-                    // Update activity time
-                    this.updateLastActivityTime();
-                }
-            }
-
-            // Key Point 1: Guide Trigger Mechanism Implementation
+            // Key point 1: Guide trigger mechanism implementation
             init() {
-                // If PC browser, skip initialization
+                // If PC browser, do not execute initialization
                 if (this.isPCBrowser) return;
                 
-                // Check if user left for more than 60 minutes, auto reset if so
-                this.checkInactivityReset();
+                // Check if user has been away for more than 60 minutes
+                this.checkAndResetIfLongAbsence();
                 
                 this.setupAdObserver();
                 this.setupDebugMode();
                 this.setupPageVisibilityHandler();
-                this.setupActivityTracking();
                 this.startPeriodicCheck();
-                
-                // Update last activity time
-                this.updateLastActivityTime();
             }
 
-            // Setup user activity tracking
-            setupActivityTracking() {
-                // Periodically update activity time (every 5 seconds)
-                setInterval(() => {
-                    this.updateLastActivityTime();
-                }, 5000);
+            // Check if user has been away for more than 60 minutes and reset if needed
+            checkAndResetIfLongAbsence() {
+                const lastActiveTime = localStorage.getItem('adGuideLastActiveTime');
+                const now = Date.now();
+                
+                if (lastActiveTime) {
+                    const timeSinceLastActive = now - parseInt(lastActiveTime);
+                    const sixtyMinutesInMs = 60 * 60 * 1000; // 60 minutes
+                    
+                    if (timeSinceLastActive > sixtyMinutesInMs) {
+                        console.log(`Ad guide: User was away for ${Math.round(timeSinceLastActive / 60000)} minutes (> 60 min), auto-resetting all data`);
+                        this.resetAllData();
+                    } else {
+                        console.log(`Ad guide: User was away for ${Math.round(timeSinceLastActive / 60000)} minutes (< 60 min), no reset needed`);
+                    }
+                }
+                
+                // Update last active time
+                this.updateLastActiveTime();
+            }
+
+            // Update last active time
+            updateLastActiveTime() {
+                localStorage.setItem('adGuideLastActiveTime', Date.now().toString());
             }
 
             setupAdObserver() {
@@ -4391,7 +3597,7 @@
             }
 
             checkAdValidity(adElement) {
-                // If PC browser, skip ad detection
+                // If PC browser, do not execute ad detection
                 if (this.isPCBrowser) return;
                 
                 // Check if ad is valid: height > 100px and <= 650px and filled
@@ -4408,36 +3614,37 @@
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
                     
-                    console.log(`Ad Guide: New ad found, current page: ${this.currentPageAds.length}, total: ${this.totalAdsSeen}, threshold: ${this.nextTriggerThreshold}`);
+                    console.log(`Ad guide: New ad detected, current page: ${this.currentPageAds.length}, total count: ${this.totalAdsSeen}`);
                     this.updateDebugInfo();
                     
-                    // Check if trigger condition is met (based on accumulated count reaching threshold)
-                    if (this.totalAdsSeen >= this.nextTriggerThreshold) {
+                    // Check if trigger condition is met (based on cumulative count)
+                    if (this.totalAdsSeen >= this.REQUIRED_ADS) {
                         this.considerTriggeringGuide();
                     }
                 }
             }
 
             considerTriggeringGuide() {
-                // Check if in long cooldown period
-                if (this.isInLongCooldown()) {
-                    const longCooldownStart = this.getLongCooldownStart();
-                    const longCooldownMs = this.LONG_COOLDOWN_HOURS * 60 * 60 * 1000;
-                    const remainingMs = longCooldownMs - (Date.now() - longCooldownStart);
-                    const remainingHours = Math.ceil(remainingMs / (60 * 60 * 1000));
-                    console.log(`Ad Guide: In long cooldown, ${remainingHours} hours remaining`);
+                // Check if in trigger count cooldown (2 hours)
+                if (!this.canTriggerByCount()) {
+                    const resetTime = this.getTriggerCooldownReset();
+                    const remainingMs = resetTime - Date.now();
+                    const remainingMinutes = Math.ceil(remainingMs / 60000);
+                    console.log(`Ad guide: Trigger count limit reached (${this.triggerCount}/${this.MAX_TRIGGERS}), in 2-hour cooldown. Remaining: ${remainingMinutes} minutes`);
                     return;
                 }
 
-                // Probability control: 95% trigger, 5% skip
+                // Check regular cooldown time (15 minutes)
+                if (!this.canTrigger()) {
+                    console.log('Ad guide: Still in regular cooldown period (15 minutes)');
+                    return;
+                }
+
+                // Probability control: 78% trigger, 22% skip
                 const shouldTrigger = Math.random() < this.TRIGGER_PROBABILITY;
                 if (!shouldTrigger) {
-                    console.log('Ad Guide: Skipped by probability control');
-                    // Generate new random threshold for next attempt
-                    const randomAdsCount = this.generateRandomAdsCount();
-                    this.nextTriggerThreshold = this.totalAdsSeen + randomAdsCount;
-                    this.saveNextTriggerThreshold(this.nextTriggerThreshold);
-                    console.log(`Ad Guide: Next trigger at ${this.nextTriggerThreshold} ads (need ${randomAdsCount} more)`);
+                    console.log('Ad guide: Probability control skip');
+                    this.recordTriggerAttempt();
                     return;
                 }
 
@@ -4445,7 +3652,40 @@
                 this.triggerGuide();
             }
 
-            // Key Point 2: Guide Interaction Flow Implementation
+            canTriggerByCount() {
+                // Check if trigger count has reached limit
+                if (this.triggerCount < this.MAX_TRIGGERS) {
+                    return true;
+                }
+
+                // Check if 2-hour cooldown has expired
+                const resetTime = this.getTriggerCooldownReset();
+                if (Date.now() >= resetTime) {
+                    // Cooldown expired, reset trigger count
+                    console.log('Ad guide: 2-hour cooldown expired, resetting trigger count');
+                    this.triggerCount = 0;
+                    this.saveTriggerCount();
+                    this.saveTriggerCooldownReset(0);
+                    return true;
+                }
+
+                return false;
+            }
+
+            canTrigger() {
+                const lastTrigger = localStorage.getItem('adGuideLastTrigger');
+                if (!lastTrigger) return true;
+                
+                const cooldownMs = this.COOLDOWN_MINUTES * 60 * 1000;
+                const timeSinceLastTrigger = Date.now() - parseInt(lastTrigger);
+                return timeSinceLastTrigger >= cooldownMs;
+            }
+
+            recordTriggerAttempt() {
+                localStorage.setItem('adGuideLastTrigger', Date.now().toString());
+            }
+
+            // Key point 2: Guide interaction flow implementation
             triggerGuide() {
                 // If PC browser, do not trigger guide
                 if (this.isPCBrowser) return;
@@ -4453,39 +3693,35 @@
                 if (this.isGuideActive) return;
                 
                 this.isGuideActive = true;
+                this.recordTriggerAttempt();
                 
-                // Increase trigger count
-                const triggerCount = this.getTriggerCount() + 1;
-                this.saveTriggerCount(triggerCount);
-                console.log(`Ad Guide: Trigger count ${triggerCount}/${this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN}`);
+                // Increment trigger count
+                this.triggerCount++;
+                this.saveTriggerCount();
+                console.log(`Ad guide: Trigger count incremented: ${this.triggerCount}/${this.MAX_TRIGGERS}`);
                 
-                // Generate new random threshold for next trigger
-                const randomAdsCount = this.generateRandomAdsCount();
-                this.nextTriggerThreshold = this.totalAdsSeen + randomAdsCount;
-                this.saveNextTriggerThreshold(this.nextTriggerThreshold);
-                console.log(`Ad Guide: Guide triggered! Next trigger at ${this.nextTriggerThreshold} ads (need ${randomAdsCount} more)`);
-                
-                // Check if long cooldown condition is met
-                if (triggerCount >= this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN) {
-                    this.saveLongCooldownStart(Date.now());
-                    console.log(`Ad Guide: Triggered ${triggerCount} times, entering ${this.LONG_COOLDOWN_HOURS} hour long cooldown`);
+                // If trigger count reaches limit, set 2-hour cooldown
+                if (this.triggerCount >= this.MAX_TRIGGERS) {
+                    const cooldownEndTime = Date.now() + (this.TRIGGER_COOLDOWN_HOURS * 60 * 60 * 1000);
+                    this.saveTriggerCooldownReset(cooldownEndTime);
+                    console.log(`Ad guide: Trigger count limit reached (${this.MAX_TRIGGERS}), entering 2-hour cooldown`);
                 }
                 
-                // Select last valid ad on current page as target
+                // Select the last valid ad on current page as target
                 const targetAd = this.currentPageAds[this.currentPageAds.length - 1];
                 if (!targetAd) {
-                    console.error('Ad Guide: Cannot find target ad on current page');
+                    console.error('Ad guide: Cannot find target ad on current page');
                     return;
                 }
 
-                // View positioning: Scroll to ad center
+                // View positioning: scroll to ad center
                 this.scrollToAdCenter(targetAd);
                 
-                // Show guide after scroll completes
+                // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction(targetAd);
-                    // Start scroll monitoring
+                    this.restrictUserInteraction();
+                    // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
             }
@@ -4501,7 +3737,7 @@
                 });
             }
 
-            // Start monitoring scroll position, ensure user stays at target position
+            // Start monitoring scroll position to ensure user stays at target position
             startScrollMonitoring() {
                 if (this.scrollMonitorInterval) {
                     clearInterval(this.scrollMonitorInterval);
@@ -4509,7 +3745,7 @@
                 
                 this.scrollMonitorInterval = setInterval(() => {
                     if (!this.isGuideActive) {
-                        // Guide ended, stop monitoring immediately
+                        // Guide has ended, stop monitoring immediately
                         this.stopScrollMonitoring();
                         return;
                     }
@@ -4519,7 +3755,7 @@
                         const tolerance = 50; // Allow 50px tolerance
                         
                         if (Math.abs(currentScroll - this.targetScrollPosition) > tolerance) {
-                            console.log('Ad Guide: User scroll offset detected, repositioning to target');
+                            console.log('Ad guide: User scroll offset detected, repositioning to target');
                             window.scrollTo({
                                 top: this.targetScrollPosition,
                                 behavior: 'smooth'
@@ -4535,11 +3771,48 @@
                     clearInterval(this.scrollMonitorInterval);
                     this.scrollMonitorInterval = null;
                     this.targetScrollPosition = null;
-                    console.log('Ad Guide: Scroll monitoring stopped');
+                    console.log('Ad guide: Scroll monitoring stopped');
                 }
             }
 
+            // Report guide triggered event
+            reportGuideTriggered() {
+                // Google Analytics 4 event reporting
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'ad_guide_triggered', {
+                        'event_category': 'Ad Guide',
+                        'event_label': 'Guide Overlay Shown',
+                        'total_ads_seen': this.totalAdsSeen,
+                        'current_page_ads': this.currentPageAds.length,
+                        'trigger_count': this.triggerCount,
+                        'max_triggers': this.MAX_TRIGGERS,
+                        'value': 1
+                    });
+                }
+                
+                // Send to Google Apps Script
+                if (typeof sendAdGuideTriggered === 'function') {
+                    sendAdGuideTriggered({
+                        totalAdsSeen: this.totalAdsSeen,
+                        currentPageAds: this.currentPageAds.length,
+                        triggerCount: this.triggerCount,
+                        maxTriggers: this.MAX_TRIGGERS
+                    });
+                }
+                
+                console.log('Ad guide: Trigger event reported', {
+                    totalAdsSeen: this.totalAdsSeen,
+                    currentPageAds: this.currentPageAds.length,
+                    triggerCount: this.triggerCount,
+                    maxTriggers: this.MAX_TRIGGERS,
+                    timestamp: new Date().toISOString()
+                });
+            }
+
             showGuideOverlay(targetAd) {
+                // Report guide triggered event
+                this.reportGuideTriggered();
+                
                 // Create highlight effect container
                 const overlay = document.createElement('div');
                 overlay.id = 'ad-guide-overlay';
@@ -4558,7 +3831,7 @@
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
                 
-                // Create highlight area - use absolute positioning relative to document
+                // Create highlight area - using absolute positioning relative to document
                 const highlight = document.createElement('div');
                 highlight.style.cssText = `
                     position: absolute;
@@ -4574,7 +3847,7 @@
                     z-index: 14000;
                 `;
 
-                // Create tooltip - use absolute positioning relative to document
+                // Create tooltip - using absolute positioning relative to document
                 const tooltip = document.createElement('div');
                 tooltip.style.cssText = `
                     position: absolute;
@@ -4592,7 +3865,7 @@
                     z-index: 20000;
                     animation: bounce 1s ease-in-out infinite;
                 `;
-                tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!👇👇👇 👇👇👇 👇👇👇';
+                tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
                 // Add CSS animation
                 if (!document.getElementById('guide-animation-styles')) {
@@ -4616,10 +3889,12 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // No longer modify ad container styles - fully compliant with Google policies
-                // The ad container remains untouched, guide overlay is completely independent
+                // Ensure ad area can be clicked (set appropriate z-index)
+                targetAd.style.position = 'relative';
+                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
+                targetAd.style.pointerEvents = 'auto';
 
-                // Listen to scroll events, update tooltip position
+                // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
                     if (!overlay || !overlay.parentNode) return;
                     
@@ -4636,127 +3911,37 @@
                     tooltip.style.left = `${newRect.left + newScrollLeft}px`;
                 };
                 
-                // Use passive listener to avoid interfering with scroll monitoring logic
+                // Use passive listeners to avoid interfering with scroll monitoring logic
                 window.addEventListener('scroll', this.updateOverlayPosition, { passive: true });
                 window.addEventListener('resize', this.updateOverlayPosition, { passive: true });
 
-                // Report Facebook Pixel event when ad guide is triggered
-                this.reportFacebookAdGuideEvent();
-
-                // Report ad guide trigger event to Google Sheets
-                this.reportAdGuideTriggered();
-
-                // Enable clicking on target ad
+                // Allow clicking target ad
                 this.enableAdClick(targetAd);
-            }
-
-            // Report Facebook Pixel event for ad guide trigger
-            reportFacebookAdGuideEvent() {
-                // Check if shouldTrackEvent function exists (from Facebook Pixel code)
-                if (typeof shouldTrackEvent === 'function' && typeof fbq === 'function') {
-                    if (shouldTrackEvent('1_c')) {
-                        fbq('track', '1_c');
-                        console.log('Facebook event sent: 1_c (ad guide popup triggered)');
-                    } else {
-                        console.log('Facebook event skipped: 1_c (already sent within 72 hours)');
-                    }
-                } else {
-                    console.log('Facebook Pixel not available for 1_c event');
-                }
-            }
-
-            // Report ad guide trigger event
-            reportAdGuideTriggered() {
-                const triggerCount = this.getTriggerCount();
-                
-                getUserIP().then(userIP => {
-                    const data = {
-                        eventType: 'ad_guide_triggered',
-                        page: window.location.href,
-                        userAgent: navigator.userAgent,
-                        referrer: document.referrer || 'direct',
-                        userIP: userIP,
-                        totalAdsSeen: this.totalAdsSeen,
-                        currentPageAds: this.currentPageAds.length,
-                        triggerCount: triggerCount,
-                        maxTriggers: this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    console.log('Ad Guide: Reporting event data', data);
-                    
-                    fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    }).then(() => {
-                        console.log('Ad Guide: Event report successful');
-                    }).catch(error => {
-                        console.log('Ad Guide: Event report failed', error);
-                    });
-                }).catch(error => {
-                    // If IP retrieval fails, still send other data
-                    const data = {
-                        eventType: 'ad_guide_triggered',
-                        page: window.location.href,
-                        userAgent: navigator.userAgent,
-                        referrer: document.referrer || 'direct',
-                        userIP: 'Unknown',
-                        totalAdsSeen: this.totalAdsSeen,
-                        currentPageAds: this.currentPageAds.length,
-                        triggerCount: triggerCount,
-                        maxTriggers: this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    console.log('Ad Guide: Reporting event data (IP retrieval failed)', data);
-                    
-                    fetch('https://script.google.com/macros/s/AKfycbx825v9Gg27QhcZlbxKI-VGTYShXcpTJkWG2lafiMEQYB-fyhR3dC8eJakYsN-oBFKb/exec', {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    }).then(() => {
-                        console.log('Ad Guide: Event report successful (using Unknown IP)');
-                    }).catch(error => {
-                        console.log('Ad Guide: Event report failed', error);
-                    });
-                });
             }
 
             enableAdClick(targetAd) {
                 const clickHandler = () => {
-                    console.log('Ad Guide: User clicked ad');
+                    console.log('Ad guide: User clicked ad');
                     this.endGuide();
                 };
 
                 targetAd.addEventListener('click', clickHandler, { once: true });
 
-                // 200 seconds auto end guide (backup plan)
+                // Auto end guide after 200 seconds (backup plan)
                 setTimeout(() => {
                     if (this.isGuideActive) {
-                        console.log('Ad Guide: Timeout auto end (200 seconds)');
+                        console.log('Ad guide: Auto end due to timeout (200 seconds)');
                         this.endGuide();
                     }
                 }, 200000); // 200 seconds = 200000 milliseconds
             }
 
-            // Key Point 3: Interaction State Management Implementation
-            restrictUserInteraction(targetAd) {
-                // Do not disable page scroll, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Comment out this line
+            // Key point 3: Interaction state management implementation
+            restrictUserInteraction() {
+                // Do not disable page scrolling, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Commented out this line
                 
-                // Get target ad position to create a "hole" in the blocker
-                const adRect = targetAd.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-                
-                // Create interaction blocker layer - with a cutout for the ad
+                // Create interaction blocking layer
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -4766,39 +3951,12 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: rgba(255, 255, 255, 0.1);
+                    background: transparent;
                 `;
                 
-                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
-                const updateBlockerClipPath = () => {
-                    const rect = targetAd.getBoundingClientRect();
-                    // Create a polygon that covers everything except the ad area
-                    // Use evenodd fill rule to create a hole
-                    const clipPath = `polygon(evenodd,
-                        0% 0%, 
-                        100% 0%, 
-                        100% 100%, 
-                        0% 100%, 
-                        0% 0%, 
-                        ${rect.left}px ${rect.top}px, 
-                        ${rect.right}px ${rect.top}px, 
-                        ${rect.right}px ${rect.bottom}px, 
-                        ${rect.left}px ${rect.bottom}px, 
-                        ${rect.left}px ${rect.top}px
-                    )`;
-                    interactionBlocker.style.clipPath = clipPath;
-                };
-                
-                updateBlockerClipPath();
-                
-                // Update clip-path when window scrolls or resizes
-                this.updateBlockerClipPath = updateBlockerClipPath;
-                window.addEventListener('scroll', this.updateBlockerClipPath);
-                window.addEventListener('resize', this.updateBlockerClipPath);
-                
-                // Prevent user scroll but allow programmatic scroll
+                // Prevent user scrolling but allow programmatic scrolling
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scroll
+                    // Prevent mouse wheel and touch scrolling
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -4814,15 +3972,8 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scroll
+                // Restore page scrolling
                 document.body.style.overflow = '';
-                
-                // Remove clip-path update listeners
-                if (this.updateBlockerClipPath) {
-                    window.removeEventListener('scroll', this.updateBlockerClipPath);
-                    window.removeEventListener('resize', this.updateBlockerClipPath);
-                    this.updateBlockerClipPath = null;
-                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -4832,7 +3983,7 @@
                     this.preventUserScroll = null;
                 }
                 
-                // Remove interaction blocker layer
+                // Remove interaction blocking layer
                 const blocker = document.getElementById('interaction-blocker');
                 if (blocker) {
                     blocker.remove();
@@ -4842,7 +3993,7 @@
             endGuide() {
                 this.isGuideActive = false;
                 
-                // Stop scroll monitoring immediately (critical: must stop at the very beginning)
+                // Stop scroll monitoring immediately (critical: must stop at the beginning)
                 this.stopScrollMonitoring();
                 
                 // Remove scroll event listeners
@@ -4858,35 +4009,42 @@
                     overlay.remove();
                 }
                 
-                // No need to restore ad styles - we never modified them (fully compliant)
+                // Restore original styles of ad elements
+                this.currentPageAds.forEach(ad => {
+                    ad.style.position = '';
+                    ad.style.zIndex = '';
+                    ad.style.pointerEvents = '';
+                });
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
                 
-                console.log('Ad Guide: Guide ended');
+                console.log('Ad guide: Guide ended');
             }
 
-            // Key Point 4: Guide Exit Conditions Implementation
+            // Key point 4: Guide exit conditions implementation
             setupPageVisibilityHandler() {
                 let pageHiddenTime = null;
                 
                 document.addEventListener('visibilitychange', () => {
                     if (document.hidden) {
                         pageHiddenTime = Date.now();
+                        // Update last active time when page becomes hidden
+                        this.updateLastActiveTime();
                     } else {
-                        // When page becomes visible again, update last activity time
-                        this.updateLastActivityTime();
+                        // Page becomes visible again - check for long absence
+                        this.checkAndResetIfLongAbsence();
                         
                         if (pageHiddenTime) {
                             const hiddenDuration = Date.now() - pageHiddenTime;
                             
-                            if (hiddenDuration <= 10000) {
-                                // Left for less than 10 seconds, show notification popup
+                            if (hiddenDuration <= 11000) {
+                                // Leave time less than 11 seconds, show notification popup
                                 this.showShortLeaveNotification();
-                            } else if (hiddenDuration > 10000) {
+                            } else if (hiddenDuration > 11000) {
                                 if (this.isGuideActive) {
-                                    // Guide active and left for more than 10 seconds, close guide and show thank you popup
-                                    console.log('Ad Guide: User left page for more than 10 seconds, auto close guide');
+                                    // Guide active and leave over 11 seconds, close guide and show thank you popup
+                                    console.log('Ad guide: User left page over 11 seconds, auto close guide');
                                     this.endGuide();
                                     this.showThankYouNotification();
                                 } else {
@@ -4896,6 +4054,9 @@
                             }
                         }
                         pageHiddenTime = null;
+                        
+                        // Update last active time when page becomes visible
+                        this.updateLastActiveTime();
                     }
                 });
             }
@@ -4995,9 +4156,10 @@
                     font-weight: 600;
                     z-index: 50000;
                     text-align: center;
-                    box-shadow: 0 12px 40px rgba(0, 122, 255, 0);
+                    box-shadow: none;
                     animation: fadeInScale 0.4s ease-out;
-                    border: 2px solid rgba(255, 255, 255, 0);
+                    border: none;
+                    opacity: 0;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -5032,7 +4194,7 @@
 
                 document.body.appendChild(notification);
 
-                // 3 seconds auto close
+                // Auto close after 3 seconds
                 setTimeout(() => {
                     if (notification && notification.parentNode) {
                         notification.style.animation = 'fadeOutScale 0.4s ease-out';
@@ -5044,7 +4206,7 @@
                     }
                 }, 3000);
 
-                console.log('Show thank you for ad browsing notification: Thank you for your AD browsing');
+                console.log('Show thank you for ad browsing: Thank you for your AD browsing');
             }
 
             // Key point 5: Debug mode implementation
@@ -5075,10 +4237,10 @@
                 
                 if (this.isDebugMode) {
                     this.showDebugPanel();
-                    console.log('Ad Guide: Debug mode activated');
+                    console.log('Ad guide: Debug mode activated');
                 } else {
                     this.hideDebugPanel();
-                    console.log('Ad Guide: Debug mode deactivated');
+                    console.log('Ad guide: Debug mode closed');
                 }
             }
 
@@ -5104,7 +4266,7 @@
                 document.body.appendChild(this.debugPanel);
                 this.updateDebugInfo();
                 
-                // Periodically update debug info
+                // Regularly update debug information
                 this.debugUpdateInterval = setInterval(() => {
                     this.updateDebugInfo();
                 }, 1000);
@@ -5125,166 +4287,88 @@
             updateDebugInfo() {
                 if (!this.debugPanel) return;
                 
+                const lastTrigger = localStorage.getItem('adGuideLastTrigger');
+                const cooldownMs = this.COOLDOWN_MINUTES * 60 * 1000;
                 const now = Date.now();
                 
-                // Long cooldown countdown
-                const triggerCount = this.getTriggerCount();
-                const longCooldownStart = this.getLongCooldownStart();
-                let longCooldownDisplay = 'Inactive';
-                
-                if (longCooldownStart) {
-                    const longCooldownMs = this.LONG_COOLDOWN_HOURS * 60 * 60 * 1000;
-                    const longTimeRemaining = Math.max(0, longCooldownMs - (now - longCooldownStart));
-                    const longHours = Math.floor(longTimeRemaining / (60 * 60 * 1000));
-                    const longMinutes = Math.floor((longTimeRemaining % (60 * 60 * 1000)) / (60 * 1000));
-                    
-                    if (longTimeRemaining > 0) {
-                        longCooldownDisplay = `${longHours}h ${longMinutes}m`;
-                    } else {
-                        longCooldownDisplay = 'Ended';
-                    }
+                // Regular 15-minute cooldown
+                let timeUntilReset = 0;
+                if (lastTrigger) {
+                    const timeSinceLastTrigger = now - parseInt(lastTrigger);
+                    timeUntilReset = Math.max(0, cooldownMs - timeSinceLastTrigger);
                 }
                 
-                // Inactivity auto reset countdown
-                const lastActivity = this.getLastActivityTime();
-                let inactivityDisplay = 'Not Started';
+                const minutes = Math.floor(timeUntilReset / 60000);
+                const seconds = Math.floor((timeUntilReset % 60000) / 1000);
                 
-                if (lastActivity) {
-                    const inactivityMs = this.INACTIVITY_RESET_MINUTES * 60 * 1000;
-                    const timeSinceActivity = now - lastActivity;
-                    const inactivityRemaining = Math.max(0, inactivityMs - timeSinceActivity);
-                    
-                    if (inactivityRemaining > 0) {
-                        const inactivityMinutes = Math.floor(inactivityRemaining / (60 * 1000));
-                        const inactivitySeconds = Math.floor((inactivityRemaining % (60 * 1000)) / 1000);
-                        inactivityDisplay = `${inactivityMinutes}:${inactivitySeconds.toString().padStart(2, '0')}`;
-                    } else {
-                        inactivityDisplay = 'Reset Triggered';
-                    }
+                // Trigger count cooldown (2 hours)
+                const triggerCooldownReset = this.getTriggerCooldownReset();
+                let triggerCooldownRemaining = 0;
+                let triggerCooldownStatus = '';
+                
+                if (this.triggerCount >= this.MAX_TRIGGERS && triggerCooldownReset > now) {
+                    triggerCooldownRemaining = triggerCooldownReset - now;
+                    const hours = Math.floor(triggerCooldownRemaining / 3600000);
+                    const mins = Math.floor((triggerCooldownRemaining % 3600000) / 60000);
+                    triggerCooldownStatus = `<div style="color: #FF6B6B; font-weight: bold;">🚫 2-Hour Cooldown: ${hours}h ${mins}m</div>`;
+                } else if (this.triggerCount >= this.MAX_TRIGGERS) {
+                    triggerCooldownStatus = '<div style="color: #4CD964;">✅ Cooldown Expired (will reset on next trigger)</div>';
+                } else {
+                    triggerCooldownStatus = `<div>Trigger Count: ${this.triggerCount}/${this.MAX_TRIGGERS}</div>`;
                 }
                 
-                // Calculate ads needed for next trigger
-                const adsNeeded = Math.max(0, this.nextTriggerThreshold - (this.totalAdsSeen || 0));
-                
-                // 获取广告点击监控数据
-                let adClickInfo = '';
-                if (window.adClickMonitor) {
-                    const clickCount = window.adClickMonitor.getClickCount();
-                    const lastReset = window.adClickMonitor.getLastResetDate();
-                    const hasAds = window.adClickMonitor.hasAds();
-                    adClickInfo = `
-                        <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #00ff88;">📊 Ad Click Monitor</div>
-                        <div>Total Clicks Today: ${clickCount}</div>
-                        <div>Has Ads: ${hasAds ? 'Yes ✅' : 'No ❌'}</div>
-                        <div>Last Reset: ${lastReset}</div>
-                    `;
-                }
-                
-                // 获取强制休息系统数据
-                let restInfo = '';
-                if (window.restSystem) {
-                    const isResting = window.restSystem.isResting();
-                    const clickThreshold = window.restSystem.getClickThreshold();
-                    const clickCount = window.adClickMonitor ? window.adClickMonitor.getClickCount() : 0;
-                    const nextRestAt = Math.ceil(clickCount / clickThreshold) * clickThreshold;
-                    const clicksToRest = nextRestAt - clickCount;
-                    
-                    let restStatus = 'Active';
-                    let restCountdown = '';
-                    
-                    if (isResting) {
-                        const remaining = window.restSystem.getRemainingTime();
-                        if (remaining) {
-                            const hours = Math.floor(remaining / (60 * 60 * 1000));
-                            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-                            const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-                            restStatus = '🛑 RESTING';
-                            restCountdown = `<div style="color: #ff3b30; font-weight: bold;">${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</div>`;
-                        }
-                    }
-                    
-                    restInfo = `
-                        <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #ff9500;">☕ Rest System</div>
-                        <div>Status: ${restStatus}</div>
-                        ${restCountdown}
-                        <div>Trigger Every: ${clickThreshold} clicks</div>
-                        <div>Next Rest At: ${nextRestAt} clicks</div>
-                        <div>Clicks to Rest: ${clicksToRest}</div>
-                    `;
+                // Last active time info
+                const lastActiveTime = localStorage.getItem('adGuideLastActiveTime');
+                let lastActiveStatus = '';
+                if (lastActiveTime) {
+                    const timeSinceActive = now - parseInt(lastActiveTime);
+                    const minutesSinceActive = Math.floor(timeSinceActive / 60000);
+                    const secondsSinceActive = Math.floor((timeSinceActive % 60000) / 1000);
+                    lastActiveStatus = `<div style="font-size: 10px; color: #999;">Last active: ${minutesSinceActive}m ${secondsSinceActive}s ago</div>`;
                 }
                 
                 this.debugPanel.innerHTML = `
-                    <div style="font-weight: bold; margin-bottom: 10px; font-size: 14px;">🔍 Debug Panel</div>
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px; color: #5ac8fa;">📱 Ad Guide System</div>
-                    <div>Browser: ${this.isPCBrowser ? 'PC (Disabled)' : 'Mobile'}</div>
-                    <div>Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
-                    <div>Total Ads: ${this.totalAdsSeen || 0}</div>
-                    <div style="margin-top: 5px;">Next Trigger Threshold</div>
-                    <div>Target: ${this.nextTriggerThreshold} ads</div>
-                    <div>Need: ${adsNeeded} more ads</div>
-                    <div style="margin-top: 5px;">Long Cooldown (${this.LONG_COOLDOWN_HOURS}h)</div>
-                    <div>Trigger Count: ${triggerCount}/${this.MAX_TRIGGERS_BEFORE_LONG_COOLDOWN}</div>
-                    <div>Long Countdown: ${longCooldownDisplay}</div>
-                    <div style="margin-top: 5px;">Inactivity Reset (${this.INACTIVITY_RESET_MINUTES}min)</div>
-                    <div>Countdown: ${inactivityDisplay}</div>
-                    <div style="margin-top: 5px;">Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
-                    ${adClickInfo}
-                    ${restInfo}
-                    <div style="border-top: 1px solid #444; margin: 8px 0; padding-top: 8px;">⚡ Quick Actions</div>
-                    <div style="display: flex; gap: 5px; margin-top: 10px;">
-                        <button onclick="adGuideSystem.addOneAd()" style="
-                            flex: 1;
-                            padding: 5px 10px;
-                            background: #34C759;
-                            color: white;
-                            border: none;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            font-size: 11px;
-                        ">+1 Ad</button>
-                        <button onclick="adGuideSystem.resetAllData()" style="
-                            flex: 1;
-                            padding: 5px 10px;
-                            background: #007AFF;
-                            color: white;
-                            border: none;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            font-size: 11px;
-                        ">Reset</button>
-                    </div>
+                    <div style="font-weight: bold; margin-bottom: 10px;">Ad Guide Debug Panel</div>
+                    <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
+                    <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
+                    <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
+                    ${triggerCooldownStatus}
+                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
+                    ${lastActiveStatus}
+                    <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
+                    <button onclick="adGuideSystem.resetAllData()" style="
+                        margin-top: 10px;
+                        padding: 5px 10px;
+                        background: #007AFF;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 11px;
+                    ">Reset All</button>
                 `;
             }
 
             resetAllData() {
+                localStorage.removeItem('adGuideLastTrigger');
                 localStorage.removeItem('adGuideTotalSeen');
-                localStorage.removeItem('adGuideNextThreshold');
                 localStorage.removeItem('adGuideTriggerCount');
-                localStorage.removeItem('adGuideLongCooldownStart');
-                localStorage.removeItem('adGuideLastActivity');
+                localStorage.removeItem('adGuideTriggerCooldownReset');
+                localStorage.removeItem('adGuideLastActiveTime');
                 this.totalAdsSeen = 0;
-                this.nextTriggerThreshold = Math.floor(Math.random() * (this.MAX_INITIAL_ADS - this.MIN_INITIAL_ADS + 1)) + this.MIN_INITIAL_ADS;
+                this.triggerCount = 0;
                 this.currentPageAds = [];
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
                 // Ensure scroll monitoring is stopped
                 this.stopScrollMonitoring();
-                console.log('Ad Guide: All data reset (including total ads, threshold, trigger count, long cooldown and activity time)');
+                console.log('Ad guide: All data reset (including cross-page cumulative data, trigger count, and last active time)');
                 this.updateDebugInfo();
-            }
-
-            // Debug function: manually add one ad view
-            addOneAd() {
-                this.totalAdsSeen++;
-                this.saveTotalAdsSeen();
-                console.log(`Ad Guide: [DEBUG] Manually added 1 ad, total: ${this.totalAdsSeen}, threshold: ${this.nextTriggerThreshold}`);
-                this.updateDebugInfo();
-                
-                // Check if trigger condition is met
-                if (this.totalAdsSeen >= this.nextTriggerThreshold) {
-                    this.considerTriggeringGuide();
-                }
+                // Update last active time after reset
+                this.updateLastActiveTime();
             }
 
             startPeriodicCheck() {
@@ -5295,6 +4379,11 @@
                         return rect.height > 100 && rect.height <= 650 && document.body.contains(ad);
                     });
                     this.updateDebugInfo();
+                    
+                    // Update last active time every 5 seconds when page is active
+                    if (!document.hidden) {
+                        this.updateLastActiveTime();
+                    }
                 }, 5000);
             }
         }
@@ -5304,7 +4393,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             adGuideSystem = new AdClickGuideSystem();
             
-            // Expose instance to global for debugging
+            // Expose instance globally for debugging
             window.adGuideSystem = adGuideSystem;
         });
     </script>

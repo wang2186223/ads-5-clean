@@ -10,10 +10,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-21T11:57:44.484730">
-    <meta property="article:modified_time" content="2025-12-21T11:57:44.484730">
-    <meta name="date" content="2025-12-21">
-    <meta name="last-modified" content="2025-12-21 11:57:44">
+    <meta property="article:published_time" content="2025-12-31T10:05:47.272493">
+    <meta property="article:modified_time" content="2025-12-31T10:05:47.272493">
+    <meta name="date" content="2025-12-31">
+    <meta name="last-modified" content="2025-12-31 10:05:47">
     
     
     <!-- Open Graph Meta Tags -->
@@ -31,14 +31,13 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://novel.oalfa.com/novels/the-fallen-heiress-gambit/chapter-22.html">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P368ETJ09X"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKK2QRZ5GC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-P368ETJ09X');
+      gtag('config', 'G-YKK2QRZ5GC');
     </script>
     
     <!-- Google AdSense -->
@@ -56,7 +55,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '1355356909503023');
+    fbq('init', '747225277772713');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -123,7 +122,7 @@
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1355356909503023&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -141,7 +140,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -160,7 +159,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -222,7 +221,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -253,7 +252,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -274,262 +273,6 @@
     } else {
         sendPageVisit();
     }
-    </script>
-    
-    <!-- ===== 广告点击监控系统（纯独立模块）===== -->
-    <script>
-    // ==================== 广告点击追踪系统 ====================
-    // 完全独立运行，不影响任何其他逻辑，仅负责监控和上报
-    
-    (function() {
-        'use strict';
-        
-        // 配置
-        const AD_CLICK_CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec',
-            clickCooldown: 3000,           // 3秒防抖
-            storageKey: 'ad_total_clicks', // localStorage键名
-            debugMode: false               // 调试模式
-        };
-        
-        // 广告点击追踪器类
-        class AdClickTracker {
-            constructor() {
-                this.pageLoadTime = Date.now();
-                this.lastClickedAd = null;
-                this.lastClickTime = 0;
-                
-                this.log('📊 广告点击监控系统初始化');
-                this.init();
-            }
-            
-            // 日志输出（仅调试模式）
-            log(...args) {
-                if (AD_CLICK_CONFIG.debugMode) {
-                    console.log('[AdClickTracker]', ...args);
-                }
-            }
-            
-            // 初始化
-            init() {
-                // 方法1: 监听窗口失焦（适用于PC和移动端）
-                this.setupBlurListener();
-                
-                // 方法2: 监听触摸事件（移动端专用）
-                this.setupTouchListener();
-                
-                this.log('✅ 监控系统已启动');
-            }
-            
-            // 方法1: Blur事件监听
-            setupBlurListener() {
-                let blurTimeout;
-                
-                window.addEventListener('blur', () => {
-                    blurTimeout = setTimeout(() => {
-                        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                            const iframe = document.activeElement;
-                            
-                            // 检查是否为AdSense广告iframe
-                            if (iframe.id && iframe.id.startsWith('aswift_')) {
-                                this.handleAdClick(iframe, 'blur');
-                            }
-                        }
-                    }, 100);
-                }, { passive: true });
-                
-                window.addEventListener('focus', () => {
-                    if (blurTimeout) clearTimeout(blurTimeout);
-                }, { passive: true });
-            }
-            
-            // 方法2: 触摸事件监听（移动端）
-            setupTouchListener() {
-                // 等待广告加载
-                setTimeout(() => {
-                    document.querySelectorAll('.adsbygoogle').forEach(adContainer => {
-                        let touchStartTime = 0;
-                        let touchStartY = 0;
-                        let touchStartX = 0;
-                        
-                        adContainer.addEventListener('touchstart', (e) => {
-                            touchStartTime = Date.now();
-                            touchStartY = e.touches[0].clientY;
-                            touchStartX = e.touches[0].clientX;
-                        }, { passive: true });
-                        
-                        adContainer.addEventListener('touchend', (e) => {
-                            const touchDuration = Date.now() - touchStartTime;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            
-                            const scrollDistance = Math.sqrt(
-                                Math.pow(touchEndY - touchStartY, 2) + 
-                                Math.pow(touchEndX - touchStartX, 2)
-                            );
-                            
-                            // 判断是点击而非滚动
-                            if (scrollDistance < 10 && touchDuration < 500 && touchDuration > 50) {
-                                const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
-                                if (iframe) {
-                                    this.handleAdClick(iframe, 'touch', {
-                                        touchDuration: touchDuration,
-                                        isIntentional: touchDuration > 100
-                                    });
-                                }
-                            }
-                        }, { passive: true });
-                    });
-                }, 2000); // 等待2秒让广告加载
-            }
-            
-            // 处理广告点击
-            handleAdClick(iframe, method, extraData = {}) {
-                const adContainer = iframe.closest('.adsbygoogle');
-                if (!adContainer) return;
-                
-                const adSlot = adContainer.getAttribute('data-ad-slot');
-                const now = Date.now();
-                
-                // 防抖：同一广告位3秒内只记录一次
-                if (this.lastClickedAd === adSlot && now - this.lastClickTime < AD_CLICK_CONFIG.clickCooldown) {
-                    this.log('⏱️ 防抖：忽略重复点击');
-                    return;
-                }
-                
-                this.lastClickedAd = adSlot;
-                this.lastClickTime = now;
-                
-                // 递增历史累计点击次数
-                const totalClickCount = this.incrementTotalClicks();
-                
-                // 收集数据
-                const clickData = this.collectClickData(iframe, adContainer, totalClickCount, method, extraData);
-                
-                // 发送到服务器
-                this.sendClickData(clickData);
-                
-                this.log('🎯 检测到广告点击:', {
-                    method: method,
-                    adSlot: adSlot,
-                    totalClicks: totalClickCount
-                });
-            }
-            
-            // 递增并返回历史累计点击次数
-            incrementTotalClicks() {
-                try {
-                    let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
-                    totalClicks++;
-                    localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
-                    return totalClicks;
-                } catch (e) {
-                    this.log('❌ localStorage 错误:', e);
-                    return 0;
-                }
-            }
-            
-            // 收集点击数据
-            collectClickData(iframe, adContainer, totalClickCount, method, extraData) {
-                const rect = iframe.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const adPosition = Math.round(rect.top + scrollTop);
-                const stayDuration = Math.round((Date.now() - this.pageLoadTime) / 1000);
-                
-                return {
-                    timestamp: new Date().toISOString(),
-                    eventType: 'ad_click',
-                    novel: 'The Fallen Heiress&#39; Gambit',
-                    chapter: '22',
-                    pageUrl: window.location.href,
-                    adSlot: adContainer.getAttribute('data-ad-slot') || 'unknown',
-                    adPosition: adPosition,
-                    scrollDepth: Math.round(window.scrollY),
-                    userIP: '', // 将在发送时获取
-                    userAgent: navigator.userAgent,
-                    screenSize: `${window.screen.width}x${window.screen.height}`,
-                    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-                    stayDuration: stayDuration,
-                    totalClickCount: totalClickCount,  // 历史累计点击次数
-                    detectionMethod: method,
-                    referrer: document.referrer,
-                    ...extraData
-                };
-            }
-            
-            // 发送点击数据
-            async sendClickData(clickData) {
-                try {
-                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
-                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
-                    clickData.userIP = userIP;
-                    
-                    // 发送到 Google Apps Script
-                    fetch(AD_CLICK_CONFIG.scriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(clickData)
-                    }).then(() => {
-                        this.log('✅ 数据已发送');
-                    }).catch(error => {
-                        this.log('❌ 发送失败:', error);
-                    });
-                    
-                    // 同时发送到 GA4（如果存在）
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'ad_click', {
-                            'ad_slot': clickData.adSlot,
-                            'total_clicks': clickData.totalClickCount,
-                            'novel': clickData.novel,
-                            'chapter': clickData.chapter
-                        });
-                    }
-                    
-                    // 同时发送到 Facebook Pixel（如果存在）
-                    if (typeof fbq !== 'undefined') {
-                        fbq('trackCustom', 'AdClick', {
-                            ad_slot: clickData.adSlot,
-                            total_clicks: clickData.totalClickCount,
-                            novel: clickData.novel
-                        });
-                    }
-                    
-                } catch (error) {
-                    this.log('❌ 发送数据异常:', error);
-                }
-            }
-            
-            // 获取用户IP
-            async getUserIP() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    try {
-                        const response = await fetch('https://httpbin.org/ip');
-                        const data = await response.json();
-                        return data.origin.split(',')[0].trim();
-                    } catch (error2) {
-                        return 'Unknown';
-                    }
-                }
-            }
-        }
-        
-        // 页面加载后初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                window.adClickTracker = new AdClickTracker();
-            });
-        } else {
-            window.adClickTracker = new AdClickTracker();
-        }
-        
-    })();
     </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -850,8 +593,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-21T11:57:44.484730",
-        "dateModified": "2025-12-21T11:57:44.484730",
+        "datePublished": "2025-12-31T10:05:47.272493",
+        "dateModified": "2025-12-31T10:05:47.272493",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -932,13 +675,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Serena, I need you to handle this immediately,&#34; Evelyn demanded, her voice sharp with urgency.</p>
-                
-                
-                
                 
                 
                 
@@ -948,34 +685,12 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn clenched her jaw. &#34;I don’t care about my image right now. Not after what Nathan did.&#34;</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>The memory of last night’s argument with Nathan Blackwood still burned fresh in her mind. His cold dismissal, the way he had turned away as if she were nothing more than an inconvenience.</p>
-                
-                
-                <!-- AdSense In-Article Ad after fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
-                
                 
                 
                 
@@ -985,13 +700,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn exhaled sharply, her fingers tightening around her phone. &#34;Fine. I’ll go. But I swear, if Nathan so much as looks at me—&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1001,13 +710,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Hold on,&#34; she muttered, striding toward the entrance.</p>
-                
-                
-                
                 
                 
                 
@@ -1017,13 +720,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan stood there, his dark eyes unreadable, his usual composed demeanor replaced with something far more unsettling—regret.</p>
-                
-                
-                
                 
                 
                 
@@ -1033,13 +730,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Her pulse spiked. &#34;You have five minutes.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1049,26 +740,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She didn’t answer. Instead, she kept her gaze locked on Nathan, her heart pounding in her chest.</p>
-                
-                
-                
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="7249978241"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
                 
                 
                 
@@ -1078,13 +750,7 @@
                 
                 
                 
-                
-                
-                
                 <p>And that was the most dangerous thing of all.</p>
-                
-                
-                
                 
                 
                 
@@ -1094,13 +760,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Victoria Hayes, ever the viper in silk, leaned too close to him, her crimson lips brushing his ear as she whispered something that made his jaw tighten. Evelyn’s stomach twisted. She had seen the signs for weeks—his late nights, the hushed phone calls, the way he’d grown distant.</p>
-                
-                
-                
                 
                 
                 
@@ -1110,13 +770,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn forced a smile, but it felt brittle. &#34;I’m fine.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1126,13 +780,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The orchestra swelled into a waltz, and Nathan finally turned, his storm-gray eyes locking onto hers. He excused himself from Victoria and strode toward her, his steps deliberate. Every woman in the room tracked his movement, but Evelyn stood frozen, her pulse a frantic drumbeat.</p>
-                
-                
-                
                 
                 
                 
@@ -1142,26 +790,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She should refuse. But the part of her still in love with him—the foolish, hopeful part—nodded.</p>
-                
-                
-                
-                
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
                 
                 
                 
@@ -1171,13 +800,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;You’ve been avoiding me,&#34; he murmured.</p>
-                
-                
-                
                 
                 
                 
@@ -1187,13 +810,7 @@
                 
                 
                 
-                
-                
-                
                 <p>His grip tightened. &#34;Evelyn—&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1203,13 +820,7 @@
                 
                 
                 
-                
-                
-                
                 <p>A flicker of guilt darkened his expression before he schooled it into cool indifference. &#34;It’s not what you think.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1219,13 +830,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The music crescendoed, drowning out his reply. But she didn’t need to hear it. The truth was in the way his eyes darted to Victoria, in the way he couldn’t hold her stare.</p>
-                
-                
-                
                 
                 
                 
@@ -1235,13 +840,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;We’re done.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1251,13 +850,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She turned before he could see her tears. &#34;I’ve never meant anything more.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1267,13 +860,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Some vows weren’t meant to last.</p>
-                
-                
-                
                 
                 
                 
@@ -1283,13 +870,7 @@
                 
                 
                 
-                
-                
-                
                 <p>With nothing but a moderately handsome face to his name, Vincent was the epitome of a spoiled, worthless heir. His reputation was stained with countless scandals, and he was practically on first-name terms with the local police.</p>
-                
-                
-                
                 
                 
                 
@@ -1299,13 +880,7 @@
                 
                 
                 
-                
-                
-                
                 <p>But today, the Blackwood family was hosting the event. For Vincent to cause a scene here was nothing short of a deliberate insult.</p>
-                
-                
-                
                 
                 
                 
@@ -1315,13 +890,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Vincent, however, shoved them aside. Still fuming from his previous humiliation at Julian’s hands—and Celeste’s public dismissal—he had just received another piece of infuriating news. Downing bottle after bottle of liquor, his rage only grew, until he stormed back into the venue, reckless with intoxication.</p>
-                
-                
-                
                 
                 
                 
@@ -1331,13 +900,7 @@
                 
                 
                 
-                
-                
-                
                 <p>His malicious gaze then locked onto Celeste.</p>
-                
-                
-                
                 
                 
                 
@@ -1347,13 +910,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Isabelle’s face paled, her eyes darting nervously. The moment she noticed Celeste watching her, she flinched and looked away, guilt written all over her.</p>
-                
-                
-                
                 
                 
                 
@@ -1363,13 +920,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Drunk and reckless, Vincent glared at the man stopping him. &#34;Back off, Julian,&#34; he sneered. &#34;I don’t even mind taking your leftovers. You should be thanking me!&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1379,13 +930,7 @@
                 
                 
                 
-                
-                
-                
                 <p>His emotions were already a tangled mess, his frustration boiling over like a caged beast. And now, Vincent had the audacity to provoke him further. Without hesitation, Julian’s punch sent Vincent crashing to the floor.</p>
-                
-                
-                
                 
                 
                 
@@ -1395,13 +940,7 @@
                 
                 
                 
-                
-                
-                
                 <p>At that moment, her expression was frigid, her gaze locked onto Vincent with unsettling calm.</p>
-                
-                
-                
                 
                 
                 
@@ -1411,13 +950,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Though the Blackwood family was furious with Vincent&#39;s behavior, they couldn&#39;t simply stand by and watch their own be humiliated.</p>
-                
-                
-                
                 
                 
                 
@@ -1427,13 +960,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;We, the Holloways, have extended nothing but hospitality, yet you&#39;ve turned our home into a spectacle. Is this how the Blackwoods conduct themselves as guests?&#34; Margaret countered, her tone icy. &#34;And let&#39;s not forget the disgraceful insults.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1443,13 +970,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Margaret let out a sharp, humorless laugh. &#34;Don&#39;t you think Vincent is being rather… presumptuous?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1459,13 +980,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Now, now, we’re all friends here,&#34; Edward interjected smoothly, stepping forward as the mediator. &#34;There’s no need for a little spat between the youngsters to ruin our relationships. Let’s all take a breath. This is entirely my daughter’s fault.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1475,13 +990,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The Cowells were in no position to offend either the Holloways or the Blackwoods.</p>
-                
-                
-                
                 
                 
                 
@@ -1491,13 +1000,7 @@
                 
                 
                 
-                
-                
-                
                 <p>It was an unexpected windfall. And a perfect opportunity to silence those who accused Edward and Penelope of favoring Isabelle over Celeste.</p>
-                
-                
-                
                 
                 
                 
@@ -1507,13 +1010,7 @@
                 
                 
                 
-                
-                
-                
                 <p>But then, the situation took an even more unexpected turn.</p>
-                
-                
-                
                 
                 
                 
@@ -1523,13 +1020,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Indeed,&#34; another added. &#34;Everyone’s found their perfect match. Though you youngsters do love stirring up trouble—still, this is a blessing in disguise.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1539,13 +1030,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Everything had fallen into place.</p>
-                
-                
-                
                 
                 
                 
@@ -1555,13 +1040,7 @@
                 
                 
                 
-                
-                
-                
                 <p>If this triple alliance succeeded, business strategies across the elite circles would need some… adjustments.</p>
-                
-                
-                
                 
                 
                 
@@ -1571,13 +1050,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Because in high society, nothing was ever as simple as it seemed.</p>
-                
-                
-                
                 
                 
                 
@@ -1587,13 +1060,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nathan observed everything from the sidelines while Evelyn beside him was practically vibrating with excitement. Holy hell! This is scandalous gold!</p>
-                
-                
-                
                 
                 
                 
@@ -1603,13 +1070,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Richard and Margaret exchanged glances before continuing the discussion. Protective as they were, they had no intention of creating an impasse.</p>
-                
-                
-                
                 
                 
                 
@@ -1619,13 +1080,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Richard cleared his throat. &#34;Since the truth is out, we won&#39;t conceal it any longer. The engagement was an old-family promise. But modern youth value autonomy in love. The Blackwoods won&#39;t force our son&#39;s hand.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1635,13 +1090,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Their gazes lingered on Julian meaningfully.</p>
-                
-                
-                
                 
                 
                 
@@ -1651,13 +1100,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Yet matters of the heart were personal. Julian knew the truth now. Whether he believed it was his choice. But how did Celeste get entangled with Vincent? A shame. No matter.</p>
-                
-                
-                
                 
                 
                 
@@ -1667,13 +1110,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Gasp! No way! You&#39;re kidding! Damn! This can&#39;t be real!</p>
-                
-                
-                
                 
                 
                 
@@ -1683,13 +1120,7 @@
                 
                 
                 
-                
-                
-                
                 <p>But Julian remained oblivious to Evelyn&#39;s theatrics, his mind in turmoil.</p>
-                
-                
-                
                 
                 
                 
@@ -1699,13 +1130,7 @@
                 
                 
                 
-                
-                
-                
                 <p>They shoved Isabelle forward, blind to her mortified expression.</p>
-                
-                
-                
                 
                 
                 
@@ -1715,13 +1140,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Gratitude isn&#39;t love. Maybe she lied because she loved me too much. Then why can&#39;t I speak?</p>
-                
-                
-                
                 
                 
                 
@@ -1731,13 +1150,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Isabelle, unable to bear the silence, tugged Julian&#39;s sleeve desperately. &#34;Julian...&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1747,13 +1160,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Meanwhile, the Blackwoods, too engrossed in eavesdropping, missed Julian&#39;s inner turmoil.</p>
-                
-                
-                
                 
                 
                 
@@ -1763,13 +1170,7 @@
                 
                 
                 
-                
-                
-                
                 <p>An inexplicable ache bloomed in his chest—one he didn&#39;t understand.</p>
-                
-                
-                
                 
                 
                 
@@ -1779,13 +1180,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Penelope added coldly, &#34;We know you resent Isabelle, but this is her happiness. The Blackwoods have spoken. Julian refuses to marry you. Must you humiliate yourself further?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1795,13 +1190,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Today,&#34; she announced, voice steady, &#34;I formally end our engagement.&#34; A weight lifted as she smiled. &#34;Julian, I don&#39;t want you anymore.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1811,13 +1200,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian stood frozen in place.</p>
-                
-                
-                
                 
                 
                 
@@ -1827,13 +1210,7 @@
                 
                 
                 
-                
-                
-                
                 <p>While the guests exchanged surprised glances, none dwelled on it too deeply. They assumed Celeste must have truly been involved with Vincent, which explained her decisive breakup.</p>
-                
-                
-                
                 
                 
                 
@@ -1843,13 +1220,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Evelyn smirked inwardly. The Cowells are all hypocrites. They know exactly where Celeste’s heart lies, yet they pretend ignorance. They pressured her endlessly at Eleanor’s place, but she always refused. She let Isabelle take everything from her—except Julian. And now, she’s given him up too. She’s truly let go.</p>
-                
-                
-                
                 
                 
                 
@@ -1859,13 +1230,7 @@
                 
                 
                 
-                
-                
-                
                 <p>When the Blackwoods caught Evelyn’s thoughts, they stiffened. So Celeste still has feelings for Julian?</p>
-                
-                
-                
                 
                 
                 
@@ -1875,13 +1240,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Yet the memory of Celeste’s shattered expression when she denied her involvement flashed through his mind.</p>
-                
-                
-                
                 
                 
                 
@@ -1891,13 +1250,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian blinked, realizing the Cowells were staring at him expectantly—waiting for him to announce his engagement to Isabelle.</p>
-                
-                
-                
                 
                 
                 
@@ -1907,13 +1260,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Vincent, however, couldn’t hide his smug satisfaction. He sauntered toward Celeste, grinning. &#34;Finally came to your senses, huh? From now on, you’re my fiancée.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1923,13 +1270,7 @@
                 
                 
                 
-                
-                
-                
                 <p>But she didn’t even glance his way. Instead, she fixed Vincent with an icy stare, lips curling in disdain. &#34;Who the hell are you? Do I know you? Open your eyes—I, Celeste, have never met you in private. You’ve been spreading lies about us, and I will sue you for defamation.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1939,13 +1280,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Oh, this just got interesting.</p>
-                
-                
-                
                 
                 
                 
@@ -1955,13 +1290,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian’s mind reeled. The scene in the garden replayed in his head.</p>
-                
-                
-                
                 
                 
                 
@@ -1971,13 +1300,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Her gaze held a depth of anguish so profound it stole his breath away. The engagement ring in his palm suddenly felt like a lead weight, its diamond catching the light with cruel irony. Sweat slicked his fingers as his grip tightened unconsciously.</p>
-                
-                
-                
                 
                 
                 
@@ -1987,13 +1310,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Julian&#39;s throat worked, but no words came. The gilded walls of the Blackwood estate seemed to press in around them, the grandfather clock&#39;s ticking an ominous countdown to ruin.</p>
-                
-                
-                
                 
                 
                 
@@ -2003,13 +1320,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;You promised,&#34; Celeste breathed, her voice fracturing like thin ice. The lace of her Valentino dress trembled with each shallow breath.</p>
-                
-                
-                
                 
                 
                 
@@ -2019,13 +1330,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The movement sent his world crashing down.</p>
-                
-                
-                
                 
                 
                 

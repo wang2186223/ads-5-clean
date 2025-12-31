@@ -10,10 +10,10 @@
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2025-12-21T11:57:48.312393">
-    <meta property="article:modified_time" content="2025-12-21T11:57:48.312393">
-    <meta name="date" content="2025-12-21">
-    <meta name="last-modified" content="2025-12-21 11:57:48">
+    <meta property="article:published_time" content="2025-12-31T10:05:48.592641">
+    <meta property="article:modified_time" content="2025-12-31T10:05:48.592641">
+    <meta name="date" content="2025-12-31">
+    <meta name="last-modified" content="2025-12-31 10:05:48">
     
     
     <!-- Open Graph Meta Tags -->
@@ -31,14 +31,13 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://novel.oalfa.com/novels/heartbreak-billionairehe-should-never-have-let-go/chapter-225.html">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P368ETJ09X"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKK2QRZ5GC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-P368ETJ09X');
+      gtag('config', 'G-YKK2QRZ5GC');
     </script>
     
     <!-- Google AdSense -->
@@ -56,7 +55,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '1355356909503023');
+    fbq('init', '747225277772713');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -123,7 +122,7 @@
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1355356909503023&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -141,7 +140,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -160,7 +159,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -222,7 +221,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -253,7 +252,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -274,262 +273,6 @@
     } else {
         sendPageVisit();
     }
-    </script>
-    
-    <!-- ===== 广告点击监控系统（纯独立模块）===== -->
-    <script>
-    // ==================== 广告点击追踪系统 ====================
-    // 完全独立运行，不影响任何其他逻辑，仅负责监控和上报
-    
-    (function() {
-        'use strict';
-        
-        // 配置
-        const AD_CLICK_CONFIG = {
-            scriptUrl: 'https://script.google.com/macros/s/AKfycbxOHhl5FN8XmcmA0Zf4JcnZM3uFEumgFlOfqYlhP8MJ6HUCu3SsOUlIYTdv0dSw5flm/exec',
-            clickCooldown: 3000,           // 3秒防抖
-            storageKey: 'ad_total_clicks', // localStorage键名
-            debugMode: false               // 调试模式
-        };
-        
-        // 广告点击追踪器类
-        class AdClickTracker {
-            constructor() {
-                this.pageLoadTime = Date.now();
-                this.lastClickedAd = null;
-                this.lastClickTime = 0;
-                
-                this.log('📊 广告点击监控系统初始化');
-                this.init();
-            }
-            
-            // 日志输出（仅调试模式）
-            log(...args) {
-                if (AD_CLICK_CONFIG.debugMode) {
-                    console.log('[AdClickTracker]', ...args);
-                }
-            }
-            
-            // 初始化
-            init() {
-                // 方法1: 监听窗口失焦（适用于PC和移动端）
-                this.setupBlurListener();
-                
-                // 方法2: 监听触摸事件（移动端专用）
-                this.setupTouchListener();
-                
-                this.log('✅ 监控系统已启动');
-            }
-            
-            // 方法1: Blur事件监听
-            setupBlurListener() {
-                let blurTimeout;
-                
-                window.addEventListener('blur', () => {
-                    blurTimeout = setTimeout(() => {
-                        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                            const iframe = document.activeElement;
-                            
-                            // 检查是否为AdSense广告iframe
-                            if (iframe.id && iframe.id.startsWith('aswift_')) {
-                                this.handleAdClick(iframe, 'blur');
-                            }
-                        }
-                    }, 100);
-                }, { passive: true });
-                
-                window.addEventListener('focus', () => {
-                    if (blurTimeout) clearTimeout(blurTimeout);
-                }, { passive: true });
-            }
-            
-            // 方法2: 触摸事件监听（移动端）
-            setupTouchListener() {
-                // 等待广告加载
-                setTimeout(() => {
-                    document.querySelectorAll('.adsbygoogle').forEach(adContainer => {
-                        let touchStartTime = 0;
-                        let touchStartY = 0;
-                        let touchStartX = 0;
-                        
-                        adContainer.addEventListener('touchstart', (e) => {
-                            touchStartTime = Date.now();
-                            touchStartY = e.touches[0].clientY;
-                            touchStartX = e.touches[0].clientX;
-                        }, { passive: true });
-                        
-                        adContainer.addEventListener('touchend', (e) => {
-                            const touchDuration = Date.now() - touchStartTime;
-                            const touchEndY = e.changedTouches[0].clientY;
-                            const touchEndX = e.changedTouches[0].clientX;
-                            
-                            const scrollDistance = Math.sqrt(
-                                Math.pow(touchEndY - touchStartY, 2) + 
-                                Math.pow(touchEndX - touchStartX, 2)
-                            );
-                            
-                            // 判断是点击而非滚动
-                            if (scrollDistance < 10 && touchDuration < 500 && touchDuration > 50) {
-                                const iframe = adContainer.querySelector('iframe[id^="aswift_"]');
-                                if (iframe) {
-                                    this.handleAdClick(iframe, 'touch', {
-                                        touchDuration: touchDuration,
-                                        isIntentional: touchDuration > 100
-                                    });
-                                }
-                            }
-                        }, { passive: true });
-                    });
-                }, 2000); // 等待2秒让广告加载
-            }
-            
-            // 处理广告点击
-            handleAdClick(iframe, method, extraData = {}) {
-                const adContainer = iframe.closest('.adsbygoogle');
-                if (!adContainer) return;
-                
-                const adSlot = adContainer.getAttribute('data-ad-slot');
-                const now = Date.now();
-                
-                // 防抖：同一广告位3秒内只记录一次
-                if (this.lastClickedAd === adSlot && now - this.lastClickTime < AD_CLICK_CONFIG.clickCooldown) {
-                    this.log('⏱️ 防抖：忽略重复点击');
-                    return;
-                }
-                
-                this.lastClickedAd = adSlot;
-                this.lastClickTime = now;
-                
-                // 递增历史累计点击次数
-                const totalClickCount = this.incrementTotalClicks();
-                
-                // 收集数据
-                const clickData = this.collectClickData(iframe, adContainer, totalClickCount, method, extraData);
-                
-                // 发送到服务器
-                this.sendClickData(clickData);
-                
-                this.log('🎯 检测到广告点击:', {
-                    method: method,
-                    adSlot: adSlot,
-                    totalClicks: totalClickCount
-                });
-            }
-            
-            // 递增并返回历史累计点击次数
-            incrementTotalClicks() {
-                try {
-                    let totalClicks = parseInt(localStorage.getItem(AD_CLICK_CONFIG.storageKey) || '0');
-                    totalClicks++;
-                    localStorage.setItem(AD_CLICK_CONFIG.storageKey, totalClicks.toString());
-                    return totalClicks;
-                } catch (e) {
-                    this.log('❌ localStorage 错误:', e);
-                    return 0;
-                }
-            }
-            
-            // 收集点击数据
-            collectClickData(iframe, adContainer, totalClickCount, method, extraData) {
-                const rect = iframe.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const adPosition = Math.round(rect.top + scrollTop);
-                const stayDuration = Math.round((Date.now() - this.pageLoadTime) / 1000);
-                
-                return {
-                    timestamp: new Date().toISOString(),
-                    eventType: 'ad_click',
-                    novel: 'Heartbreak Billionaire：He should never have Let Go',
-                    chapter: '225',
-                    pageUrl: window.location.href,
-                    adSlot: adContainer.getAttribute('data-ad-slot') || 'unknown',
-                    adPosition: adPosition,
-                    scrollDepth: Math.round(window.scrollY),
-                    userIP: '', // 将在发送时获取
-                    userAgent: navigator.userAgent,
-                    screenSize: `${window.screen.width}x${window.screen.height}`,
-                    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-                    stayDuration: stayDuration,
-                    totalClickCount: totalClickCount,  // 历史累计点击次数
-                    detectionMethod: method,
-                    referrer: document.referrer,
-                    ...extraData
-                };
-            }
-            
-            // 发送点击数据
-            async sendClickData(clickData) {
-                try {
-                    // 获取用户IP (优先使用全局函数,保证与页面访问统计IP一致)
-                    const userIP = typeof getUserIP === 'function' ? await getUserIP() : await this.getUserIP();
-                    clickData.userIP = userIP;
-                    
-                    // 发送到 Google Apps Script
-                    fetch(AD_CLICK_CONFIG.scriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(clickData)
-                    }).then(() => {
-                        this.log('✅ 数据已发送');
-                    }).catch(error => {
-                        this.log('❌ 发送失败:', error);
-                    });
-                    
-                    // 同时发送到 GA4（如果存在）
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'ad_click', {
-                            'ad_slot': clickData.adSlot,
-                            'total_clicks': clickData.totalClickCount,
-                            'novel': clickData.novel,
-                            'chapter': clickData.chapter
-                        });
-                    }
-                    
-                    // 同时发送到 Facebook Pixel（如果存在）
-                    if (typeof fbq !== 'undefined') {
-                        fbq('trackCustom', 'AdClick', {
-                            ad_slot: clickData.adSlot,
-                            total_clicks: clickData.totalClickCount,
-                            novel: clickData.novel
-                        });
-                    }
-                    
-                } catch (error) {
-                    this.log('❌ 发送数据异常:', error);
-                }
-            }
-            
-            // 获取用户IP
-            async getUserIP() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    try {
-                        const response = await fetch('https://httpbin.org/ip');
-                        const data = await response.json();
-                        return data.origin.split(',')[0].trim();
-                    } catch (error2) {
-                        return 'Unknown';
-                    }
-                }
-            }
-        }
-        
-        // 页面加载后初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                window.adClickTracker = new AdClickTracker();
-            });
-        } else {
-            window.adClickTracker = new AdClickTracker();
-        }
-        
-    })();
     </script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -850,8 +593,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2025-12-21T11:57:48.312393",
-        "dateModified": "2025-12-21T11:57:48.312393",
+        "datePublished": "2025-12-31T10:05:48.592641",
+        "dateModified": "2025-12-31T10:05:48.592641",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -932,13 +675,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Fixing her eyes on Vivian, she spoke without hesitation. &#34;If your big idea for this live stream was to parade my old house and dredge up pieces of my past just to rattle me, you&#39;ve got it all wrong. Honestly, I find it pretty sad. I regret nothing I&#39;ve done, and I&#39;m not ashamed of loving someone who turned out to be the wrong choice.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -948,34 +685,12 @@
                 
                 
                 
-                
-                
-                
                 <p>She continued, &#34;My marriage to Brandon and our divorce-they&#39;re both public knowledge. Everyone in Crobert knows my story. I don&#39;t have anything to cover up or pretend about.&#34;</p>
                 
                 
                 
                 
-                
-                
-                
                 <p>Vivian went pale, her eyes filling with tears.</p>
-                
-                
-                <!-- AdSense In-Article Ad after fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
-                
                 
                 
                 
@@ -985,13 +700,7 @@
                 
                 
                 
-                
-                
-                
                 <p>A slight smile crossed Millie&#39;s lips.</p>
-                
-                
-                
                 
                 
                 
@@ -1001,13 +710,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Vivian jumped in. &#34;It just happened like this. All of it. Pure chance.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1017,13 +720,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Her smile sharpened, tinged with irony.</p>
-                
-                
-                
                 
                 
                 
@@ -1033,13 +730,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Nobody watching the livestream was buying the coincidence excuse.</p>
-                
-                
-                
                 
                 
                 
@@ -1049,26 +740,7 @@
                 
                 
                 
-                
-                
-                
                 <p>The Elliott Group&#39;s product launch had been planned and announced far in advance.</p>
-                
-                
-                
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="7249978241"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                
                 
                 
                 
@@ -1078,13 +750,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Everyone remembered Vivian&#39;s live stream wasn&#39;t supposed to take place here at all.</p>
-                
-                
-                
                 
                 
                 
@@ -1094,13 +760,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Even if the original venue fell through, there was no explaining why Vivian went to Millie and Brandon&#39;s old home and kept the camera focused on their wedding photo still hanging on the wall.④</p>
-                
-                
-                
                 
                 
                 
@@ -1110,13 +770,7 @@
                 
                 
                 
-                
-                
-                
                 <p>One or two lucky breaks might slip by, but after a while, the setup was too obvious. Vivian&#39;s choices were obviously intentional.</p>
-                
-                
-                
                 
                 
                 
@@ -1126,13 +780,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Besides, whether it was the wedding portrait left untouched or the suspicious decor of the bathroom,the message behind was clear-Millie and Brandon had genuinely loved eachother once.</p>
-                
-                
-                
                 
                 
                 
@@ -1142,26 +790,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Their marriage had been real-recognized by the law, embraced by their families, and celebrated for what it was.</p>
-                
-                
-                
-                
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
                 
                 
                 
@@ -1171,13 +800,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;Any real product comparison should actually spotlight the product-like how Millie&#39;s streams always focus on the Golden collection. Even if there&#39;s a marketing stunt involved, it all boils down to what&#39;s being sold.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1187,13 +810,7 @@
                 
                 
                 
-                
-                
-                
                 <p>ef&#39;ve caught Vivian&#39;s other home tours and floral arrangement vlogs before. She never behaved this way in those videos.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1203,13 +820,7 @@
                 
                 
                 
-                
-                
-                
                 <p>All of this comeback had been planned through a quick phone call from Millie.</p>
-                
-                
-                
                 
                 
                 
@@ -1219,13 +830,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Messages flooded the chat, each one zipping past faster than the last.</p>
-                
-                
-                
                 
                 
                 
@@ -1235,13 +840,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Chaos erupted in the livestreamn room.</p>
-                
-                
-                
                 
                 
                 
@@ -1251,13 +850,7 @@
                 
                 
                 
-                
-                
-                
                 <p>A serene smile on her face, she turned her attention to the people gathered in person.</p>
-                
-                
-                
                 
                 
                 
@@ -1267,13 +860,7 @@
                 
                 
                 
-                
-                
-                
                 <p>No one needed to be asked twice. The group, satisfied with what they&#39;d seen, eagerly followed her lead.</p>
-                
-                
-                
                 
                 
                 
@@ -1283,13 +870,7 @@
                 
                 
                 
-                
-                
-                
                 <p>There weren&#39;t any specific details printed on them, just two unmistakable names.</p>
-                
-                
-                
                 
                 
                 
@@ -1299,13 +880,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Stamped boldly across the marriage certificate prop-&#34;CANCELLED.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1315,13 +890,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Millie was already leading the group onward.</p>
-                
-                
-                
                 
                 
                 
@@ -1331,13 +900,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Desperate for attention,she faked a bout of weakness, coughing in front of the camera.</p>
-                
-                
-                
                 
                 
                 
@@ -1347,13 +910,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;If you&#39;re feeling that unwell, there&#39;s really no reason to push yourself in a contest like this.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1363,13 +920,7 @@
                 
                 
                 
-                
-                
-                
                 <p>These remarks were quickly lost in the sea of comments.</p>
-                
-                
-                
                 
                 
                 
@@ -1379,13 +930,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She gazed into the camera, a single tear slipping down and landing right inside the vase she clutched.</p>
-                
-                
-                
                 
                 
                 
@@ -1395,13 +940,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Lowering her gaze, Vivian looked as fragile as ever. &#34;I know nothing I say will change a thing. Simply by showing up here, I become the villain. It feels like even my existing is a mistake at this point.&#34;①</p>
-                
-                
-                
                 
                 
                 
@@ -1411,13 +950,7 @@
                 
                 
                 
-                
-                
-                
                 <p>This space symbolized everything about the present moment.</p>
-                
-                
-                
                 
                 
                 
@@ -1427,13 +960,7 @@
                 
                 
                 
-                
-                
-                
                 <p>A sweeping golden river cut through the center, echoing the gemstone motif from the previous hall. Now,golden grains formed little beaches and jagged rock islands.</p>
-                
-                
-                
                 
                 
                 
@@ -1443,13 +970,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Each frame, unique in design and shape, stood ready with wide open space. Arranged before every frame,the latest pieces from the Golden series sparkled in the light.</p>
-                
-                
-                
                 
                 
                 
@@ -1459,13 +980,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She turned toward the streaming device.</p>
-                
-                
-                
                 
                 
                 
@@ -1475,13 +990,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;These are Renoir&#39;s Roses,&#34; she said, her face still stained with tears.</p>
-                
-                
-                
                 
                 
                 
@@ -1491,13 +1000,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Determined, Vivian swept away her tears with the back of her hand.</p>
-                
-                
-                
                 
                 
                 
@@ -1507,13 +1010,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Not so much as a flicker crossed Millie&#39;s face. &#34;And then?&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1523,13 +1020,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Hurt pride and defiance warred in her tone, as though Millie had pushed her to this point.</p>
-                
-                
-                
                 
                 
                 
@@ -1539,13 +1030,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;If I asked you not to go, would that actually stop you? Drop the act, Vivian. If you want to wander in, then just do it.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1555,13 +1040,7 @@
                 
                 
                 
-                
-                
-                
                 <p>&#34;You...&#34; she stuttered, at a loss for anything else to say.</p>
-                
-                
-                
                 
                 
                 
@@ -1571,13 +1050,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Viewers watching the stream couldn&#39;t help but burst into laughter.</p>
-                
-                
-                
                 
                 
                 
@@ -1587,13 +1060,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Keeping her gaze fixed on the floor, Vivian masked the bitterness brewing inside her.</p>
-                
-                
-                
                 
                 
                 
@@ -1603,13 +1070,7 @@
                 
                 
                 
-                
-                
-                
                 <p>She needed to act fast.</p>
-                
-                
-                
                 
                 
                 
@@ -1619,13 +1080,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Millie, you&#39;ve set upo surprises for the launch. What&#39;s next? I can&#39;t wait tofind out.&#34;</p>
-                
-                
-                
                 
                 
                 
@@ -1635,13 +1090,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Soon after, Vivian picked up her bouquet and headed straight for the master bedroom, determined to see the place Millie and Brandon once shared.</p>
-                
-                
-                
                 
                 
                 
@@ -1651,13 +1100,7 @@
                 
                 
                 
-                
-                
-                
                 <p>Somewhere beyond the villa, the distant whir of helicopter blades drifted closer, growing louder by the second.</p>
-                
-                
-                
                 
                 
                 
