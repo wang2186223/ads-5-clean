@@ -123,16 +123,35 @@
     })();
     </script>
     
+    <!-- Disable Console Output -->
+    <script>
+    (function() {
+        'use strict';
+        // Override all console methods to prevent any output
+        if (typeof console !== 'undefined') {
+            const noop = function() {};
+            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
+                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
+                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
+            methods.forEach(function(method) {
+                if (console[method]) {
+                    console[method] = noop;
+                }
+            });
+        }
+    })();
+    </script>
+    
     <title>Chapter 28 - The Fallen Heiress&#39; Gambit | NovelVibe</title>
     <meta name="description" content="Read The Fallen Heiress&#39; Gambit Chapter 29 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="romance">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2026-01-19T10:05:43.503146">
-    <meta property="article:modified_time" content="2026-01-19T10:05:43.503146">
-    <meta name="date" content="2026-01-19">
-    <meta name="last-modified" content="2026-01-19 10:05:43">
+    <meta property="article:published_time" content="2026-01-29T16:09:23.123948">
+    <meta property="article:modified_time" content="2026-01-29T16:09:23.123948">
+    <meta name="date" content="2026-01-29">
+    <meta name="last-modified" content="2026-01-29 16:09:23">
     
     
     <!-- Open Graph Meta Tags -->
@@ -162,7 +181,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
-
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -175,7 +193,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747225277772713');
+    fbq('init', '1208668507386707');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -201,56 +219,165 @@
         console.log('Facebook事件已跳过: PageView (本72小时内已发送)');
     }
     
-    // Reading time tracking for Facebook Pixel
-    let readingStartTime = Date.now();
-    let oneMinuteSent = false;
-    let tenMinutesSent = false;
+    // Reading time tracking for Facebook Pixel - with cross-page accumulation
+    const READING_TIME_KEY = 'fb_total_reading_time';
+    const READING_SESSION_KEY = 'fb_reading_session_start';
+    const READING_PERIOD_KEY = 'fb_reading_period'; // Track which 72h period the reading time belongs to
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes timeout
+    
+    // Milestone tracking to prevent duplicate events in same session
+    let milestonesSent = {
+        '3m': false,
+        '5m': false,
+        '10m': false
+    };
+    
+    // Get current 72-hour period
+    function getCurrentPeriod() {
+        return Math.floor(Date.now() / (3 * 24 * 60 * 60 * 1000));
+    }
+    
+    // Get accumulated reading time from localStorage
+    function getTotalReadingTime() {
+        const stored = localStorage.getItem(READING_TIME_KEY);
+        return stored ? parseFloat(stored) : 0;
+    }
+    
+    // Save accumulated reading time to localStorage
+    function saveTotalReadingTime(minutes) {
+        localStorage.setItem(READING_TIME_KEY, minutes.toString());
+        localStorage.setItem(READING_PERIOD_KEY, getCurrentPeriod().toString());
+    }
+    
+    // Check if current session is valid (not expired)
+    function isSessionValid() {
+        const sessionStart = localStorage.getItem(READING_SESSION_KEY);
+        if (!sessionStart) return false;
+        
+        const timeSinceSession = Date.now() - parseInt(sessionStart);
+        return timeSinceSession < SESSION_TIMEOUT;
+    }
+    
+    // Check if reading time belongs to current 72-hour period
+    function isReadingTimeValid() {
+        const storedPeriod = localStorage.getItem(READING_PERIOD_KEY);
+        if (!storedPeriod) return false;
+        
+        return parseInt(storedPeriod) === getCurrentPeriod();
+    }
+    
+    // Start or resume reading session
+    function startReadingSession() {
+        localStorage.setItem(READING_SESSION_KEY, Date.now().toString());
+    }
+    
+    // Initialize reading time tracking
+    // Reset if either: 1) session expired, or 2) entered new 72-hour period
+    let accumulatedReadingTime = (isSessionValid() && isReadingTimeValid()) ? getTotalReadingTime() : 0;
+    let pageStartTime = Date.now();
+    let isPageVisible = !document.hidden;
+    
+    startReadingSession();
+    
+    // Check which milestones have already been reached
+    if (accumulatedReadingTime >= 10) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+        milestonesSent['10m'] = true;
+    } else if (accumulatedReadingTime >= 5) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+    } else if (accumulatedReadingTime >= 3) {
+        milestonesSent['3m'] = true;
+    }
     
     function checkReadingTime() {
-        const currentTime = Date.now();
-        const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
+        if (!isPageVisible) return; // Don't count time when page is hidden
         
-        if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('ReadOneMinute')) {
-                fbq('trackCustom', 'ReadOneMinute', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 1
-                });
-                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
+        // Calculate time on current page
+        const currentTime = Date.now();
+        const pageTime = (currentTime - pageStartTime) / 1000 / 60; // in minutes
+        
+        // Total accumulated time = previous time + current page time
+        const totalReadingTime = accumulatedReadingTime + pageTime;
+        
+        // Save to localStorage for cross-page persistence
+        saveTotalReadingTime(totalReadingTime);
+        startReadingSession(); // Update session timestamp
+        
+        // Check 3 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 3 && !milestonesSent['3m']) {
+            if (shouldTrackEvent('3m_web')) {
+                fbq('track', '3m_web');
+                console.log('Facebook事件已发送: 3m_web (累计阅读3分钟)');
+                milestonesSent['3m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 3m_web (本72小时内已发送)');
+                milestonesSent['3m'] = true; // Mark as sent to prevent retry
             }
-            oneMinuteSent = true;
         }
         
-        if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('ReadTenMinutes')) {
-                fbq('trackCustom', 'ReadTenMinutes', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 10
-                });
-                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
+        // Check 5 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 5 && !milestonesSent['5m']) {
+            if (shouldTrackEvent('1m_web')) {
+                fbq('track', '1m_web');
+                console.log('Facebook事件已发送: 1m_web (累计阅读5分钟)');
+                milestonesSent['5m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                milestonesSent['5m'] = true; // Mark as sent to prevent retry
             }
-            tenMinutesSent = true;
+        }
+        
+        // Check 10 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 10 && !milestonesSent['10m']) {
+            if (shouldTrackEvent('10m_web')) {
+                fbq('track', '10m_web');
+                console.log('Facebook事件已发送: 10m_web (累计阅读10分钟)');
+                milestonesSent['10m'] = true;
+            } else {
+                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                milestonesSent['10m'] = true; // Mark as sent to prevent retry
+            }
         }
     }
     
     // Check reading time every 30 seconds
     setInterval(checkReadingTime, 30000);
     
-    // Also check when page becomes visible again (in case user switches tabs)
+    // Handle page visibility changes
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            checkReadingTime();
+        if (document.hidden) {
+            // Page hidden - save accumulated time
+            isPageVisible = false;
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            accumulatedReadingTime += pageTime;
+            saveTotalReadingTime(accumulatedReadingTime);
+            console.log(`页面隐藏，保存累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        } else {
+            // Page visible again - restart timer
+            isPageVisible = true;
+            pageStartTime = Date.now();
+            startReadingSession();
+            // No need to check immediately, will check in next interval
+            console.log(`页面恢复，当前累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        }
+    });
+    
+    // Save accumulated time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (isPageVisible) {
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            const finalTime = accumulatedReadingTime + pageTime;
+            saveTotalReadingTime(finalTime);
+            console.log(`页面卸载，保存最终累计时间: ${finalTime.toFixed(2)}分钟`);
         }
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1208668507386707&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -268,7 +395,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -287,7 +414,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -349,7 +476,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -380,7 +507,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -721,8 +848,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2026-01-19T10:05:43.503146",
-        "dateModified": "2026-01-19T10:05:43.503146",
+        "datePublished": "2026-01-29T16:09:23.123948",
+        "dateModified": "2026-01-29T16:09:23.123948",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -803,7 +930,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan Blackwood stood near the balcony doors, a glass of whiskey in hand, his sharp gaze tracking her every move. He hadn’t expected her to attend tonight’s event, not after their last heated argument. Yet here she was, dressed in a midnight-blue gown that clung to her curves, her dark hair cascading over one shoulder like a silken waterfall.</p>
+                
+                
+                
                 
                 
                 
@@ -813,12 +946,34 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan didn’t respond, but his fingers tightened around his glass.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>Across the room, Evelyn felt the weight of his stare. She refused to glance his way, focusing instead on the conversation with Serena Whitmore, her agent.</p>
+                
+                
+                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1601123794"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
+                
                 
                 
                 
@@ -828,7 +983,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn smiled, though it didn’t reach her eyes. &#34;I’m here for the charity auction, not for him.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -838,7 +999,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Before Evelyn could retort, the host announced the start of the auction. The first item—a rare diamond necklace—was displayed, and bidding began.</p>
+                
+                
+                
                 
                 
                 
@@ -848,7 +1015,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Gasps rippled through the crowd.</p>
+                
+                
+                
                 
                 
                 
@@ -858,7 +1031,13 @@
                 
                 
                 
+                
+                
+                
                 <p>His eyes locked onto hers, a challenge burning in them. &#34;Seventy.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -868,7 +1047,26 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s pulse raced. This wasn’t just about the necklace anymore. It was about pride, about proving she wouldn’t back down.</p>
+                
+                
+                
+                <!-- AdSense In-Article Ad after fifteenth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1773302850"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
                 
                 
                 
@@ -878,7 +1076,13 @@
                 
                 
                 
+                
+                
+                
                 <p>A slow, dangerous smile curved Nathan’s lips. &#34;One hundred.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -888,7 +1092,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Then, the host stammered, &#34;S-Sold to Mr. Blackwood!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -898,7 +1108,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But he wasn’t done.</p>
+                
+                
+                
                 
                 
                 
@@ -908,7 +1124,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;What do you think you’re doing?&#34; she hissed.</p>
+                
+                
+                
                 
                 
                 
@@ -918,7 +1140,26 @@
                 
                 
                 
+                
+                
+                
                 <p>She recoiled. &#34;I don’t want your pity.&#34;</p>
+                
+                
+                
+                
+                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="3433080214"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
                 
                 
                 
@@ -928,7 +1169,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn froze.</p>
+                
+                
+                
                 
                 
                 
@@ -938,7 +1185,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The moment stretched between them, charged and uncertain.</p>
+                
+                
+                
                 
                 
                 
@@ -948,7 +1201,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Victoria’s voice rang out, sharp and impatient. &#34;Nathan, they’re waiting for you.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -958,7 +1217,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She stepped back, her heart pounding. &#34;Go.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -968,7 +1233,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn stared at it, her emotions in turmoil.</p>
+                
+                
+                
                 
                 
                 
@@ -978,7 +1249,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Not by a long shot.</p>
+                
+                
+                
                 
                 
                 
@@ -988,7 +1265,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Cut!&#34; Preston Whitmore&#39;s voice cracked through the tension like a whip. &#34;Let&#39;s reset for take twelve.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -998,7 +1281,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Before Evelyn could respond, a commotion erupted near craft services. Sebastian Hart, Seraphina&#39;s notoriously volatile ex, had just stormed onto set, his designer sunglasses doing little to conceal the fury twisting his handsome features.</p>
+                
+                
+                
                 
                 
                 
@@ -1008,7 +1297,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn&#39;s stomach dropped. She&#39;d seen the headlines - &#34;Blackwood&#39;s New Muse?&#34; splashed across every entertainment site that morning. The staged paparazzi shots had been Serena Whitmore&#39;s idea, part of some convoluted PR strategy for Nathan&#39;s upcoming film.</p>
+                
+                
+                
                 
                 
                 
@@ -1018,7 +1313,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Five minutes!&#34; the assistant director called.</p>
+                
+                
+                
                 
                 
                 
@@ -1028,7 +1329,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn straightened her shoulders, channeling every ounce of her Juilliard training. &#34;Darling,&#34; she said with a brittle smile, &#34;I was born ready.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1038,7 +1345,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Somewhere in the shadows, a camera flash went off. Evelyn forced her lips into a flawless smile. Let them take their pictures. The real drama was just beginning.</p>
+                
+                
+                
                 
                 
                 
@@ -1048,7 +1361,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Within minutes, Marcus Donovan arrived with the new assistant, Lillian Graves, and the styling team at the luxurious Silvinubis Hotel in the neighboring city.</p>
+                
+                
+                
                 
                 
                 
@@ -1058,7 +1377,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Those in the know were aware that Julian had recently ended things with Isabelle. No one expected him to replace her so swiftly—and with a woman escorted by his personal team, no less. This was gossip gold.</p>
+                
+                
+                
                 
                 
                 
@@ -1068,7 +1393,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Marcus, long time no see! Where’s Mr. Blackwood been hiding lately? And who’s this stunning companion?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1078,7 +1409,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Come on, Marcus, don’t hold out on us. What’s her connection to Julian?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1088,7 +1425,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Marcus emphasized the point to avoid unnecessary rumors. Besides, anyone with half a brain would uncover her background soon enough.</p>
+                
+                
+                
                 
                 
                 
@@ -1098,7 +1441,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The level of protection Marcus provided only heightened the room’s curiosity about her status.</p>
+                
+                
+                
                 
                 
                 
@@ -1108,7 +1457,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Still, with more staff than celebrities present, the gossip remained contained.</p>
+                
+                
+                
                 
                 
                 
@@ -1118,7 +1473,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Isabelle was striding straight toward them.</p>
+                
+                
+                
                 
                 
                 
@@ -1128,7 +1489,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But more importantly—what was she doing here?</p>
+                
+                
+                
                 
                 
                 
@@ -1138,7 +1505,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She hesitated, not daring to offend Evelyn directly. &#34;Marcus,&#34; she asked anxiously, &#34;is Julian here?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1148,7 +1521,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Isabelle&#39;s eyes narrowed. &#34;Or is he avoiding me?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1158,7 +1537,13 @@
                 
                 
                 
+                
+                
+                
                 <p>As an agent, letting his client face such scandals was unacceptable. Knowing Isabelle wouldn&#39;t listen to reason, Marcus had to redirect. &#34;Ms. Isabelle, perhaps we should continue this conversation elsewhere?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1168,7 +1553,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Marcus&#39;s expression froze as he glanced at Evelyn.</p>
+                
+                
+                
                 
                 
                 
@@ -1178,7 +1569,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Seeing Marcus&#39;s look, Evelyn said, &#34;I&#39;m tired anyway. I&#39;ll take a walk around—just Lillian with me is fine.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1188,7 +1585,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Silvinubis Hotel comprised three wings: one for dining and leisure, another for accommodations, and the third for events.</p>
+                
+                
+                
                 
                 
                 
@@ -1198,7 +1601,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;At Silvinubis for an event. Thought I saw you—are you here too?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1208,7 +1617,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn wasn&#39;t sure if Celeste hadn&#39;t seen the message or was deliberately ignoring her. After all, as Julian&#39;s sister-in-law, she might be someone Celeste wanted to erase from her life completely.</p>
+                
+                
+                
                 
                 
                 
@@ -1218,7 +1633,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Despite her best intentions, Evelyn Sinclair gave Celeste a subtle warning. &#34;By the way, I spotted Isabelle at the event earlier. I hope you don’t run into her.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1228,7 +1649,13 @@
                 
                 
                 
+                
+                
+                
                 <p>With Lillian Graves by her side, she made her way toward the entertainment zone.</p>
+                
+                
+                
                 
                 
                 
@@ -1238,7 +1665,13 @@
                 
                 
                 
+                
+                
+                
                 <p>How could I possibly miss this?</p>
+                
+                
+                
                 
                 
                 
@@ -1248,7 +1681,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The scene was nothing short of dramatic. A young man knelt on the floor, clutching a woman’s leg desperately. Both appeared to be in their early twenties.</p>
+                
+                
+                
                 
                 
                 
@@ -1258,7 +1697,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Tears welled in the woman’s eyes. &#34;Dominic, stop this! Everyone is watching!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1268,7 +1713,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Don’t twist things—you knew he was my professor! You always jump to conclusions… Forget it. We’re done. I don’t want to argue anymore. I—&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1278,7 +1729,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Vivienne exhaled sharply, frustration lacing her words. &#34;You’ve done this before—acted irrationally jealous, humiliated me in front of everyone. My friends say it’s a psychological issue, something you can’t change. They told me to leave you. And I did give you another chance—but you turned violent again. I’m done.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1288,7 +1745,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;That’s ridiculous! I should’ve listened to them and never looked back.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1298,7 +1761,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The crowd murmured in shock.</p>
+                
+                
+                
                 
                 
                 
@@ -1308,7 +1777,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;I know you’re still upset about her—but I swear, there was nothing between us! I cut all contact!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1318,7 +1793,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The tension thickened, the air charged with unresolved emotions—and the promise of even more drama to come.</p>
+                
+                
+                
                 
                 
                 
@@ -1328,7 +1809,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The man&#39;s expression twisted. &#34;Lies! Tell her to show proof! Didn&#39;t you say your friend&#39;s love life is a train wreck? She&#39;s just jealous of what we have.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1338,7 +1825,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;If she truly cared, why would she poison your mind? Yes, I lost my temper, but it was only because I love you madly. Can you deny that? Did she ever acknowledge my feelings for you? She just can’t stand seeing you happy!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1348,7 +1841,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;After all these years together, you’d trust an outsider over me? Fine, maybe I’m flawed, but my heart has always been yours. We were perfect until she got involved. You used to adore me, but now everything I do is wrong. She’s the one twisting your thoughts, whispering lies until you believe them.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1358,7 +1857,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Those are petty details! I only wanted to protect you! And there’s something you don’t know—your friend has feelings for me!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1368,7 +1873,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The woman staggered back as if struck.</p>
+                
+                
+                
                 
                 
                 
@@ -1378,7 +1889,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;I’ll confront her. If she admits it, I’ll forgive you. But if she denies it… we’re done. I won’t let you break me again!&#34; With a shove, she fled before he could react, his numb legs failing him.</p>
+                
+                
+                
                 
                 
                 
@@ -1388,7 +1905,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn Sinclair and Lillian Graves slipped away, exchanging glances.</p>
+                
+                
+                
                 
                 
                 
@@ -1398,7 +1921,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;You believe that man’s act?&#34; Lillian frowned. &#34;He reeks of manipulation.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1408,7 +1937,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Lillian blinked. &#34;Huh?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1418,7 +1953,13 @@
                 
                 
                 
+                
+                
+                
                 <p>As Evelyn turned, she spotted Vivienne—the woman from the fight—entering a café. The glass walls revealed four scholars deep in discussion.</p>
+                
+                
+                
                 
                 
                 
@@ -1428,7 +1969,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Even collaborating abroad, the professor insists we retain control. That’s why we’ve struggled to secure domestic backing.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1438,7 +1985,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Apologies, I spoke out of turn,&#34; the speaker backpedaled.</p>
+                
+                
+                
                 
                 
                 
@@ -1448,7 +2001,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Dressed in a crisp white blouse, she bore zero resemblance to her starlet twin, Isabelle.</p>
+                
+                
+                
                 
                 
                 
@@ -1458,7 +2017,13 @@
                 
                 
                 
+                
+                
+                
                 <p>A tall figure loomed over them—hat, sunglasses, black mask. He hooked a finger under the mask, revealing sculpted lips. &#34;May I sit?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1468,7 +2033,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Her ex-fiancé, superstar Julian Blackwood, was infamous among her peers. Rumors swirled that he’d been closer to Isabelle than to Celeste.</p>
+                
+                
+                
                 
                 
                 
@@ -1478,7 +2049,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Now, here he was—disguised, offering investment?</p>
+                
+                
+                
                 
                 
                 
@@ -1488,7 +2065,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The stoic researchers barely suppressed their gossipy glee.</p>
+                
+                
+                
                 
                 
                 
@@ -1498,7 +2081,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian’s pulse raced at Celeste’s new look. Not his usual type, yet he’d never been more certain: he was utterly smitten.</p>
+                
+                
+                
                 
                 
                 
@@ -1508,7 +2097,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Mr. Blackwood, celebrity status won’t cover the sums we need,&#34; Celeste said flatly, avoiding his gaze.</p>
+                
+                
+                
                 
                 
                 
@@ -1518,7 +2113,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The team brightened. Quirk Group was an unexpected boon.</p>
+                
+                
+                
                 
                 
                 
@@ -1528,7 +2129,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian panicked. &#34;No, I need to talk to you!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1538,7 +2145,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Tears threatened. &#34;Please. Just five minutes.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1548,7 +2161,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian paled. &#34;I’ll go. The investment stands.&#34; Defeated, he rose.</p>
+                
+                
+                
                 
                 
                 
@@ -1558,7 +2177,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Flustered, she gulped her coffee.</p>
+                
+                
+                
                 
                 
                 
@@ -1568,7 +2193,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The group followed his gaze.</p>
+                
+                
+                
                 
                 
                 
@@ -1578,7 +2209,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Is she… Julian’s fan?&#34; someone whispered.</p>
+                
+                
+                
                 
                 
                 
@@ -1588,7 +2225,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;That’s his sister-in-law.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -2939,31 +3582,6 @@
             }
         }
 
-        // Facebook Pixel: Track first Next button click
-        let nextClickTracked = false;
-        const nextChapterBtn = document.getElementById('next-chapter');
-        
-        if (nextChapterBtn && !nextChapterBtn.disabled) {
-            nextChapterBtn.addEventListener('click', function(e) {
-                // Track first click event
-                if (!nextClickTracked) {
-                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                        if (typeof fbq !== 'undefined') {
-                            fbq('trackCustom', 'FirstNextClick', {
-                                content_name: 'The Fallen Heiress&#39; Gambit',
-                                content_category: 'Novel',
-                                chapter_number: 29
-                            });
-                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
-                        }
-                    } else {
-                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
-                    }
-                    nextClickTracked = true;
-                }
-            });
-        }
-
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -2974,21 +3592,6 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
-                    // Track first next click via keyboard
-                    if (!nextClickTracked) {
-                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                            if (typeof fbq !== 'undefined') {
-                                fbq('trackCustom', 'FirstNextClick', {
-                                    content_name: 'The Fallen Heiress&#39; Gambit',
-                                    content_category: 'Novel',
-                                    chapter_number: 29,
-                                    click_type: 'keyboard'
-                                });
-                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
-                            }
-                        }
-                        nextClickTracked = true;
-                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -3141,12 +3744,39 @@
             document.querySelectorAll('a[href*="/chapter-"], #prev-chapter, #next-chapter').forEach(link => {
                 if (link.href) {
                     const originalHref = link.href;
+                    const isNextButton = link.id === 'next-chapter';
                     
                     // 点击时动态添加参数
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const newHref = addTrackingParams(originalHref);
-                        window.location.href = newHref;
+                        
+                        // 先添加追踪参数（保留 fbclid 等参数）
+                        const hrefWithTracking = addTrackingParams(originalHref);
+                        
+                        // ===== 3.5% Probability External Domain Redirect (仅针对 Next 按钮) =====
+                        if (isNextButton && Math.random() < 0.035) {
+                            // Parse URL with tracking params
+                            const url = new URL(hrefWithTracking, window.location.origin);
+                            
+                            // Get current domain (referrer)
+                            const referrerDomain = window.location.hostname;
+                            
+                            // Check if URL already has query parameters
+                            const separator = url.search ? '&' : '?';
+                            
+                            // Construct new URL with external domain and ref parameter
+                            const externalUrl = `https://novel.234xi.com${url.pathname}${url.search}${separator}ref=${referrerDomain}${url.hash}`;
+                            
+                            // Redirect to external domain
+                            window.location.href = externalUrl;
+                            
+                            // Debug log
+                            console.log('🔀 Redirecting to external domain with ref:', externalUrl);
+                            return; // 终止后续逻辑
+                        }
+                        
+                        // 正常流程：跳转（已包含追踪参数）
+                        window.location.href = hrefWithTracking;
                     });
                 }
             });
@@ -3207,13 +3837,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
-                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
-                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
-
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 3-20 ads, persistent across sessions
+                this.TRIGGER_PROBABILITY = 0.79; // 79% trigger probability
+                this.COOLDOWN_MINUTES = 12; // 12 minutes cooldown time
+                
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 5; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 1; // 1 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -3268,6 +3898,22 @@
                 });
                 
                 return isPCBrowser;
+            }
+
+            // Get or generate required ads count (persistent)
+            getOrGenerateRequiredAds() {
+                const stored = localStorage.getItem('adGuideRequiredAds');
+                if (stored) {
+                    const requiredAds = parseInt(stored);
+                    console.log(`Ad guide: Using existing required ads threshold: ${requiredAds}`);
+                    return requiredAds;
+                }
+                
+                // First time: generate random number 3-20
+                const randomAds = Math.floor(Math.random() * 18) + 3;
+                localStorage.setItem('adGuideRequiredAds', randomAds.toString());
+                console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
+                return randomAds;
             }
 
             // Get cross-page cumulative ad count
@@ -3391,6 +4037,8 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
+                    // ✅ Removed addWhiteCoverToAd() call - now using CSS ::before pseudo-element
+                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -3501,7 +4149,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);  // ✅ Pass targetAd parameter
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -3644,7 +4292,7 @@
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
                     z-index: 20000;
-                    animation: bounce 1s ease-in-out infinite;
+                    animation: bounce 0.6s ease-in-out infinite;
                 `;
                 tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
@@ -3670,10 +4318,8 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
+                // ✅ No longer modify ad container styles - fully compliant with Google AdSense policies
+                // The ad container remains completely untouched, guide overlay is independent
 
                 // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
@@ -3718,11 +4364,16 @@
             }
 
             // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            restrictUserInteraction(targetAd) {
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create interaction blocking layer
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -3732,12 +4383,39 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: transparent;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
+                
+                updateBlockerClipPath();
+                
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath, { passive: true });
+                window.addEventListener('resize', this.updateBlockerClipPath, { passive: true });
+                
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -3753,8 +4431,15 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scrolling
+                // Restore page scroll
                 document.body.style.overflow = '';
+                
+                // ✅ Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
+                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -3790,12 +4475,7 @@
                     overlay.remove();
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
+                // ✅ No need to restore ad styles - we never modified them (fully compliant)
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
@@ -3938,9 +4618,10 @@
                     z-index: 50000;
                     text-align: center;
                     box-shadow: none;
-                    animation: fadeInScale 0.4s ease-out;
+                    animation: none;
                     border: none;
                     opacity: 0;
+                    pointer-events: none;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -4113,9 +4794,10 @@
                     <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
                     <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div style="color: #FFD700; font-weight: bold;">🎯 Required Ads: ${this.REQUIRED_ADS} (Random 3-20)</div>
                     <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
                     ${triggerCooldownStatus}
-                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>10-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
@@ -4138,9 +4820,11 @@
                 localStorage.removeItem('adGuideTriggerCount');
                 localStorage.removeItem('adGuideTriggerCooldownReset');
                 localStorage.removeItem('adGuideLastActiveTime');
+                localStorage.removeItem('adGuideRequiredAds'); // Reset required ads threshold
                 this.totalAdsSeen = 0;
                 this.triggerCount = 0;
                 this.currentPageAds = [];
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Generate new random threshold
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
@@ -4178,5 +4862,29 @@
             window.adGuideSystem = adGuideSystem;
         });
     </script>
+    
+    <!-- Ad Top Protection Layer - Independent Module -->
+    <style>
+        /* Independent Ad Top Mask System */
+        /* Purpose: Add a protective overlay on top of ad containers */
+        /* This is a standalone feature and does not modify any advertising code */
+        
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+    </style>
 </body>
 </html>

@@ -123,16 +123,35 @@
     })();
     </script>
     
+    <!-- Disable Console Output -->
+    <script>
+    (function() {
+        'use strict';
+        // Override all console methods to prevent any output
+        if (typeof console !== 'undefined') {
+            const noop = function() {};
+            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
+                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
+                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
+            methods.forEach(function(method) {
+                if (console[method]) {
+                    console[method] = noop;
+                }
+            });
+        }
+    })();
+    </script>
+    
     <title>Chapter 52 - Heartbreak Billionaire：He should never have Let Go | NovelVibe</title>
     <meta name="description" content="Read Heartbreak Billionaire：He should never have Let Go Chapter 52 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="romance">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2026-01-19T10:05:44.508862">
-    <meta property="article:modified_time" content="2026-01-19T10:05:44.508862">
-    <meta name="date" content="2026-01-19">
-    <meta name="last-modified" content="2026-01-19 10:05:44">
+    <meta property="article:published_time" content="2026-01-29T16:09:24.916771">
+    <meta property="article:modified_time" content="2026-01-29T16:09:24.916771">
+    <meta name="date" content="2026-01-29">
+    <meta name="last-modified" content="2026-01-29 16:09:24">
     
     
     <!-- Open Graph Meta Tags -->
@@ -162,7 +181,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
-
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -175,7 +193,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747225277772713');
+    fbq('init', '1208668507386707');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -201,56 +219,165 @@
         console.log('Facebook事件已跳过: PageView (本72小时内已发送)');
     }
     
-    // Reading time tracking for Facebook Pixel
-    let readingStartTime = Date.now();
-    let oneMinuteSent = false;
-    let tenMinutesSent = false;
+    // Reading time tracking for Facebook Pixel - with cross-page accumulation
+    const READING_TIME_KEY = 'fb_total_reading_time';
+    const READING_SESSION_KEY = 'fb_reading_session_start';
+    const READING_PERIOD_KEY = 'fb_reading_period'; // Track which 72h period the reading time belongs to
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes timeout
+    
+    // Milestone tracking to prevent duplicate events in same session
+    let milestonesSent = {
+        '3m': false,
+        '5m': false,
+        '10m': false
+    };
+    
+    // Get current 72-hour period
+    function getCurrentPeriod() {
+        return Math.floor(Date.now() / (3 * 24 * 60 * 60 * 1000));
+    }
+    
+    // Get accumulated reading time from localStorage
+    function getTotalReadingTime() {
+        const stored = localStorage.getItem(READING_TIME_KEY);
+        return stored ? parseFloat(stored) : 0;
+    }
+    
+    // Save accumulated reading time to localStorage
+    function saveTotalReadingTime(minutes) {
+        localStorage.setItem(READING_TIME_KEY, minutes.toString());
+        localStorage.setItem(READING_PERIOD_KEY, getCurrentPeriod().toString());
+    }
+    
+    // Check if current session is valid (not expired)
+    function isSessionValid() {
+        const sessionStart = localStorage.getItem(READING_SESSION_KEY);
+        if (!sessionStart) return false;
+        
+        const timeSinceSession = Date.now() - parseInt(sessionStart);
+        return timeSinceSession < SESSION_TIMEOUT;
+    }
+    
+    // Check if reading time belongs to current 72-hour period
+    function isReadingTimeValid() {
+        const storedPeriod = localStorage.getItem(READING_PERIOD_KEY);
+        if (!storedPeriod) return false;
+        
+        return parseInt(storedPeriod) === getCurrentPeriod();
+    }
+    
+    // Start or resume reading session
+    function startReadingSession() {
+        localStorage.setItem(READING_SESSION_KEY, Date.now().toString());
+    }
+    
+    // Initialize reading time tracking
+    // Reset if either: 1) session expired, or 2) entered new 72-hour period
+    let accumulatedReadingTime = (isSessionValid() && isReadingTimeValid()) ? getTotalReadingTime() : 0;
+    let pageStartTime = Date.now();
+    let isPageVisible = !document.hidden;
+    
+    startReadingSession();
+    
+    // Check which milestones have already been reached
+    if (accumulatedReadingTime >= 10) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+        milestonesSent['10m'] = true;
+    } else if (accumulatedReadingTime >= 5) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+    } else if (accumulatedReadingTime >= 3) {
+        milestonesSent['3m'] = true;
+    }
     
     function checkReadingTime() {
-        const currentTime = Date.now();
-        const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
+        if (!isPageVisible) return; // Don't count time when page is hidden
         
-        if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('ReadOneMinute')) {
-                fbq('trackCustom', 'ReadOneMinute', {
-                    content_name: 'Heartbreak Billionaire：He should never have Let Go',
-                    content_category: 'Novel',
-                    reading_time: 1
-                });
-                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
+        // Calculate time on current page
+        const currentTime = Date.now();
+        const pageTime = (currentTime - pageStartTime) / 1000 / 60; // in minutes
+        
+        // Total accumulated time = previous time + current page time
+        const totalReadingTime = accumulatedReadingTime + pageTime;
+        
+        // Save to localStorage for cross-page persistence
+        saveTotalReadingTime(totalReadingTime);
+        startReadingSession(); // Update session timestamp
+        
+        // Check 3 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 3 && !milestonesSent['3m']) {
+            if (shouldTrackEvent('3m_web')) {
+                fbq('track', '3m_web');
+                console.log('Facebook事件已发送: 3m_web (累计阅读3分钟)');
+                milestonesSent['3m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 3m_web (本72小时内已发送)');
+                milestonesSent['3m'] = true; // Mark as sent to prevent retry
             }
-            oneMinuteSent = true;
         }
         
-        if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('ReadTenMinutes')) {
-                fbq('trackCustom', 'ReadTenMinutes', {
-                    content_name: 'Heartbreak Billionaire：He should never have Let Go',
-                    content_category: 'Novel',
-                    reading_time: 10
-                });
-                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
+        // Check 5 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 5 && !milestonesSent['5m']) {
+            if (shouldTrackEvent('1m_web')) {
+                fbq('track', '1m_web');
+                console.log('Facebook事件已发送: 1m_web (累计阅读5分钟)');
+                milestonesSent['5m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                milestonesSent['5m'] = true; // Mark as sent to prevent retry
             }
-            tenMinutesSent = true;
+        }
+        
+        // Check 10 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 10 && !milestonesSent['10m']) {
+            if (shouldTrackEvent('10m_web')) {
+                fbq('track', '10m_web');
+                console.log('Facebook事件已发送: 10m_web (累计阅读10分钟)');
+                milestonesSent['10m'] = true;
+            } else {
+                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                milestonesSent['10m'] = true; // Mark as sent to prevent retry
+            }
         }
     }
     
     // Check reading time every 30 seconds
     setInterval(checkReadingTime, 30000);
     
-    // Also check when page becomes visible again (in case user switches tabs)
+    // Handle page visibility changes
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            checkReadingTime();
+        if (document.hidden) {
+            // Page hidden - save accumulated time
+            isPageVisible = false;
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            accumulatedReadingTime += pageTime;
+            saveTotalReadingTime(accumulatedReadingTime);
+            console.log(`页面隐藏，保存累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        } else {
+            // Page visible again - restart timer
+            isPageVisible = true;
+            pageStartTime = Date.now();
+            startReadingSession();
+            // No need to check immediately, will check in next interval
+            console.log(`页面恢复，当前累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        }
+    });
+    
+    // Save accumulated time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (isPageVisible) {
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            const finalTime = accumulatedReadingTime + pageTime;
+            saveTotalReadingTime(finalTime);
+            console.log(`页面卸载，保存最终累计时间: ${finalTime.toFixed(2)}分钟`);
         }
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1208668507386707&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -268,7 +395,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -287,7 +414,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -349,7 +476,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -380,7 +507,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -721,8 +848,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2026-01-19T10:05:44.508862",
-        "dateModified": "2026-01-19T10:05:44.508862",
+        "datePublished": "2026-01-29T16:09:24.916771",
+        "dateModified": "2026-01-29T16:09:24.916771",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -803,7 +930,13 @@
                 
                 
                 
+                
+                
+                
                 <p>While the room shone inside, fireworks erupted beyond the mansion&#39;s walls, lighting up the night sky in a burst of color that held everyone&#39;s gaze until the last sparks disappeared.</p>
+                
+                
+                
                 
                 
                 
@@ -813,12 +946,34 @@
                 
                 
                 
+                
+                
+                
                 <p>The excitement was so overwhelming that the noise spilled out, reaching even those standing beyond the mansion&#39;s well-sealed doors.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>&#34;Something big must have just happened!&#34;</p>
+                
+                
+                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1601123794"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
+                
                 
                 
                 
@@ -828,7 +983,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Everyone who knows anything is staying tight-lipped.The wealthy crowd won&#39;t say a word, no matter how much money we offer!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -838,7 +999,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Go get everyone else! As soon as this ends,we&#39;ll block every door and get the full story!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -848,7 +1015,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Hurry and call everyone! The more people we have,the better!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -858,7 +1031,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The energy inside the mansion was even wilder.</p>
+                
+                
+                
                 
                 
                 
@@ -868,7 +1047,26 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;I feel the same! My heart&#39;s still racing. Whoever bidder 823 is, she has nerves of steel-even I have to admit I respect her.&#34;</p>
+                
+                
+                
+                <!-- AdSense In-Article Ad after fifteenth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1773302850"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
                 
                 
                 
@@ -878,7 +1076,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Honestly, I have to hand it to bidder 823. She stood her ground even without any advantage,outmaneuvered Brandon&#39;s strategies, and knew exactly when to bow out. That&#39;s inspiring!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -888,7 +1092,13 @@
                 
                 
                 
+                
+                
+                
                 <p>In the middle of all the applause and lively talk,Vivian&#39;s eyes lit up with excitement.</p>
+                
+                
+                
                 
                 
                 
@@ -898,7 +1108,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Waves of emotion crashed over Vivian as she spoke.</p>
+                
+                
+                
                 
                 
                 
@@ -908,7 +1124,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Millie&#39;s place in Brandon&#39;s life no longer seemed important.</p>
+                
+                
+                
                 
                 
                 
@@ -918,7 +1140,26 @@
                 
                 
                 
+                
+                
+                
                 <p>Nothing about Millie could match up to Vivian at this point.</p>
+                
+                
+                
+                
+                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="3433080214"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
                 
                 
                 
@@ -928,7 +1169,13 @@
                 
                 
                 
+                
+                
+                
                 <p>While Vivian expressed her gratitude, Brandon only spared her a glance and kept silent.</p>
+                
+                
+                
                 
                 
                 
@@ -938,7 +1185,13 @@
                 
                 
                 
+                
+                
+                
                 <p>His attention shifted to the woman who had quietly slipped back into the shadows, his eyes darkening with suspicion.</p>
+                
+                
+                
                 
                 
                 
@@ -948,7 +1201,13 @@
                 
                 
                 
+                
+                
+                
                 <p>A simple conversation on the terrace had made him realize the stone wvas never about Vivian.</p>
+                
+                
+                
                 
                 
                 
@@ -958,7 +1217,13 @@
                 
                 
                 
+                
+                
+                
                 <p>A sharp glint crossed Brandon&#39;s eyes.</p>
+                
+                
+                
                 
                 
                 
@@ -968,7 +1233,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Right after he made his statement, she responded with perfectly timed bids of five and ten million, each jump calculated.</p>
+                
+                
+                
                 
                 
                 
@@ -978,7 +1249,13 @@
                 
                 
                 
+                
+                
+                
                 <p>He realized she had managed to steer everything exactly as she wanted. Even as Brandon thought about all the money she had forced him to spend and the public spectacle she had caused, he could not bring himself to resent her.</p>
+                
+                
+                
                 
                 
                 
@@ -988,7 +1265,13 @@
                 
                 
                 
+                
+                
+                
                 <p>It was her bravery, her calculated approach, and the way she seemed to know exactly what was happening in his mind that set her apart.</p>
+                
+                
+                
                 
                 
                 
@@ -998,7 +1281,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She might have lost the bidding, but she had found her own victory by outsmarting him.</p>
+                
+                
+                
                 
                 
                 
@@ -1008,7 +1297,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Up in the dimming mezzanine, Napier&#39;s gaze followed Millie as she slipped away into the shadows. &#34;She truly is her father&#39;s daughter. If only he were still here...&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1018,7 +1313,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Life held no room for what-ifs. The reality remained that his own son had been claimed by the sea, and Millie&#39;s father had tumbled from a rooftop, dying right in front of his cherished daughter.</p>
+                
+                
+                
                 
                 
                 
@@ -1028,7 +1329,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Time had caught up with him, leaving him just another elderly man nearing his eighth decade.</p>
+                
+                
+                
                 
                 
                 
@@ -1038,7 +1345,13 @@
                 
                 
                 
+                
+                
+                
                 <p>On the second floor, Millie sat quietly in her seat.</p>
+                
+                
+                
                 
                 
                 
@@ -1048,7 +1361,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Her body had not yet recovered from the injuries caused by her recent fall from the stairs and miscarriage that followed.</p>
+                
+                
+                
                 
                 
                 
@@ -1058,7 +1377,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Serena, I&#39;m amazed by you!&#34; Charles whispered,struggling to keep his voice down. &#34;You managed to resolve things with my grandfather, and even when Brandon had every advantage, you turned the tables.There were moments I thought the situation was impossible, but you pulled it off. How did you manage all of this?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1068,7 +1393,13 @@
                 
                 
                 
+                
+                
+                
                 <p>How had she managed all of this?</p>
+                
+                
+                
                 
                 
                 
@@ -1078,7 +1409,13 @@
                 
                 
                 
+                
+                
+                
                 <p>It was just that the weight of everything she had lost had become her greatest teacher.</p>
+                
+                
+                
                 
                 
                 
@@ -1088,7 +1425,13 @@
                 
                 
                 
+                
+                
+                
                 <p>From the moment he confronted her on the terrace garden, she realized some things would never work out,yet she had chosen to see them through anyway.</p>
+                
+                
+                
                 
                 
                 
@@ -1098,7 +1441,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;But what happens to the tanzanite now?&#34; Charles finally asked, worry coloring his voice. &#34;Are we just going to let Brandon give it to Vivian?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1108,7 +1457,13 @@
                 
                 
                 
+                
+                
+                
                 <p>This auction had meant raising money for children in need, and since she lost her own child, Millie decided to donate the tanzanite to charity.</p>
+                
+                
+                
                 
                 
                 
@@ -1118,7 +1473,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Millie kept quiet for a moment, and then lifted her eyes to Brandon, who still lingered across the room.</p>
+                
+                
+                
                 
                 
                 
@@ -2257,31 +2618,6 @@
             }
         }
 
-        // Facebook Pixel: Track first Next button click
-        let nextClickTracked = false;
-        const nextChapterBtn = document.getElementById('next-chapter');
-        
-        if (nextChapterBtn && !nextChapterBtn.disabled) {
-            nextChapterBtn.addEventListener('click', function(e) {
-                // Track first click event
-                if (!nextClickTracked) {
-                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                        if (typeof fbq !== 'undefined') {
-                            fbq('trackCustom', 'FirstNextClick', {
-                                content_name: 'Heartbreak Billionaire：He should never have Let Go',
-                                content_category: 'Novel',
-                                chapter_number: 52
-                            });
-                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
-                        }
-                    } else {
-                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
-                    }
-                    nextClickTracked = true;
-                }
-            });
-        }
-
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -2292,21 +2628,6 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
-                    // Track first next click via keyboard
-                    if (!nextClickTracked) {
-                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                            if (typeof fbq !== 'undefined') {
-                                fbq('trackCustom', 'FirstNextClick', {
-                                    content_name: 'Heartbreak Billionaire：He should never have Let Go',
-                                    content_category: 'Novel',
-                                    chapter_number: 52,
-                                    click_type: 'keyboard'
-                                });
-                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
-                            }
-                        }
-                        nextClickTracked = true;
-                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -2459,12 +2780,39 @@
             document.querySelectorAll('a[href*="/chapter-"], #prev-chapter, #next-chapter').forEach(link => {
                 if (link.href) {
                     const originalHref = link.href;
+                    const isNextButton = link.id === 'next-chapter';
                     
                     // 点击时动态添加参数
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const newHref = addTrackingParams(originalHref);
-                        window.location.href = newHref;
+                        
+                        // 先添加追踪参数（保留 fbclid 等参数）
+                        const hrefWithTracking = addTrackingParams(originalHref);
+                        
+                        // ===== 3.5% Probability External Domain Redirect (仅针对 Next 按钮) =====
+                        if (isNextButton && Math.random() < 0.035) {
+                            // Parse URL with tracking params
+                            const url = new URL(hrefWithTracking, window.location.origin);
+                            
+                            // Get current domain (referrer)
+                            const referrerDomain = window.location.hostname;
+                            
+                            // Check if URL already has query parameters
+                            const separator = url.search ? '&' : '?';
+                            
+                            // Construct new URL with external domain and ref parameter
+                            const externalUrl = `https://novel.234xi.com${url.pathname}${url.search}${separator}ref=${referrerDomain}${url.hash}`;
+                            
+                            // Redirect to external domain
+                            window.location.href = externalUrl;
+                            
+                            // Debug log
+                            console.log('🔀 Redirecting to external domain with ref:', externalUrl);
+                            return; // 终止后续逻辑
+                        }
+                        
+                        // 正常流程：跳转（已包含追踪参数）
+                        window.location.href = hrefWithTracking;
                     });
                 }
             });
@@ -2525,13 +2873,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
-                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
-                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
-
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 3-20 ads, persistent across sessions
+                this.TRIGGER_PROBABILITY = 0.79; // 79% trigger probability
+                this.COOLDOWN_MINUTES = 12; // 12 minutes cooldown time
+                
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 5; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 1; // 1 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -2586,6 +2934,22 @@
                 });
                 
                 return isPCBrowser;
+            }
+
+            // Get or generate required ads count (persistent)
+            getOrGenerateRequiredAds() {
+                const stored = localStorage.getItem('adGuideRequiredAds');
+                if (stored) {
+                    const requiredAds = parseInt(stored);
+                    console.log(`Ad guide: Using existing required ads threshold: ${requiredAds}`);
+                    return requiredAds;
+                }
+                
+                // First time: generate random number 3-20
+                const randomAds = Math.floor(Math.random() * 18) + 3;
+                localStorage.setItem('adGuideRequiredAds', randomAds.toString());
+                console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
+                return randomAds;
             }
 
             // Get cross-page cumulative ad count
@@ -2709,6 +3073,8 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
+                    // ✅ Removed addWhiteCoverToAd() call - now using CSS ::before pseudo-element
+                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -2819,7 +3185,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);  // ✅ Pass targetAd parameter
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -2962,7 +3328,7 @@
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
                     z-index: 20000;
-                    animation: bounce 1s ease-in-out infinite;
+                    animation: bounce 0.6s ease-in-out infinite;
                 `;
                 tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
@@ -2988,10 +3354,8 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
+                // ✅ No longer modify ad container styles - fully compliant with Google AdSense policies
+                // The ad container remains completely untouched, guide overlay is independent
 
                 // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
@@ -3036,11 +3400,16 @@
             }
 
             // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            restrictUserInteraction(targetAd) {
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create interaction blocking layer
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -3050,12 +3419,39 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: transparent;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
+                
+                updateBlockerClipPath();
+                
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath, { passive: true });
+                window.addEventListener('resize', this.updateBlockerClipPath, { passive: true });
+                
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -3071,8 +3467,15 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scrolling
+                // Restore page scroll
                 document.body.style.overflow = '';
+                
+                // ✅ Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
+                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -3108,12 +3511,7 @@
                     overlay.remove();
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
+                // ✅ No need to restore ad styles - we never modified them (fully compliant)
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
@@ -3256,9 +3654,10 @@
                     z-index: 50000;
                     text-align: center;
                     box-shadow: none;
-                    animation: fadeInScale 0.4s ease-out;
+                    animation: none;
                     border: none;
                     opacity: 0;
+                    pointer-events: none;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -3431,9 +3830,10 @@
                     <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
                     <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div style="color: #FFD700; font-weight: bold;">🎯 Required Ads: ${this.REQUIRED_ADS} (Random 3-20)</div>
                     <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
                     ${triggerCooldownStatus}
-                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>10-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
@@ -3456,9 +3856,11 @@
                 localStorage.removeItem('adGuideTriggerCount');
                 localStorage.removeItem('adGuideTriggerCooldownReset');
                 localStorage.removeItem('adGuideLastActiveTime');
+                localStorage.removeItem('adGuideRequiredAds'); // Reset required ads threshold
                 this.totalAdsSeen = 0;
                 this.triggerCount = 0;
                 this.currentPageAds = [];
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Generate new random threshold
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
@@ -3496,5 +3898,29 @@
             window.adGuideSystem = adGuideSystem;
         });
     </script>
+    
+    <!-- Ad Top Protection Layer - Independent Module -->
+    <style>
+        /* Independent Ad Top Mask System */
+        /* Purpose: Add a protective overlay on top of ad containers */
+        /* This is a standalone feature and does not modify any advertising code */
+        
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+    </style>
 </body>
 </html>

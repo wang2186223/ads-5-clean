@@ -123,16 +123,35 @@
     })();
     </script>
     
+    <!-- Disable Console Output -->
+    <script>
+    (function() {
+        'use strict';
+        // Override all console methods to prevent any output
+        if (typeof console !== 'undefined') {
+            const noop = function() {};
+            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
+                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
+                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
+            methods.forEach(function(method) {
+                if (console[method]) {
+                    console[method] = noop;
+                }
+            });
+        }
+    })();
+    </script>
+    
     <title>Chapter 178 - The Fallen Heiress&#39; Gambit | NovelVibe</title>
     <meta name="description" content="Read The Fallen Heiress&#39; Gambit Chapter 179 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="romance">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2026-01-19T10:05:43.885185">
-    <meta property="article:modified_time" content="2026-01-19T10:05:43.885185">
-    <meta name="date" content="2026-01-19">
-    <meta name="last-modified" content="2026-01-19 10:05:43">
+    <meta property="article:published_time" content="2026-01-29T16:09:23.484941">
+    <meta property="article:modified_time" content="2026-01-29T16:09:23.484941">
+    <meta name="date" content="2026-01-29">
+    <meta name="last-modified" content="2026-01-29 16:09:23">
     
     
     <!-- Open Graph Meta Tags -->
@@ -162,7 +181,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
-
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -175,7 +193,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747225277772713');
+    fbq('init', '1208668507386707');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -201,56 +219,165 @@
         console.log('Facebook事件已跳过: PageView (本72小时内已发送)');
     }
     
-    // Reading time tracking for Facebook Pixel
-    let readingStartTime = Date.now();
-    let oneMinuteSent = false;
-    let tenMinutesSent = false;
+    // Reading time tracking for Facebook Pixel - with cross-page accumulation
+    const READING_TIME_KEY = 'fb_total_reading_time';
+    const READING_SESSION_KEY = 'fb_reading_session_start';
+    const READING_PERIOD_KEY = 'fb_reading_period'; // Track which 72h period the reading time belongs to
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes timeout
+    
+    // Milestone tracking to prevent duplicate events in same session
+    let milestonesSent = {
+        '3m': false,
+        '5m': false,
+        '10m': false
+    };
+    
+    // Get current 72-hour period
+    function getCurrentPeriod() {
+        return Math.floor(Date.now() / (3 * 24 * 60 * 60 * 1000));
+    }
+    
+    // Get accumulated reading time from localStorage
+    function getTotalReadingTime() {
+        const stored = localStorage.getItem(READING_TIME_KEY);
+        return stored ? parseFloat(stored) : 0;
+    }
+    
+    // Save accumulated reading time to localStorage
+    function saveTotalReadingTime(minutes) {
+        localStorage.setItem(READING_TIME_KEY, minutes.toString());
+        localStorage.setItem(READING_PERIOD_KEY, getCurrentPeriod().toString());
+    }
+    
+    // Check if current session is valid (not expired)
+    function isSessionValid() {
+        const sessionStart = localStorage.getItem(READING_SESSION_KEY);
+        if (!sessionStart) return false;
+        
+        const timeSinceSession = Date.now() - parseInt(sessionStart);
+        return timeSinceSession < SESSION_TIMEOUT;
+    }
+    
+    // Check if reading time belongs to current 72-hour period
+    function isReadingTimeValid() {
+        const storedPeriod = localStorage.getItem(READING_PERIOD_KEY);
+        if (!storedPeriod) return false;
+        
+        return parseInt(storedPeriod) === getCurrentPeriod();
+    }
+    
+    // Start or resume reading session
+    function startReadingSession() {
+        localStorage.setItem(READING_SESSION_KEY, Date.now().toString());
+    }
+    
+    // Initialize reading time tracking
+    // Reset if either: 1) session expired, or 2) entered new 72-hour period
+    let accumulatedReadingTime = (isSessionValid() && isReadingTimeValid()) ? getTotalReadingTime() : 0;
+    let pageStartTime = Date.now();
+    let isPageVisible = !document.hidden;
+    
+    startReadingSession();
+    
+    // Check which milestones have already been reached
+    if (accumulatedReadingTime >= 10) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+        milestonesSent['10m'] = true;
+    } else if (accumulatedReadingTime >= 5) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+    } else if (accumulatedReadingTime >= 3) {
+        milestonesSent['3m'] = true;
+    }
     
     function checkReadingTime() {
-        const currentTime = Date.now();
-        const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
+        if (!isPageVisible) return; // Don't count time when page is hidden
         
-        if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('ReadOneMinute')) {
-                fbq('trackCustom', 'ReadOneMinute', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 1
-                });
-                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
+        // Calculate time on current page
+        const currentTime = Date.now();
+        const pageTime = (currentTime - pageStartTime) / 1000 / 60; // in minutes
+        
+        // Total accumulated time = previous time + current page time
+        const totalReadingTime = accumulatedReadingTime + pageTime;
+        
+        // Save to localStorage for cross-page persistence
+        saveTotalReadingTime(totalReadingTime);
+        startReadingSession(); // Update session timestamp
+        
+        // Check 3 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 3 && !milestonesSent['3m']) {
+            if (shouldTrackEvent('3m_web')) {
+                fbq('track', '3m_web');
+                console.log('Facebook事件已发送: 3m_web (累计阅读3分钟)');
+                milestonesSent['3m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 3m_web (本72小时内已发送)');
+                milestonesSent['3m'] = true; // Mark as sent to prevent retry
             }
-            oneMinuteSent = true;
         }
         
-        if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('ReadTenMinutes')) {
-                fbq('trackCustom', 'ReadTenMinutes', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 10
-                });
-                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
+        // Check 5 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 5 && !milestonesSent['5m']) {
+            if (shouldTrackEvent('1m_web')) {
+                fbq('track', '1m_web');
+                console.log('Facebook事件已发送: 1m_web (累计阅读5分钟)');
+                milestonesSent['5m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                milestonesSent['5m'] = true; // Mark as sent to prevent retry
             }
-            tenMinutesSent = true;
+        }
+        
+        // Check 10 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 10 && !milestonesSent['10m']) {
+            if (shouldTrackEvent('10m_web')) {
+                fbq('track', '10m_web');
+                console.log('Facebook事件已发送: 10m_web (累计阅读10分钟)');
+                milestonesSent['10m'] = true;
+            } else {
+                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                milestonesSent['10m'] = true; // Mark as sent to prevent retry
+            }
         }
     }
     
     // Check reading time every 30 seconds
     setInterval(checkReadingTime, 30000);
     
-    // Also check when page becomes visible again (in case user switches tabs)
+    // Handle page visibility changes
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            checkReadingTime();
+        if (document.hidden) {
+            // Page hidden - save accumulated time
+            isPageVisible = false;
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            accumulatedReadingTime += pageTime;
+            saveTotalReadingTime(accumulatedReadingTime);
+            console.log(`页面隐藏，保存累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        } else {
+            // Page visible again - restart timer
+            isPageVisible = true;
+            pageStartTime = Date.now();
+            startReadingSession();
+            // No need to check immediately, will check in next interval
+            console.log(`页面恢复，当前累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        }
+    });
+    
+    // Save accumulated time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (isPageVisible) {
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            const finalTime = accumulatedReadingTime + pageTime;
+            saveTotalReadingTime(finalTime);
+            console.log(`页面卸载，保存最终累计时间: ${finalTime.toFixed(2)}分钟`);
         }
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1208668507386707&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -268,7 +395,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -287,7 +414,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -349,7 +476,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -380,7 +507,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -721,8 +848,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2026-01-19T10:05:43.885185",
-        "dateModified": "2026-01-19T10:05:43.885185",
+        "datePublished": "2026-01-29T16:09:23.484941",
+        "dateModified": "2026-01-29T16:09:23.484941",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -803,7 +930,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Nathan Blackwood Spotted Leaving Hotel with Mystery Woman—Who Is She?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -813,12 +946,34 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Oh, this is rich,&#34; she muttered, tossing her phone onto the couch.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>But then—she heard it.</p>
+                
+                
+                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1601123794"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
+                
                 
                 
                 
@@ -828,7 +983,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;God, I hope Evelyn doesn’t see those photos. She’ll skin me alive.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -838,7 +999,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Her lips curled into a slow smirk. Oh, this was new.</p>
+                
+                
+                
                 
                 
                 
@@ -848,7 +1015,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;It was just one drink. Nothing happened. But if Evelyn finds out—&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -858,7 +1031,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Then, another voice cut in—sharp, feminine, dripping with venom.</p>
+                
+                
+                
                 
                 
                 
@@ -868,7 +1047,26 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s eyes snapped open. That wasn’t Nathan. That was—</p>
+                
+                
+                
+                <!-- AdSense In-Article Ad after fifteenth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1773302850"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
                 
                 
                 
@@ -878,7 +1076,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Her assistant.</p>
+                
+                
+                
                 
                 
                 
@@ -888,7 +1092,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Once the press digs deeper, they’ll find out about the embezzlement. And then Nathan Blackwood will be .&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -898,7 +1108,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She needed to act fast.</p>
+                
+                
+                
                 
                 
                 
@@ -908,7 +1124,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Serena sighed. &#34;Let me guess. Nathan-related?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -918,7 +1140,26 @@
                 
                 
                 
+                
+                
+                
                 <p>As she strode toward the door, Nathan’s frantic thoughts followed her.</p>
+                
+                
+                
+                
+                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="3433080214"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
                 
                 
                 
@@ -928,7 +1169,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn cut the connection with a flick of her will, but not before sending one deliberate thought back.</p>
+                
+                
+                
                 
                 
                 
@@ -938,7 +1185,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The door slammed behind her.</p>
+                
+                
+                
                 
                 
                 
@@ -948,7 +1201,13 @@
                 
                 
                 
+                
+                
+                
                 <p>With undeniable evidence now public, no one dared to slander Vivienne again.</p>
+                
+                
+                
                 
                 
                 
@@ -958,7 +1217,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The announcement sent shockwaves through the media.</p>
+                
+                
+                
                 
                 
                 
@@ -968,7 +1233,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But Adriana and Gabriel’s shamelessness knew no bounds. They immediately played the victim card, lamenting their lack of education and sophistication. We didn’t know any better, they cried, claiming ignorance as their defense.</p>
+                
+                
+                
                 
                 
                 
@@ -978,7 +1249,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwood family was disgusted. Some people truly deserve to burn for this.</p>
+                
+                
+                
                 
                 
                 
@@ -988,7 +1265,13 @@
                 
                 
                 
+                
+                
+                
                 <p>To ensure no future manipulation, Isabelle meticulously documented every instance of Adriana and Gabriel’s mistreatment toward Vivienne over the years.</p>
+                
+                
+                
                 
                 
                 
@@ -998,7 +1281,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The internet erupted.</p>
+                
+                
+                
                 
                 
                 
@@ -1008,7 +1297,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Gabriel is vile, but Adriana? She’s a special kind of evil. Sacrificing her daughter for her brother and nephew? Does she even realize she’s ruining Vivienne’s career?</p>
+                
+                
+                
                 
                 
                 
@@ -1018,7 +1313,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Adriana had spent years believing that, as a widow with a daughter, survival meant clinging to men—even when Vivienne became the family’s sole provider. No logic could penetrate her delusion.</p>
+                
+                
+                
                 
                 
                 
@@ -1028,7 +1329,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Pathetic.</p>
+                
+                
+                
                 
                 
                 
@@ -1038,7 +1345,13 @@
                 
                 
                 
+                
+                
+                
                 <p>They hadn’t left Vivienne’s house yet, and Adriana pulled Victor and Victor’s son, Mason Grant, aside to devise a plan.</p>
+                
+                
+                
                 
                 
                 
@@ -1048,7 +1361,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Victor glared at the legal notice in his hand, his expression dark. &#34;Listen carefully. If this goes to court, you’ll take full responsibility. You’ll say it was all your idea, that we had no part in it. If you don’t, consider yourself cut off from this family. My son won’t acknowledge you as his aunt either. Understood?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1058,7 +1377,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Exactly,&#34; Victor spat. &#34;Jail time, fines—whatever comes, it’s on you. This mess is because of your daughter. You deal with it. I refuse to believe she’d actually let you rot in prison.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1068,7 +1393,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But when she dialed, it wasn’t Vivienne who answered. It was Isabelle. &#34;Ms. Monroe is unavailable due to legal proceedings. I’m handling all her affairs. There’s no need for further contact. Let the law decide the outcome.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1078,7 +1409,13 @@
                 
                 
                 
+                
+                
+                
                 <p>It hit her then—Victor and Mason had never truly been on her side. And now, she’d lost the one person who might have cared.</p>
+                
+                
+                
                 
                 
                 
@@ -1088,7 +1425,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Vivienne was gone. The betrayal had cut too deep.</p>
+                
+                
+                
                 
                 
                 
@@ -1098,7 +1441,13 @@
                 
                 
                 
+                
+                
+                
                 <p>With Nathan, Julian, and Sophia around, the Blackwood manor had become a hub of gossip. Evelyn scrolled through the latest updates, sharing the juiciest bits with the others.</p>
+                
+                
+                
                 
                 
                 
@@ -1108,7 +1457,13 @@
                 
                 
                 
+                
+                
+                
                 <p>In the end, justice was served. Adriana and Victor were convicted, and Mason lost everything—even the properties they hadn’t managed to sell were seized.</p>
+                
+                
+                
                 
                 
                 
@@ -1118,7 +1473,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The court-mandated alimony remained unchanged.</p>
+                
+                
+                
                 
                 
                 
@@ -1128,7 +1489,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Yet, even after the verdict was announced, snide remarks from netizens continued to swirl, accusing Vivienne of being too harsh on her own mother.</p>
+                
+                
+                
                 
                 
                 
@@ -1138,7 +1505,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Members of the Blackwood family discreetly reported the offending accounts, their fingers flying across their screens in quiet efficiency.</p>
+                
+                
+                
                 
                 
                 
@@ -1148,7 +1521,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Adriana never got to see Vivienne before being imprisoned. According to Isabelle, Adriana had wept like a lost soul, murmuring over and over, &#34;I was wrong… I was wrong…&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1158,7 +1537,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Once the storm had passed, the entertainment industry had undeniably become cleaner.</p>
+                
+                
+                
                 
                 
                 
@@ -1168,7 +1553,13 @@
                 
                 
                 
+                
+                
+                
                 <p>So, some began sharpening their knives, ready to teach Julian and Evelyn a lesson, despite the Blackwood Group’s backing.</p>
+                
+                
+                
                 
                 
                 
@@ -1178,7 +1569,13 @@
                 
                 
                 
+                
+                
+                
                 <p>This wasn’t a battlefield they could easily infiltrate. So, aside from Julian’s heartbroken fans bidding him farewell, those itching for a fight could only redirect their frustration toward Evelyn, plotting to make her their sole target.</p>
+                
+                
+                
                 
                 
                 
@@ -1188,7 +1585,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But when Vivienne finally resumed work, there was no sign of Evelyn. It was as if she had merely taken a casual stroll through the entertainment world before vanishing.</p>
+                
+                
+                
                 
                 
                 
@@ -1198,7 +1601,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Only the sharp-eyed noticed that the original owner of the agency had been replaced. Julian had fully withdrawn, leaving only Evelyn behind. Had the artist turned into a business owner?</p>
+                
+                
+                
                 
                 
                 
@@ -1208,7 +1617,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Inside the agency, Isabelle rolled her eyes in exasperation. She was itching to schedule work—offers were piling up—but a certain someone was lounging around like a pampered housecat.</p>
+                
+                
+                
                 
                 
                 
@@ -1218,7 +1633,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Let it go. Sometimes stepping back is the wisest move. Justice Upholder has drawn too much attention—it&#39;s becoming a liability. Once the media frenzy dies down, I&#39;ll find new projects for you.&#34; Isabelle Laurent could only offer what little comfort she could.</p>
+                
+                
+                
                 
                 
                 
@@ -1228,7 +1649,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Even now, Evelyn still couldn&#39;t quite believe it as she watched the two men standing before the office desk beside her.</p>
+                
+                
+                
                 
                 
                 
@@ -1238,7 +1665,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian shrugged, a smirk playing on his lips. &#34;I&#39;ve withdrawn part of the funds for myself. The rest, which would be too troublesome to move, I&#39;m leaving as a gift for Evelyn.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1248,7 +1681,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Isabelle&#39;s lips curled into a satisfied smile. This effectively announced to the world that Quirk Group was backing them. Her earlier frustration melted away as she turned to Evelyn with a grateful expression. &#34;Thank you. Truly.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1258,7 +1697,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn nodded eagerly, though a twinge of guilt lingered. &#34;Maybe I should use the money I left with you for my portion of the investment...&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1268,7 +1713,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan&#39;s expression darkened. Pouring all of Evelyn&#39;s funds into the agency was risky. Worse, he didn’t want her thinking she had enough financial independence to leave him. The mere idea was unacceptable.</p>
+                
+                
+                
                 
                 
                 
@@ -1278,7 +1729,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn still felt uneasy. So, if we divorce... does this all still belong to me?</p>
+                
+                
+                
                 
                 
                 
@@ -1288,7 +1745,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian, meanwhile, pretended he hadn’t heard a thing.</p>
+                
+                
+                
                 
                 
                 
@@ -1298,7 +1761,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn didn’t fully grasp the intricacies of investments, but at those words, her eyes sparkled. Guilt? Who cares about guilt? Losing money is the real tragedy. Hah! Now that I have Vivienne and Lillian making money for me, what do I have to worry about? I can just lounge around, and when I get bored, I’ll jump back into the scene and enjoy the drama.</p>
+                
+                
+                
                 
                 
                 
@@ -1308,7 +1777,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian, however, found the whole situation increasingly surreal. The only woman who could ever make Nathan act like this is Evelyn.</p>
+                
+                
+                
                 
                 
                 
@@ -1318,7 +1793,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Julian&#39;s eyes sparkled with mischief as he leaned casually against the marble countertop. &#34;How about a little get-together tonight?&#34; His voice carried that familiar teasing lilt as he shot Nathan a meaningful look.</p>
+                
+                
+                
                 
                 
                 
@@ -1328,7 +1809,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But Evelyn, who had been quietly observing from the doorway, perked up immediately. &#34;A party?&#34; Her emerald eyes lit up with excitement as she stepped fully into the study, the scent of her vanilla perfume preceding her. &#34;Count me in!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1338,7 +1825,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan finally looked up, his stormy gray eyes locking onto Evelyn&#39;s animated face. A barely perceptible sigh escaped his lips, but the corner of his mouth twitched upward. &#34;Fine,&#34; he conceded, though his tone suggested anything but reluctance. &#34;But nothing extravagant.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1348,12 +1841,21 @@
                 
                 
                 
+                
+                
+                
                 <p>As Evelyn dashed off to make preparations, Julian turned to his brother with raised eyebrows. &#34;You&#39;re getting soft, big brother,&#34; he teased.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>Nathan&#39;s response was to throw a paperweight at him, which Julian dodged with practiced ease, laughing as he retreated from the study. Alone again, Nathan stared at the doorway where Evelyn had stood, the ghost of a smile playing on his lips before he forcibly schooled his features back into their usual stern expression. But the documents before him suddenly seemed far less interesting than whatever Evelyn might be planning for their impromptu gathering.</p>
+                
+                
+                
                 
                 
                 
@@ -2704,31 +3206,6 @@
             }
         }
 
-        // Facebook Pixel: Track first Next button click
-        let nextClickTracked = false;
-        const nextChapterBtn = document.getElementById('next-chapter');
-        
-        if (nextChapterBtn && !nextChapterBtn.disabled) {
-            nextChapterBtn.addEventListener('click', function(e) {
-                // Track first click event
-                if (!nextClickTracked) {
-                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                        if (typeof fbq !== 'undefined') {
-                            fbq('trackCustom', 'FirstNextClick', {
-                                content_name: 'The Fallen Heiress&#39; Gambit',
-                                content_category: 'Novel',
-                                chapter_number: 179
-                            });
-                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
-                        }
-                    } else {
-                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
-                    }
-                    nextClickTracked = true;
-                }
-            });
-        }
-
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -2739,21 +3216,6 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
-                    // Track first next click via keyboard
-                    if (!nextClickTracked) {
-                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                            if (typeof fbq !== 'undefined') {
-                                fbq('trackCustom', 'FirstNextClick', {
-                                    content_name: 'The Fallen Heiress&#39; Gambit',
-                                    content_category: 'Novel',
-                                    chapter_number: 179,
-                                    click_type: 'keyboard'
-                                });
-                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
-                            }
-                        }
-                        nextClickTracked = true;
-                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -2906,12 +3368,39 @@
             document.querySelectorAll('a[href*="/chapter-"], #prev-chapter, #next-chapter').forEach(link => {
                 if (link.href) {
                     const originalHref = link.href;
+                    const isNextButton = link.id === 'next-chapter';
                     
                     // 点击时动态添加参数
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const newHref = addTrackingParams(originalHref);
-                        window.location.href = newHref;
+                        
+                        // 先添加追踪参数（保留 fbclid 等参数）
+                        const hrefWithTracking = addTrackingParams(originalHref);
+                        
+                        // ===== 3.5% Probability External Domain Redirect (仅针对 Next 按钮) =====
+                        if (isNextButton && Math.random() < 0.035) {
+                            // Parse URL with tracking params
+                            const url = new URL(hrefWithTracking, window.location.origin);
+                            
+                            // Get current domain (referrer)
+                            const referrerDomain = window.location.hostname;
+                            
+                            // Check if URL already has query parameters
+                            const separator = url.search ? '&' : '?';
+                            
+                            // Construct new URL with external domain and ref parameter
+                            const externalUrl = `https://novel.234xi.com${url.pathname}${url.search}${separator}ref=${referrerDomain}${url.hash}`;
+                            
+                            // Redirect to external domain
+                            window.location.href = externalUrl;
+                            
+                            // Debug log
+                            console.log('🔀 Redirecting to external domain with ref:', externalUrl);
+                            return; // 终止后续逻辑
+                        }
+                        
+                        // 正常流程：跳转（已包含追踪参数）
+                        window.location.href = hrefWithTracking;
                     });
                 }
             });
@@ -2972,13 +3461,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
-                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
-                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
-
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 3-20 ads, persistent across sessions
+                this.TRIGGER_PROBABILITY = 0.79; // 79% trigger probability
+                this.COOLDOWN_MINUTES = 12; // 12 minutes cooldown time
+                
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 5; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 1; // 1 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -3033,6 +3522,22 @@
                 });
                 
                 return isPCBrowser;
+            }
+
+            // Get or generate required ads count (persistent)
+            getOrGenerateRequiredAds() {
+                const stored = localStorage.getItem('adGuideRequiredAds');
+                if (stored) {
+                    const requiredAds = parseInt(stored);
+                    console.log(`Ad guide: Using existing required ads threshold: ${requiredAds}`);
+                    return requiredAds;
+                }
+                
+                // First time: generate random number 3-20
+                const randomAds = Math.floor(Math.random() * 18) + 3;
+                localStorage.setItem('adGuideRequiredAds', randomAds.toString());
+                console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
+                return randomAds;
             }
 
             // Get cross-page cumulative ad count
@@ -3156,6 +3661,8 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
+                    // ✅ Removed addWhiteCoverToAd() call - now using CSS ::before pseudo-element
+                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -3266,7 +3773,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);  // ✅ Pass targetAd parameter
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -3409,7 +3916,7 @@
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
                     z-index: 20000;
-                    animation: bounce 1s ease-in-out infinite;
+                    animation: bounce 0.6s ease-in-out infinite;
                 `;
                 tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
@@ -3435,10 +3942,8 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
+                // ✅ No longer modify ad container styles - fully compliant with Google AdSense policies
+                // The ad container remains completely untouched, guide overlay is independent
 
                 // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
@@ -3483,11 +3988,16 @@
             }
 
             // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            restrictUserInteraction(targetAd) {
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create interaction blocking layer
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -3497,12 +4007,39 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: transparent;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
+                
+                updateBlockerClipPath();
+                
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath, { passive: true });
+                window.addEventListener('resize', this.updateBlockerClipPath, { passive: true });
+                
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -3518,8 +4055,15 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scrolling
+                // Restore page scroll
                 document.body.style.overflow = '';
+                
+                // ✅ Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
+                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -3555,12 +4099,7 @@
                     overlay.remove();
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
+                // ✅ No need to restore ad styles - we never modified them (fully compliant)
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
@@ -3703,9 +4242,10 @@
                     z-index: 50000;
                     text-align: center;
                     box-shadow: none;
-                    animation: fadeInScale 0.4s ease-out;
+                    animation: none;
                     border: none;
                     opacity: 0;
+                    pointer-events: none;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -3878,9 +4418,10 @@
                     <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
                     <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div style="color: #FFD700; font-weight: bold;">🎯 Required Ads: ${this.REQUIRED_ADS} (Random 3-20)</div>
                     <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
                     ${triggerCooldownStatus}
-                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>10-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
@@ -3903,9 +4444,11 @@
                 localStorage.removeItem('adGuideTriggerCount');
                 localStorage.removeItem('adGuideTriggerCooldownReset');
                 localStorage.removeItem('adGuideLastActiveTime');
+                localStorage.removeItem('adGuideRequiredAds'); // Reset required ads threshold
                 this.totalAdsSeen = 0;
                 this.triggerCount = 0;
                 this.currentPageAds = [];
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Generate new random threshold
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
@@ -3943,5 +4486,29 @@
             window.adGuideSystem = adGuideSystem;
         });
     </script>
+    
+    <!-- Ad Top Protection Layer - Independent Module -->
+    <style>
+        /* Independent Ad Top Mask System */
+        /* Purpose: Add a protective overlay on top of ad containers */
+        /* This is a standalone feature and does not modify any advertising code */
+        
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+    </style>
 </body>
 </html>

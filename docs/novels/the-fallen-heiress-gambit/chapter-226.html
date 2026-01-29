@@ -123,16 +123,35 @@
     })();
     </script>
     
+    <!-- Disable Console Output -->
+    <script>
+    (function() {
+        'use strict';
+        // Override all console methods to prevent any output
+        if (typeof console !== 'undefined') {
+            const noop = function() {};
+            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
+                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
+                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
+            methods.forEach(function(method) {
+                if (console[method]) {
+                    console[method] = noop;
+                }
+            });
+        }
+    })();
+    </script>
+    
     <title>Chapter 225 - The Fallen Heiress&#39; Gambit | NovelVibe</title>
     <meta name="description" content="Read The Fallen Heiress&#39; Gambit Chapter 226 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="romance">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2026-01-19T10:05:44.082778">
-    <meta property="article:modified_time" content="2026-01-19T10:05:44.082778">
-    <meta name="date" content="2026-01-19">
-    <meta name="last-modified" content="2026-01-19 10:05:44">
+    <meta property="article:published_time" content="2026-01-29T16:09:23.598412">
+    <meta property="article:modified_time" content="2026-01-29T16:09:23.598412">
+    <meta name="date" content="2026-01-29">
+    <meta name="last-modified" content="2026-01-29 16:09:23">
     
     
     <!-- Open Graph Meta Tags -->
@@ -162,7 +181,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
-
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -175,7 +193,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747225277772713');
+    fbq('init', '1208668507386707');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -201,56 +219,165 @@
         console.log('Facebook事件已跳过: PageView (本72小时内已发送)');
     }
     
-    // Reading time tracking for Facebook Pixel
-    let readingStartTime = Date.now();
-    let oneMinuteSent = false;
-    let tenMinutesSent = false;
+    // Reading time tracking for Facebook Pixel - with cross-page accumulation
+    const READING_TIME_KEY = 'fb_total_reading_time';
+    const READING_SESSION_KEY = 'fb_reading_session_start';
+    const READING_PERIOD_KEY = 'fb_reading_period'; // Track which 72h period the reading time belongs to
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes timeout
+    
+    // Milestone tracking to prevent duplicate events in same session
+    let milestonesSent = {
+        '3m': false,
+        '5m': false,
+        '10m': false
+    };
+    
+    // Get current 72-hour period
+    function getCurrentPeriod() {
+        return Math.floor(Date.now() / (3 * 24 * 60 * 60 * 1000));
+    }
+    
+    // Get accumulated reading time from localStorage
+    function getTotalReadingTime() {
+        const stored = localStorage.getItem(READING_TIME_KEY);
+        return stored ? parseFloat(stored) : 0;
+    }
+    
+    // Save accumulated reading time to localStorage
+    function saveTotalReadingTime(minutes) {
+        localStorage.setItem(READING_TIME_KEY, minutes.toString());
+        localStorage.setItem(READING_PERIOD_KEY, getCurrentPeriod().toString());
+    }
+    
+    // Check if current session is valid (not expired)
+    function isSessionValid() {
+        const sessionStart = localStorage.getItem(READING_SESSION_KEY);
+        if (!sessionStart) return false;
+        
+        const timeSinceSession = Date.now() - parseInt(sessionStart);
+        return timeSinceSession < SESSION_TIMEOUT;
+    }
+    
+    // Check if reading time belongs to current 72-hour period
+    function isReadingTimeValid() {
+        const storedPeriod = localStorage.getItem(READING_PERIOD_KEY);
+        if (!storedPeriod) return false;
+        
+        return parseInt(storedPeriod) === getCurrentPeriod();
+    }
+    
+    // Start or resume reading session
+    function startReadingSession() {
+        localStorage.setItem(READING_SESSION_KEY, Date.now().toString());
+    }
+    
+    // Initialize reading time tracking
+    // Reset if either: 1) session expired, or 2) entered new 72-hour period
+    let accumulatedReadingTime = (isSessionValid() && isReadingTimeValid()) ? getTotalReadingTime() : 0;
+    let pageStartTime = Date.now();
+    let isPageVisible = !document.hidden;
+    
+    startReadingSession();
+    
+    // Check which milestones have already been reached
+    if (accumulatedReadingTime >= 10) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+        milestonesSent['10m'] = true;
+    } else if (accumulatedReadingTime >= 5) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+    } else if (accumulatedReadingTime >= 3) {
+        milestonesSent['3m'] = true;
+    }
     
     function checkReadingTime() {
-        const currentTime = Date.now();
-        const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
+        if (!isPageVisible) return; // Don't count time when page is hidden
         
-        if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('ReadOneMinute')) {
-                fbq('trackCustom', 'ReadOneMinute', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 1
-                });
-                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
+        // Calculate time on current page
+        const currentTime = Date.now();
+        const pageTime = (currentTime - pageStartTime) / 1000 / 60; // in minutes
+        
+        // Total accumulated time = previous time + current page time
+        const totalReadingTime = accumulatedReadingTime + pageTime;
+        
+        // Save to localStorage for cross-page persistence
+        saveTotalReadingTime(totalReadingTime);
+        startReadingSession(); // Update session timestamp
+        
+        // Check 3 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 3 && !milestonesSent['3m']) {
+            if (shouldTrackEvent('3m_web')) {
+                fbq('track', '3m_web');
+                console.log('Facebook事件已发送: 3m_web (累计阅读3分钟)');
+                milestonesSent['3m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 3m_web (本72小时内已发送)');
+                milestonesSent['3m'] = true; // Mark as sent to prevent retry
             }
-            oneMinuteSent = true;
         }
         
-        if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('ReadTenMinutes')) {
-                fbq('trackCustom', 'ReadTenMinutes', {
-                    content_name: 'The Fallen Heiress&#39; Gambit',
-                    content_category: 'Novel',
-                    reading_time: 10
-                });
-                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
+        // Check 5 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 5 && !milestonesSent['5m']) {
+            if (shouldTrackEvent('1m_web')) {
+                fbq('track', '1m_web');
+                console.log('Facebook事件已发送: 1m_web (累计阅读5分钟)');
+                milestonesSent['5m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                milestonesSent['5m'] = true; // Mark as sent to prevent retry
             }
-            tenMinutesSent = true;
+        }
+        
+        // Check 10 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 10 && !milestonesSent['10m']) {
+            if (shouldTrackEvent('10m_web')) {
+                fbq('track', '10m_web');
+                console.log('Facebook事件已发送: 10m_web (累计阅读10分钟)');
+                milestonesSent['10m'] = true;
+            } else {
+                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                milestonesSent['10m'] = true; // Mark as sent to prevent retry
+            }
         }
     }
     
     // Check reading time every 30 seconds
     setInterval(checkReadingTime, 30000);
     
-    // Also check when page becomes visible again (in case user switches tabs)
+    // Handle page visibility changes
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            checkReadingTime();
+        if (document.hidden) {
+            // Page hidden - save accumulated time
+            isPageVisible = false;
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            accumulatedReadingTime += pageTime;
+            saveTotalReadingTime(accumulatedReadingTime);
+            console.log(`页面隐藏，保存累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        } else {
+            // Page visible again - restart timer
+            isPageVisible = true;
+            pageStartTime = Date.now();
+            startReadingSession();
+            // No need to check immediately, will check in next interval
+            console.log(`页面恢复，当前累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        }
+    });
+    
+    // Save accumulated time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (isPageVisible) {
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            const finalTime = accumulatedReadingTime + pageTime;
+            saveTotalReadingTime(finalTime);
+            console.log(`页面卸载，保存最终累计时间: ${finalTime.toFixed(2)}分钟`);
         }
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1208668507386707&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -268,7 +395,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -287,7 +414,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -349,7 +476,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -380,7 +507,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -721,8 +848,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2026-01-19T10:05:44.082778",
-        "dateModified": "2026-01-19T10:05:44.082778",
+        "datePublished": "2026-01-29T16:09:23.598412",
+        "dateModified": "2026-01-29T16:09:23.598412",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -803,7 +930,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The city below was just waking up, but Evelyn’s mind was already racing. The gala had been a success—her new film project had garnered attention, and whispers of her undeniable chemistry with Nathan had spread like wildfire. But beneath the glittering surface, tension simmered.</p>
+                
+                
+                
                 
                 
                 
@@ -813,12 +946,34 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn exhaled sharply, her fingers tightening around the silk robe she’d thrown on. Victoria wasn’t just Nathan’s secretary—she was a viper waiting to strike. And after last night’s whispered threats, Evelyn knew the woman wouldn’t hesitate to sink her fangs in.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>A rustle of sheets drew her attention. Nathan was awake now, his dark eyes tracking her every move. “You’re up early,” he murmured, voice rough with sleep.</p>
+                
+                
+                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1601123794"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
+                
                 
                 
                 
@@ -828,7 +983,13 @@
                 
                 
                 
+                
+                
+                
                 <p>He sat up, the sheets pooling around his waist. “Thinking about Victoria?”</p>
+                
+                
+                
                 
                 
                 
@@ -838,7 +999,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan smirked, but there was no humor in it. “She’s been with me for years. She knows how to play the game.”</p>
+                
+                
+                
                 
                 
                 
@@ -848,7 +1015,13 @@
                 
                 
                 
+                
+                
+                
                 <p>His expression darkened. “Power. Control. She thinks she can manipulate me.” His hand shot out, catching her wrist and pulling her onto the bed. “But she doesn’t know you.”</p>
+                
+                
+                
                 
                 
                 
@@ -858,7 +1031,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan’s grip tightened. “You fight back.”</p>
+                
+                
+                
                 
                 
                 
@@ -868,7 +1047,26 @@
                 
                 
                 
+                
+                
+                
                 <p>“Mr. Blackwood,” Victoria’s crisp voice called through the wood. “Your nine o’clock is here.”</p>
+                
+                
+                
+                <!-- AdSense In-Article Ad after fifteenth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1773302850"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                
                 
                 
                 
@@ -878,7 +1076,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn watched him dress with practiced efficiency, her mind already plotting. If Victoria wanted a war, she’d get one.</p>
+                
+                
+                
                 
                 
                 
@@ -888,7 +1092,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The members of the Blackwood family, scattered across the lavish venue, abruptly halted their conversations mid-sentence.</p>
+                
+                
+                
                 
                 
                 
@@ -898,7 +1108,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Though they stood at a distance, catching only fragments of the heated exchange—what in the world had just been revealed?</p>
+                
+                
+                
                 
                 
                 
@@ -908,7 +1124,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Richard and Margaret happened to be facing Serena Collins at that very moment.</p>
+                
+                
+                
                 
                 
                 
@@ -918,7 +1140,26 @@
                 
                 
                 
+                
+                
+                
                 <p>Yet here was the truth: Victor’s illegitimate son was nearly the same age as Daniel Wright. The revelation was nothing short of earth-shattering.</p>
+                
+                
+                
+                
+                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="3433080214"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
                 
                 
                 
@@ -928,7 +1169,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Meanwhile, Julian Blackwood stood outside and spotted Mason Wright strolling back leisurely, his demeanor relaxed.</p>
+                
+                
+                
                 
                 
                 
@@ -938,7 +1185,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But Daniel didn’t even know this man was his father’s secret son—so why would he attack him?</p>
+                
+                
+                
                 
                 
                 
@@ -948,7 +1201,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Then, without warning, Evelyn Sinclair’s piercing scream tore through the air, sharp and unmistakable.</p>
+                
+                
+                
                 
                 
                 
@@ -958,7 +1217,13 @@
                 
                 
                 
+                
+                
+                
                 <p>What now?</p>
+                
+                
+                
                 
                 
                 
@@ -968,7 +1233,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: &#34;It can’t be. This is absolutely impossible!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -978,7 +1249,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: &#34;Daniel’s wife is pregnant… with Mason’s child!&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -988,7 +1265,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Wait a minute.</p>
+                
+                
+                
                 
                 
                 
@@ -998,7 +1281,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Whose wife—and whose child?!</p>
+                
+                
+                
                 
                 
                 
@@ -1008,7 +1297,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The woman was too absorbed in the scandalous revelation to notice his reaction.</p>
+                
+                
+                
                 
                 
                 
@@ -1018,7 +1313,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods: Was she threatened? Coerced? Poor girl. That must have been hell.</p>
+                
+                
+                
                 
                 
                 
@@ -1028,7 +1329,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Blackmail! Mason must’ve had leverage. That’s the only explanation...</p>
+                
+                
+                
                 
                 
                 
@@ -1038,7 +1345,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She combed through the details again.</p>
+                
+                
+                
                 
                 
                 
@@ -1048,7 +1361,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Silence.</p>
+                
+                
+                
                 
                 
                 
@@ -1058,7 +1377,13 @@
                 
                 
                 
+                
+                
+                
                 <p>What the hell happened?!</p>
+                
+                
+                
                 
                 
                 
@@ -1068,7 +1393,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Then—Evelyn’s sharp inhale.</p>
+                
+                
+                
                 
                 
                 
@@ -1078,7 +1409,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods’ pulses spiked.</p>
+                
+                
+                
                 
                 
                 
@@ -1088,7 +1425,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Reality crashed over them, shattering every assumption.</p>
+                
+                
+                
                 
                 
                 
@@ -1098,7 +1441,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Is this some kind of twisted kink?</p>
+                
+                
+                
                 
                 
                 
@@ -1108,7 +1457,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: At first, she complained to teachers. But the more Mason got scolded, the worse he retaliated. Soon, classmates avoided her out of fear. They chose self-preservation over compassion.</p>
+                
+                
+                
                 
                 
                 
@@ -1118,7 +1473,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods exchanged bewildered glances. Wasn’t this supposed to be a straightforward hero-saves-the-damsel scenario?</p>
+                
+                
+                
                 
                 
                 
@@ -1128,7 +1489,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn continued, her voice measured. At the time, Amelia feared and resented Grayson, but she was deeply grateful to Daniel. After the school handled the incident, she accidentally witnessed Grayson speaking with Victor Reed on campus. She only knew Victor as Grayson’s father—not Daniel’s. Victor berated Grayson harshly, even striking him. &#34;Remember your place as an illegitimate child,&#34; he hissed. &#34;One more misstep, and I’ll have you sent away!&#34; When Grayson tried to call him &#39;Father,&#39; Victor silenced him with a glare.</p>
+                
+                
+                
                 
                 
                 
@@ -1138,7 +1505,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s lips thinned. After Victor left, Grayson broke down in the rain. To Amelia, he looked like a lost child. Something in her stirred—pity, perhaps—and she stepped forward, shielding him with her umbrella. At first, Grayson reacted with hostility, even raising a hand to strike her. But she didn’t flinch. She just stared at him, silent and sorrowful. Then, he shattered. He pulled her into a desperate embrace, sobbing against her shoulder. In a moment of raw emotion, he kissed her. She resisted at first, but then… she stopped. And just like that, Grayson carved a place for himself in her heart.</p>
+                
+                
+                
                 
                 
                 
@@ -1148,7 +1521,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn sighed. After their encounter, Grayson was mortified. He wanted to erase it from existence—especially since he’d never thought much of Amelia to begin with. Amelia wasn’t the type to demand commitment, so outwardly, nothing changed. But Grayson had a rebellious streak. He craved Victor’s approval and resented Daniel for having it. Since Daniel protected Amelia, Grayson targeted her even more fiercely.</p>
+                
+                
+                
                 
                 
                 
@@ -1158,7 +1537,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But once Grayson noticed Daniel’s attention waning, he lost interest in Amelia and started pursuing women who caught Daniel’s eye. Amelia, feeling abandoned, grew anxious. She began confiding in Daniel, her distress bleeding into their interactions. It didn’t take long for him to realize something was wrong.</p>
+                
+                
+                
                 
                 
                 
@@ -1168,7 +1553,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan’s jaw tightened. So let me get this straight. Amelia pitied Grayson, endured his abuse to protect him, and then… fell for him?</p>
+                
+                
+                
                 
                 
                 
@@ -1178,7 +1569,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The morning sun cast golden streaks across the penthouse as Evelyn Sinclair stirred beneath silk sheets. Her phone buzzed insistently on the nightstand—another message from Lillian Graves, her ever-efficient assistant.</p>
+                
+                
+                
                 
                 
                 
@@ -1188,7 +1585,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn groaned, rubbing her temples. Nathan had been relentless since their last encounter, his messages growing increasingly urgent. She knew what he wanted—answers she wasn’t ready to give.</p>
+                
+                
+                
                 
                 
                 
@@ -1198,7 +1601,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Good morning, Miss Sinclair,&#34; Claudia greeted warmly. &#34;I made your favorite—avocado toast with poached eggs.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1208,7 +1617,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Her phone buzzed once more. This time, it wasn’t Lillian.</p>
+                
+                
+                
                 
                 
                 
@@ -1218,7 +1633,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Nathan’s name flashed on the screen, sending an unwelcome jolt through her. She exhaled sharply, fingers hovering over the keyboard.</p>
+                
+                
+                
                 
                 
                 
@@ -1228,7 +1649,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;A-List Actor Harrison Montgomery Spotted with Mystery Woman Amidst Divorce Rumors.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1238,7 +1665,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Poor Natalie,&#34; Evelyn thought, though she knew the woman was far from helpless. Natalie had her own secrets—ones that could ruin Harrison if she chose to reveal them.</p>
+                
+                
+                
                 
                 
                 
@@ -1248,7 +1681,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Claudia hurried to answer it, returning moments later with a familiar face—Serena Whitmore, Evelyn’s sharp-witted agent.</p>
+                
+                
+                
                 
                 
                 
@@ -1258,7 +1697,13 @@
                 
                 
                 
+                
+                
+                
                 <p>&#34;Close enough,&#34; Evelyn muttered, tossing her phone onto the couch. &#34;Nathan won’t stop calling.&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1268,7 +1713,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn hesitated. The truth was complicated—wrapped in layers of past betrayals and unspoken promises.</p>
+                
+                
+                
                 
                 
                 
@@ -1278,7 +1729,13 @@
                 
                 
                 
+                
+                
+                
                 <p>This time, it wasn’t Nathan.</p>
+                
+                
+                
                 
                 
                 
@@ -1288,7 +1745,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s pulse quickened. Julian was Nathan’s brother, and if he was calling…</p>
+                
+                
+                
                 
                 
                 
@@ -1298,7 +1761,13 @@
                 
                 
                 
+                
+                
+                
                 <p>She swiped to answer. &#34;Marcus?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1308,7 +1777,13 @@
                 
                 
                 
+                
+                
+                
                 <p>A chill ran down her spine. &#34;Why? What happened?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1318,7 +1793,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The world tilted. Sophia—Nathan’s sister, her closest friend.</p>
+                
+                
+                
                 
                 
                 
@@ -1328,7 +1809,13 @@
                 
                 
                 
+                
+                
+                
                 <p>As she bolted toward the door, Serena called after her, &#34;Evelyn, wait—what about your meeting with Preston?&#34;</p>
+                
+                
+                
                 
                 
                 
@@ -1338,7 +1825,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Some things were more important than business.</p>
+                
+                
+                
                 
                 
                 
@@ -1348,7 +1841,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods: Huh? What... What does this mean?</p>
+                
+                
+                
                 
                 
                 
@@ -1358,7 +1857,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Amelia assumed Daniel would merely warn Ethan. But every time Daniel caught him, he reported him to the school, demanding his expulsion. Each time, Amelia intervened, begging Daniel not to go through with it. When questioned, she would only shake her head, tears welling in her eyes—so heartbroken that anyone who saw her would ache in sympathy.</p>
+                
+                
+                
                 
                 
                 
@@ -1368,7 +1873,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Naturally, Ethan noticed. He saw the way she looked at him—no hatred, only something unsettlingly close to devotion. No matter how cruelly he treated her, she never truly fought back. A little force, and she yielded. Often, she didn’t even protest.</p>
+                
+                
+                
                 
                 
                 
@@ -1378,7 +1889,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods exhaled sharply.</p>
+                
+                
+                
                 
                 
                 
@@ -1388,7 +1905,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s chest tightened. The truth was staggering.</p>
+                
+                
+                
                 
                 
                 
@@ -1398,7 +1921,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: During Daniel’s hospitalization, Amelia visited daily. There, she learned his injuries had destroyed his chance at the Air Force—years of preparation, gone. She wept endlessly. Daniel’s mother, Serena, was so moved by her devotion...</p>
+                
+                
+                
                 
                 
                 
@@ -1408,7 +1937,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Perhaps it was out of remorse, or perhaps she was moved by his unwavering devotion, but Amelia eventually agreed to date Daniel. Despite her unconventional views on love, she knew deep down where her happiness truly lay.</p>
+                
+                
+                
                 
                 
                 
@@ -1418,7 +1953,13 @@
                 
                 
                 
+                
+                
+                
                 <p>And now she was carrying Mason’s child?</p>
+                
+                
+                
                 
                 
                 
@@ -1428,7 +1969,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Now, they fully grasped the meaning of never judging a book by its cover.</p>
+                
+                
+                
                 
                 
                 
@@ -1438,7 +1985,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Under Daniel’s gentle care, the wounds in Amelia’s heart slowly began to heal. Though they attended different universities, they shared a sweet and tender college romance. During this time, Amelia met Daniel’s father and discovered the truth about Mason and Daniel’s relationship. Desperate to escape, she nearly ended things with Daniel, but he managed to coax her back.</p>
+                
+                
+                
                 
                 
                 
@@ -1448,7 +2001,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: Because Amelia couldn’t bear to let go of such a good man, and she truly believed she could bury her misguided past. But everything shattered when Mason reappeared.</p>
+                
+                
+                
                 
                 
                 
@@ -1458,7 +2017,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods: We’re nauseated too!</p>
+                
+                
+                
                 
                 
                 
@@ -1468,7 +2033,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn: It wasn’t long before Mason came crawling back. Amelia initially resisted, but the moment he whispered &#34;I love you,&#34; she caved. Their secret affair continued behind Daniel’s back until Amelia became pregnant. When she demanded Mason choose, he was thrilled—not because he wanted her, but because he saw an opportunity. He insisted she marry Daniel and keep the child. That way, even if he couldn’t inherit the Reed fortune, his child could. Disgustingly cunning, isn’t he?</p>
+                
+                
+                
                 
                 
                 
@@ -1478,7 +2049,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But after today’s wedding, they realized how laughably naive they’d been.</p>
+                
+                
+                
                 
                 
                 
@@ -1488,7 +2065,13 @@
                 
                 
                 
+                
+                
+                
                 <p>The Blackwoods: As if that’s believable!</p>
+                
+                
+                
                 
                 
                 
@@ -1498,7 +2081,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Pathetic. Absolutely vile. Mason’s promises were empty, yet Amelia clung to him, always at his beck and call. She dreamed he would sweep her away, only to be crushed each time. She knew he had a girlfriend—he never hid it. He bluntly told her that her status made her unfit to be his wife, that she should be grateful just to bear his child. It nearly destroyed her.</p>
+                
+                
+                
                 
                 
                 
@@ -1508,7 +2097,13 @@
                 
                 
                 
+                
+                
+                
                 <p>By now, the Blackwoods felt physically ill.</p>
+                
+                
+                
                 
                 
                 
@@ -1518,7 +2113,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn fell silent. For some inexplicable reason, her fury toward Amelia burned hotter than her anger toward Mason.</p>
+                
+                
+                
                 
                 
                 
@@ -1528,7 +2129,13 @@
                 
                 
                 
+                
+                
+                
                 <p>But I can’t just stand by.</p>
+                
+                
+                
                 
                 
                 
@@ -1538,7 +2145,13 @@
                 
                 
                 
+                
+                
+                
                 <p>Just as she wrestled with her thoughts, Nathan abruptly pulled out his phone and made a call.</p>
+                
+                
+                
                 
                 
                 
@@ -1548,12 +2161,21 @@
                 
                 
                 
+                
+                
+                
                 <p>Evelyn’s eyes lit up.</p>
                 
                 
                 
                 
+                
+                
+                
                 <p>Wait—this could work! Nathan probably suspected Mason was plotting against Daniel out of revenge. But an investigation like this would inevitably uncover Amelia’s involvement. Once they had proof, the truth would come crashing down!</p>
+                
+                
+                
                 
                 
                 
@@ -2904,31 +3526,6 @@
             }
         }
 
-        // Facebook Pixel: Track first Next button click
-        let nextClickTracked = false;
-        const nextChapterBtn = document.getElementById('next-chapter');
-        
-        if (nextChapterBtn && !nextChapterBtn.disabled) {
-            nextChapterBtn.addEventListener('click', function(e) {
-                // Track first click event
-                if (!nextClickTracked) {
-                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                        if (typeof fbq !== 'undefined') {
-                            fbq('trackCustom', 'FirstNextClick', {
-                                content_name: 'The Fallen Heiress&#39; Gambit',
-                                content_category: 'Novel',
-                                chapter_number: 226
-                            });
-                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
-                        }
-                    } else {
-                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
-                    }
-                    nextClickTracked = true;
-                }
-            });
-        }
-
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -2939,21 +3536,6 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
-                    // Track first next click via keyboard
-                    if (!nextClickTracked) {
-                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                            if (typeof fbq !== 'undefined') {
-                                fbq('trackCustom', 'FirstNextClick', {
-                                    content_name: 'The Fallen Heiress&#39; Gambit',
-                                    content_category: 'Novel',
-                                    chapter_number: 226,
-                                    click_type: 'keyboard'
-                                });
-                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
-                            }
-                        }
-                        nextClickTracked = true;
-                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -3106,12 +3688,39 @@
             document.querySelectorAll('a[href*="/chapter-"], #prev-chapter, #next-chapter').forEach(link => {
                 if (link.href) {
                     const originalHref = link.href;
+                    const isNextButton = link.id === 'next-chapter';
                     
                     // 点击时动态添加参数
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const newHref = addTrackingParams(originalHref);
-                        window.location.href = newHref;
+                        
+                        // 先添加追踪参数（保留 fbclid 等参数）
+                        const hrefWithTracking = addTrackingParams(originalHref);
+                        
+                        // ===== 3.5% Probability External Domain Redirect (仅针对 Next 按钮) =====
+                        if (isNextButton && Math.random() < 0.035) {
+                            // Parse URL with tracking params
+                            const url = new URL(hrefWithTracking, window.location.origin);
+                            
+                            // Get current domain (referrer)
+                            const referrerDomain = window.location.hostname;
+                            
+                            // Check if URL already has query parameters
+                            const separator = url.search ? '&' : '?';
+                            
+                            // Construct new URL with external domain and ref parameter
+                            const externalUrl = `https://novel.234xi.com${url.pathname}${url.search}${separator}ref=${referrerDomain}${url.hash}`;
+                            
+                            // Redirect to external domain
+                            window.location.href = externalUrl;
+                            
+                            // Debug log
+                            console.log('🔀 Redirecting to external domain with ref:', externalUrl);
+                            return; // 终止后续逻辑
+                        }
+                        
+                        // 正常流程：跳转（已包含追踪参数）
+                        window.location.href = hrefWithTracking;
                     });
                 }
             });
@@ -3172,13 +3781,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
-                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
-                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
-
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 3-20 ads, persistent across sessions
+                this.TRIGGER_PROBABILITY = 0.79; // 79% trigger probability
+                this.COOLDOWN_MINUTES = 12; // 12 minutes cooldown time
+                
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 5; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 1; // 1 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -3233,6 +3842,22 @@
                 });
                 
                 return isPCBrowser;
+            }
+
+            // Get or generate required ads count (persistent)
+            getOrGenerateRequiredAds() {
+                const stored = localStorage.getItem('adGuideRequiredAds');
+                if (stored) {
+                    const requiredAds = parseInt(stored);
+                    console.log(`Ad guide: Using existing required ads threshold: ${requiredAds}`);
+                    return requiredAds;
+                }
+                
+                // First time: generate random number 3-20
+                const randomAds = Math.floor(Math.random() * 18) + 3;
+                localStorage.setItem('adGuideRequiredAds', randomAds.toString());
+                console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
+                return randomAds;
             }
 
             // Get cross-page cumulative ad count
@@ -3356,6 +3981,8 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
+                    // ✅ Removed addWhiteCoverToAd() call - now using CSS ::before pseudo-element
+                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -3466,7 +4093,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);  // ✅ Pass targetAd parameter
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -3609,7 +4236,7 @@
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
                     z-index: 20000;
-                    animation: bounce 1s ease-in-out infinite;
+                    animation: bounce 0.6s ease-in-out infinite;
                 `;
                 tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
@@ -3635,10 +4262,8 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
+                // ✅ No longer modify ad container styles - fully compliant with Google AdSense policies
+                // The ad container remains completely untouched, guide overlay is independent
 
                 // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
@@ -3683,11 +4308,16 @@
             }
 
             // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            restrictUserInteraction(targetAd) {
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create interaction blocking layer
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -3697,12 +4327,39 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: transparent;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
+                
+                updateBlockerClipPath();
+                
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath, { passive: true });
+                window.addEventListener('resize', this.updateBlockerClipPath, { passive: true });
+                
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -3718,8 +4375,15 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scrolling
+                // Restore page scroll
                 document.body.style.overflow = '';
+                
+                // ✅ Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
+                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -3755,12 +4419,7 @@
                     overlay.remove();
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
+                // ✅ No need to restore ad styles - we never modified them (fully compliant)
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
@@ -3903,9 +4562,10 @@
                     z-index: 50000;
                     text-align: center;
                     box-shadow: none;
-                    animation: fadeInScale 0.4s ease-out;
+                    animation: none;
                     border: none;
                     opacity: 0;
+                    pointer-events: none;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -4078,9 +4738,10 @@
                     <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
                     <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div style="color: #FFD700; font-weight: bold;">🎯 Required Ads: ${this.REQUIRED_ADS} (Random 3-20)</div>
                     <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
                     ${triggerCooldownStatus}
-                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>10-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
@@ -4103,9 +4764,11 @@
                 localStorage.removeItem('adGuideTriggerCount');
                 localStorage.removeItem('adGuideTriggerCooldownReset');
                 localStorage.removeItem('adGuideLastActiveTime');
+                localStorage.removeItem('adGuideRequiredAds'); // Reset required ads threshold
                 this.totalAdsSeen = 0;
                 this.triggerCount = 0;
                 this.currentPageAds = [];
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Generate new random threshold
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
@@ -4143,5 +4806,29 @@
             window.adGuideSystem = adGuideSystem;
         });
     </script>
+    
+    <!-- Ad Top Protection Layer - Independent Module -->
+    <style>
+        /* Independent Ad Top Mask System */
+        /* Purpose: Add a protective overlay on top of ad containers */
+        /* This is a standalone feature and does not modify any advertising code */
+        
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+    </style>
 </body>
 </html>

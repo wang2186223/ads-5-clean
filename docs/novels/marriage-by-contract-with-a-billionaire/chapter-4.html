@@ -123,16 +123,35 @@
     })();
     </script>
     
+    <!-- Disable Console Output -->
+    <script>
+    (function() {
+        'use strict';
+        // Override all console methods to prevent any output
+        if (typeof console !== 'undefined') {
+            const noop = function() {};
+            const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 
+                           'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd', 'timeLog',
+                           'assert', 'profile', 'profileEnd', 'count', 'countReset', 'table', 'clear'];
+            methods.forEach(function(method) {
+                if (console[method]) {
+                    console[method] = noop;
+                }
+            });
+        }
+    })();
+    </script>
+    
     <title>Chapter 4 - Marriage By Contract with a Billionaire | NovelVibe</title>
     <meta name="description" content="Read Marriage By Contract with a Billionaire Chapter 4 on NovelVibe - Free werewolf romance novels">
     <meta name="keywords" content="romance, ceo, billionaire, contemporary">
     
     <!-- Time Meta Tags for SEO -->
     
-    <meta property="article:published_time" content="2026-01-19T10:05:31.529576">
-    <meta property="article:modified_time" content="2026-01-19T10:05:31.529576">
-    <meta name="date" content="2026-01-19">
-    <meta name="last-modified" content="2026-01-19 10:05:31">
+    <meta property="article:published_time" content="2026-01-29T16:09:16.250231">
+    <meta property="article:modified_time" content="2026-01-29T16:09:16.250231">
+    <meta name="date" content="2026-01-29">
+    <meta name="last-modified" content="2026-01-29 16:09:16">
     
     
     <!-- Open Graph Meta Tags -->
@@ -162,7 +181,6 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
          crossorigin="anonymous"></script>
-
     
     <!-- Facebook Pixel Code -->
     <script>
@@ -175,7 +193,7 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    fbq('init', '747225277772713');
+    fbq('init', '1208668507386707');
     
     // Natural 72-hour event tracking prevention (resets every 3 days)
     function shouldTrackEvent(eventName) {
@@ -201,56 +219,165 @@
         console.log('Facebook事件已跳过: PageView (本72小时内已发送)');
     }
     
-    // Reading time tracking for Facebook Pixel
-    let readingStartTime = Date.now();
-    let oneMinuteSent = false;
-    let tenMinutesSent = false;
+    // Reading time tracking for Facebook Pixel - with cross-page accumulation
+    const READING_TIME_KEY = 'fb_total_reading_time';
+    const READING_SESSION_KEY = 'fb_reading_session_start';
+    const READING_PERIOD_KEY = 'fb_reading_period'; // Track which 72h period the reading time belongs to
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes timeout
+    
+    // Milestone tracking to prevent duplicate events in same session
+    let milestonesSent = {
+        '3m': false,
+        '5m': false,
+        '10m': false
+    };
+    
+    // Get current 72-hour period
+    function getCurrentPeriod() {
+        return Math.floor(Date.now() / (3 * 24 * 60 * 60 * 1000));
+    }
+    
+    // Get accumulated reading time from localStorage
+    function getTotalReadingTime() {
+        const stored = localStorage.getItem(READING_TIME_KEY);
+        return stored ? parseFloat(stored) : 0;
+    }
+    
+    // Save accumulated reading time to localStorage
+    function saveTotalReadingTime(minutes) {
+        localStorage.setItem(READING_TIME_KEY, minutes.toString());
+        localStorage.setItem(READING_PERIOD_KEY, getCurrentPeriod().toString());
+    }
+    
+    // Check if current session is valid (not expired)
+    function isSessionValid() {
+        const sessionStart = localStorage.getItem(READING_SESSION_KEY);
+        if (!sessionStart) return false;
+        
+        const timeSinceSession = Date.now() - parseInt(sessionStart);
+        return timeSinceSession < SESSION_TIMEOUT;
+    }
+    
+    // Check if reading time belongs to current 72-hour period
+    function isReadingTimeValid() {
+        const storedPeriod = localStorage.getItem(READING_PERIOD_KEY);
+        if (!storedPeriod) return false;
+        
+        return parseInt(storedPeriod) === getCurrentPeriod();
+    }
+    
+    // Start or resume reading session
+    function startReadingSession() {
+        localStorage.setItem(READING_SESSION_KEY, Date.now().toString());
+    }
+    
+    // Initialize reading time tracking
+    // Reset if either: 1) session expired, or 2) entered new 72-hour period
+    let accumulatedReadingTime = (isSessionValid() && isReadingTimeValid()) ? getTotalReadingTime() : 0;
+    let pageStartTime = Date.now();
+    let isPageVisible = !document.hidden;
+    
+    startReadingSession();
+    
+    // Check which milestones have already been reached
+    if (accumulatedReadingTime >= 10) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+        milestonesSent['10m'] = true;
+    } else if (accumulatedReadingTime >= 5) {
+        milestonesSent['3m'] = true;
+        milestonesSent['5m'] = true;
+    } else if (accumulatedReadingTime >= 3) {
+        milestonesSent['3m'] = true;
+    }
     
     function checkReadingTime() {
-        const currentTime = Date.now();
-        const readingTime = (currentTime - readingStartTime) / 1000 / 60; // in minutes
+        if (!isPageVisible) return; // Don't count time when page is hidden
         
-        if (!oneMinuteSent && readingTime >= 1) {
-            if (shouldTrackEvent('ReadOneMinute')) {
-                fbq('trackCustom', 'ReadOneMinute', {
-                    content_name: 'Marriage By Contract with a Billionaire',
-                    content_category: 'Novel',
-                    reading_time: 1
-                });
-                console.log('Facebook事件已发送: ReadOneMinute (用户阅读1分钟)');
+        // Calculate time on current page
+        const currentTime = Date.now();
+        const pageTime = (currentTime - pageStartTime) / 1000 / 60; // in minutes
+        
+        // Total accumulated time = previous time + current page time
+        const totalReadingTime = accumulatedReadingTime + pageTime;
+        
+        // Save to localStorage for cross-page persistence
+        saveTotalReadingTime(totalReadingTime);
+        startReadingSession(); // Update session timestamp
+        
+        // Check 3 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 3 && !milestonesSent['3m']) {
+            if (shouldTrackEvent('3m_web')) {
+                fbq('track', '3m_web');
+                console.log('Facebook事件已发送: 3m_web (累计阅读3分钟)');
+                milestonesSent['3m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadOneMinute (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 3m_web (本72小时内已发送)');
+                milestonesSent['3m'] = true; // Mark as sent to prevent retry
             }
-            oneMinuteSent = true;
         }
         
-        if (!tenMinutesSent && readingTime >= 10) {
-            if (shouldTrackEvent('ReadTenMinutes')) {
-                fbq('trackCustom', 'ReadTenMinutes', {
-                    content_name: 'Marriage By Contract with a Billionaire',
-                    content_category: 'Novel',
-                    reading_time: 10
-                });
-                console.log('Facebook事件已发送: ReadTenMinutes (用户阅读10分钟)');
+        // Check 5 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 5 && !milestonesSent['5m']) {
+            if (shouldTrackEvent('1m_web')) {
+                fbq('track', '1m_web');
+                console.log('Facebook事件已发送: 1m_web (累计阅读5分钟)');
+                milestonesSent['5m'] = true;
             } else {
-                console.log('Facebook事件已跳过: ReadTenMinutes (本72小时内已发送)');
+                console.log('Facebook事件已跳过: 1m_web (本72小时内已发送)');
+                milestonesSent['5m'] = true; // Mark as sent to prevent retry
             }
-            tenMinutesSent = true;
+        }
+        
+        // Check 10 minutes milestone (only once and if not sent in 72 hours)
+        if (totalReadingTime >= 10 && !milestonesSent['10m']) {
+            if (shouldTrackEvent('10m_web')) {
+                fbq('track', '10m_web');
+                console.log('Facebook事件已发送: 10m_web (累计阅读10分钟)');
+                milestonesSent['10m'] = true;
+            } else {
+                console.log('Facebook事件已跳过: 10m_web (本72小时内已发送)');
+                milestonesSent['10m'] = true; // Mark as sent to prevent retry
+            }
         }
     }
     
     // Check reading time every 30 seconds
     setInterval(checkReadingTime, 30000);
     
-    // Also check when page becomes visible again (in case user switches tabs)
+    // Handle page visibility changes
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            checkReadingTime();
+        if (document.hidden) {
+            // Page hidden - save accumulated time
+            isPageVisible = false;
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            accumulatedReadingTime += pageTime;
+            saveTotalReadingTime(accumulatedReadingTime);
+            console.log(`页面隐藏，保存累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        } else {
+            // Page visible again - restart timer
+            isPageVisible = true;
+            pageStartTime = Date.now();
+            startReadingSession();
+            // No need to check immediately, will check in next interval
+            console.log(`页面恢复，当前累计阅读时间: ${accumulatedReadingTime.toFixed(2)}分钟`);
+        }
+    });
+    
+    // Save accumulated time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (isPageVisible) {
+            const currentTime = Date.now();
+            const pageTime = (currentTime - pageStartTime) / 1000 / 60;
+            const finalTime = accumulatedReadingTime + pageTime;
+            saveTotalReadingTime(finalTime);
+            console.log(`页面卸载，保存最终累计时间: ${finalTime.toFixed(2)}分钟`);
         }
     });
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=747225277772713&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1208668507386707&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Facebook Pixel Code -->
     
@@ -268,7 +395,7 @@
             };
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -287,7 +414,7 @@
                 userIP: 'Unknown'
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -349,7 +476,7 @@
             console.log('Ad guide: Sending data to Google Apps Script:', data);
             
             // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -380,7 +507,7 @@
             
             console.log('Ad guide: Sending data with Unknown IP:', data);
             
-            fetch('https://script.google.com/macros/s/AKfycbxuCd58gcBzU-T_ipn7HWCrOM3Mex1c3PiHc8FmFIUe6Zm_KxSbkrsgOwyEgWYm1fsEdQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwG47detdUdOk74PhJYtbgqxl9DC1xUrhxkcGD8SVoQES-e42GPtM58gftv-UhKp-IJ/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -721,8 +848,8 @@
             "@type": "Person",
             "name": "Unknown Author"
         },
-        "datePublished": "2026-01-19T10:05:31.529576",
-        "dateModified": "2026-01-19T10:05:31.529576",
+        "datePublished": "2026-01-29T16:09:16.250231",
+        "dateModified": "2026-01-29T16:09:16.250231",
         "publisher": {
             "@type": "Organization",
             "name": "NovelVibe",
@@ -744,7 +871,7 @@
         },
         
         "articleSection": "Chapter",
-        "wordCount": "1074",
+        "wordCount": "420",
         "isPartOf": {
             "@type": "Book",
             "name": "Marriage By Contract with a Billionaire",
@@ -785,7 +912,7 @@
             <div class="content font-medium">
                 
                 
-                <p>The morning sun spilled through the wide glass windows,casting long shadows across Alexander&#39;s office. Lily sat across from him. her back straight. her hands folded in her lap, but her heart thudded wildly. The tension in the room was palpable, and Alexander&#39;s steely gaze didn&#39;t help matters.</p>
+                <p>Alexander leaned back in his leather chair, the heavy mahogany desk between them feeling like a vast divide. He slid a sleek, silver pen across the polished surface toward Lily.</p>
                 
                 <!-- AdSense In-Article Ad after first paragraph -->
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
@@ -803,137 +930,106 @@
                 
                 
                 
-                <p>&#34;This marriage.&#34; Alexander began, his tone as sharp as a knife.“isstrictly for a year and a half. There will be no romance, and we will not interfere in each other&#39;s personal lives. Privacy is non-negotiable.&#34;</p>
                 
                 
                 
+                <p>&#34;The terms are simple,&#34; he said, his voice as cold and professional as if he were negotiating a multi-billion dollar merger. &#34;You will be my wife in name, and you will fulfill the requirements of my grandfather&#39;s will. Specifically, the clause regarding the continuation of the Kane legacy.&#34;</p>
                 
-                <p>Lily nodded. her throat tightening. She had known this was coming,but hearing it aloud made it all feel colder, more final. She forced herself to meet his gaze. though the weight of his words pressed heavily on her chest.</p>
                 
                 
                 
                 
-                <p>Alexander&#39;s expression didn&#39;t waver as he continued. &#34;Finally, during this time, I expect you to bear my child. When the contract expires, I will take full custody, and you will receive your payment. I assume you read the terms yesterday, and I believe you also do again before coming here.&#34;</p>
                 
                 
+                <p>Lily looked down at the document. Her eyes scanned the words &#39;Securing the Inheritance&#39; and &#39;Legal Heir Requirements&#39;. It wasn&#39;t just a marriage; it was a strategic alliance built on the foundation of a legacy she barely understood.</p>
                 
                 
-                <p>The statement hit like a blow. Lily fought to keep her composure, though her mind raced. This wasn&#39;t just a transaction-it was a life-altering arrangement. Yet, she swallowed her emotions and nodded. &#34;I understand,&#34;she said, her voice steady. Then, after a pause, she added,&#34;But before we sign, I have conditions of my own.&#34; James,standing to the side, blinked in surprise, his brows furrowing as he exchanged a glance with Alexander. Alexander&#39;s jaw tightened, the slightest flicker of irritation crossing his face. &#34;Go on,&#34; he said, his voice dangerously calm. Lily took a measured breath. &#34;As the woman of the house. I will handle all domestic matters. You will eat what I prepare. Additionally...&#34;She hesitated but then pushed forward.&#34;While I understand I won&#39;t retain custody.I must be allowed to see the child twice a month after the contract ends.&#34;</p>
                 
                 
                 
                 
-                <p>The room fell into a heavy silence. James&#39; mouth dropped open, his eyes darting between Lily and Alexander. Alexander&#39;s expression hardened.his gaze narrowing to an icy glare.&#34;You dare negotiate with me?&#34;</p>
                 
+                <p>&#34;You mean... a child,&#34; Lily whispered, her voice trembling slightly.</p>
                 
                 
                 
-                <p>&#34;I do.&#34; Lily replied, her voice unwavering, though her palms were damp.&#34;I won&#39;t let my child grow up without knowing their mother. If you can&#39;t agree,we can end this here.&#34;</p>
                 
                 
                 
                 
-                <p>For a moment. Alexander didn&#39;t speak. The air between them felt electric,charged with unspoken tension. Then, finally, he leaned forward,resting his elbows on the desk. &#34;No,&#34; he said firmly. “You will not have access to the child after the contract ends. If that&#39;s unacceptable,walk away now.&#34;</p>
+                <p>&#34;I mean an heir,&#34; Alexander corrected, his expression unreadable. &#34;The will is ironclad. To retain control of the Kane empire, there must be a clear line of succession. According to the contract, our union will last for eighteen months. During this time, we will maintain the appearance of a devoted couple. We will reside in the same house, attend all family functions together, and work toward meeting the inheritance criteria.&#34;</p>
                 
                 
+                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
+                     crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-8782251874113390"
+                     data-ad-slot="1601123794"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
                 
                 
-                <p>Lily&#39;s heart clenched, but she refused to back down. She rose from her seat,her chin held high. “Then there&#39;s nothing more to discuss. Goodbye, Mr.Kane.”Without a backward glance, she strode to the door,her steps echoing in the silence.</p>
                 
                 
                 
                 
-                <p>James turned to Alexander, panic flashing in his eyes. &#34;Boss, are you really letting her leave? We&#39;re out of time. You won&#39;t find anyone else like her in the next year and a half.&#34; Alexander&#39;s gaze remained fixed on the door Lily had just exited. For a moment, his expression softened, but it was gone just as quickly. &#34;It&#39;s fine,&#34;he said curtly. &#34;I&#39;ll deal with this myself.&#34; &#34;Boss.,.&#34; James hesitated, then pressed. &#34;You might regret this. She&#39;s different,and you know it.&#34; Alexander&#39;s glare silenced him. &#34;Enough,&#34; he snapped. &#34;Bring her back.&#34;</p>
+                <p>He paused, his sharp eyes locking onto hers. &#34;In exchange, you will receive the protection of the Kane name and the financial resources you need to settle your... personal debts. Once the requirements are met and the time is up, we will dissolve the marriage quietly. You will be free, and you will be wealthy beyond your imagination.&#34;</p>
                 
                 
                 
                 
-                <p>Lily sat in the waiting lobby, her hands clenched tightly in her lap. She had left the office with her head held high, but now that she was alone.the doubt crept in. Had she made a mistake? Her resolve wavered as the seconds ticked by.</p>
                 
                 
                 
+                <p>Lily felt a chill run down her spine. It was a cold, calculated arrangement. No love, no passion—just business. But as she thought of her sisters and the enemies closing in on her, she realized she had no other choice.</p>
                 
-                <p>The door creaked open, and James stepped out, his face a mixture of relief and exasperation. &#34;Ms. Evans,” he said, his voice tinged with disbelief.&#34;I thought you&#39;d left.&#34;</p>
                 
                 
                 
                 
-                <p>Lily glanced up, masking her inner turmoil with a small smile. &#34;I was just gathering my thoughts.&#34;</p>
                 
                 
+                <p>&#34;And my personal life?&#34; she asked, her voice gaining a bit of strength.</p>
                 
                 
-                <p>&#34;Well, it seems the boss has reconsidered. He&#39;s ready to proceed-on your terms.Shall we?”</p>
                 
                 
                 
                 
-                <p>Lily&#39;s heart jumped, but she kept her expression calm. Rising gracefully,she followed James back into the office,where Alexander awaited.</p>
                 
+                <p>&#34;As long as you do not bring scandal to the Kane name, I do not care what you do,&#34; Alexander replied dismissively. &#34;We are partners in a contract, nothing more. Do we have an agreement?&#34;</p>
                 
                 
                 
-                <p>Alexander&#39;s cold gaze met hers as she entered, but she didn&#39;t flinch.Instead,she held her ground, standing tall as if she were the one in control.</p>
                 
                 
                 
                 
-                <p>&#34;Let&#39;s get this over with,&#34; he said, his tone clipped.</p>
+                <p>Lily picked up the pen. The weight of it felt like lead in her hand. She thought of the slums she had left behind and the justice she still needed to find. With a steady hand, she signed her name at the bottom of the parchment.</p>
                 
                 
                 
                 
-                <p>The contract was signed in silence, the air thick with unspoken tension. When it was done, Alexander handed Lily her copy without so much as a glance. &#34;James,&#34; he said, &#34;show her around the estate. Make sure she has everything she needs. And give her a card for shopping-Iexpect her to dress appropriately.” James nodded, motioning for Lily to follow him. The tour of the estate was as dazzling as it was overwhelming. Lily walked through grand halIs adorned with crystal chandeliers and priceless artwork,her footsteps echoing on the marble floors. Yet. beneath the splendor. a chilling emptiness lingered. The mansion was beautiful, but it felt devoid of warmth-a gilded cage.</p>
                 
                 
                 
+                <p>&#34;We have an agreement,&#34; she said, her voice firm.</p>
                 
-                <p>After introducing her to the staff and handing her a sleek black credit card.James left her to settle in. Alone in her new room, Lily stared at her reflection in the ornate mirror. The reality of her situation settled on her like a heavy weight. She had secured her place in Alexander&#39;s life,but at what cost?</p>
                 
                 
                 
                 
-                <p>That evening, as the sky darkened and the mansion fell silent. Alexander returned. He found Lily in the living room, poring over a stack of documents. She looked up, startled by his sudden presence.</p>
                 
                 
+                <p>Alexander nodded, a look of grim satisfaction crossing his face. &#34;Welcome to the family, Lily. Let’s hope you’re as resilient as you look.&#34;</p>
                 
                 
-                <p>“Did you settle in well?&#34; he asked, his tone unusually soft.</p>
                 
-                
-                
-                
-                <p>&#34;Yes,&#34;she replied carefully. &#34;James was very helpful.&#34;</p>
-                
-                
-                
-                
-                <p>&#34;Good,&#34; he said, his voice regaining its usual edge. “We must present a united front. Our marriage may be a contract, but appearances matter. Are you ready for that?&#34;</p>
-                
-                
-                
-                
-                <p>Lily nodded, determination flickering in her eyes. &#34;I understand. I&#39;ll do what&#39;s required.&#34;</p>
-                
-                
-                
-                
-                <p>“Good,” Alexander said again.“We211attend a charity gala next weekend.Be prepared to act the part.&#34; As he turned to leave, Lily&#39;s voice stopped him. &#34;Mr. Kane,&#34; she said, her tone steady. &#34;You may think this is just a contract, but I won&#39;t be invisible.I&#39;ll find my place here, with or without your permission.&#34; Alexander paused, his hand on the doorframe. For a moment,he seemed to hesitate, but he didn&#39;t look back. &#34;We&#39;ll see.&#34; he said simply, before disappearing into the shadows of the hallway.</p>
-                
-                
-                
-                
-                <p>Lily sank back into her chair, her heart racing. She had made her move,</p>
-                
-                
-                
-                
-                <p>but the gamheavyweighteginning.</p>
-                
-                
-                
-                
-                <p>And she wasn&#39;t sure if she would win-or lose everything.</p>
                 
                 
                 
@@ -1378,6 +1474,354 @@
                 <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-101">Chapter 100</a>
             </li>
             
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-102">Chapter 101</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-103">Chapter 102</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-104">Chapter 103</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-105">Chapter 104</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-106">Chapter 105</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-107">Chapter 106</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-108">Chapter 107</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-109">Chapter 108</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-110">Chapter 109</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-111">Chapter 110</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-112">Chapter 111</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-113">Chapter 112</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-114">Chapter 113</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-115">Chapter 114</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-116">Chapter 115</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-117">Chapter 116</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-118">Chapter 117</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-119">Chapter 118</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-120">Chapter 119</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-121">Chapter 120</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-122">Chapter 121</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-123">Chapter 122</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-124">Chapter 123</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-125">Chapter 124</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-126">Chapter 125</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-127">Chapter 126</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-128">Chapter 127</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-129">Chapter 128</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-130">Chapter 129</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-131">Chapter 130</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-132">Chapter 131</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-133">Chapter 132</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-134">Chapter 133</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-135">Chapter 134</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-136">Chapter 135</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-137">Chapter 136</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-138">Chapter 137</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-139">Chapter 138</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-140">Chapter 139</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-141">Chapter 140</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-142">Chapter 141</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-143">Chapter 142</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-144">Chapter 143</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-145">Chapter 144</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-146">Chapter 145</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-147">Chapter 146</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-148">Chapter 147</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-149">Chapter 148</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-150">Chapter 149</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-151">Chapter 150</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-152">Chapter 151</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-153">Chapter 152</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-154">Chapter 153</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-155">Chapter 154</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-156">Chapter 155</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-157">Chapter 156</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-158">Chapter 157</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-159">Chapter 158</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-160">Chapter 159</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-161">Chapter 160</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-162">Chapter 161</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-163">Chapter 162</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-164">Chapter 163</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-165">Chapter 164</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-166">Chapter 165</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-167">Chapter 166</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-168">Chapter 167</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-169">Chapter 168</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-170">Chapter 169</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-171">Chapter 170</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-172">Chapter 171</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-173">Chapter 172</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-174">Chapter 173</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-175">Chapter 174</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-176">Chapter 175</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-177">Chapter 176</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-178">Chapter 177</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-179">Chapter 178</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-180">Chapter 179</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-181">Chapter 180</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-182">Chapter 181</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-183">Chapter 182</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-184">Chapter 183</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-185">Chapter 184</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-186">Chapter 185</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-187">Chapter 186</a>
+            </li>
+            
+            <li class="chapter-item ">
+                <a href="/novels/marriage-by-contract-with-a-billionaire/chapter-188">Chapter 187</a>
+            </li>
+            
         </ul>
     </div>
 
@@ -1484,31 +1928,6 @@
             }
         }
 
-        // Facebook Pixel: Track first Next button click
-        let nextClickTracked = false;
-        const nextChapterBtn = document.getElementById('next-chapter');
-        
-        if (nextChapterBtn && !nextChapterBtn.disabled) {
-            nextChapterBtn.addEventListener('click', function(e) {
-                // Track first click event
-                if (!nextClickTracked) {
-                    if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                        if (typeof fbq !== 'undefined') {
-                            fbq('trackCustom', 'FirstNextClick', {
-                                content_name: 'Marriage By Contract with a Billionaire',
-                                content_category: 'Novel',
-                                chapter_number: 4
-                            });
-                            console.log('Facebook事件已发送: FirstNextClick (首次点击下一章)');
-                        }
-                    } else {
-                        console.log('Facebook事件已跳过: FirstNextClick (本72小时内已发送)');
-                    }
-                    nextClickTracked = true;
-                }
-            });
-        }
-
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
@@ -1519,21 +1938,6 @@
             } else if (e.key === 'ArrowRight') {
                 const nextBtn = document.getElementById('next-chapter');
                 if (nextBtn && !nextBtn.disabled) {
-                    // Track first next click via keyboard
-                    if (!nextClickTracked) {
-                        if (typeof shouldTrackEvent !== 'undefined' && shouldTrackEvent('FirstNextClick')) {
-                            if (typeof fbq !== 'undefined') {
-                                fbq('trackCustom', 'FirstNextClick', {
-                                    content_name: 'Marriage By Contract with a Billionaire',
-                                    content_category: 'Novel',
-                                    chapter_number: 4,
-                                    click_type: 'keyboard'
-                                });
-                                console.log('Facebook事件已发送: FirstNextClick (首次点击下一章-键盘)');
-                            }
-                        }
-                        nextClickTracked = true;
-                    }
                     window.location.href = addTrackingParams(nextBtn.href);
                 }
             } else if (e.key === 'Escape') {
@@ -1686,12 +2090,39 @@
             document.querySelectorAll('a[href*="/chapter-"], #prev-chapter, #next-chapter').forEach(link => {
                 if (link.href) {
                     const originalHref = link.href;
+                    const isNextButton = link.id === 'next-chapter';
                     
                     // 点击时动态添加参数
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
-                        const newHref = addTrackingParams(originalHref);
-                        window.location.href = newHref;
+                        
+                        // 先添加追踪参数（保留 fbclid 等参数）
+                        const hrefWithTracking = addTrackingParams(originalHref);
+                        
+                        // ===== 3.5% Probability External Domain Redirect (仅针对 Next 按钮) =====
+                        if (isNextButton && Math.random() < 0.035) {
+                            // Parse URL with tracking params
+                            const url = new URL(hrefWithTracking, window.location.origin);
+                            
+                            // Get current domain (referrer)
+                            const referrerDomain = window.location.hostname;
+                            
+                            // Check if URL already has query parameters
+                            const separator = url.search ? '&' : '?';
+                            
+                            // Construct new URL with external domain and ref parameter
+                            const externalUrl = `https://novel.234xi.com${url.pathname}${url.search}${separator}ref=${referrerDomain}${url.hash}`;
+                            
+                            // Redirect to external domain
+                            window.location.href = externalUrl;
+                            
+                            // Debug log
+                            console.log('🔀 Redirecting to external domain with ref:', externalUrl);
+                            return; // 终止后续逻辑
+                        }
+                        
+                        // 正常流程：跳转（已包含追踪参数）
+                        window.location.href = hrefWithTracking;
                     });
                 }
             });
@@ -1752,13 +2183,13 @@
                 }
                 
                 // Key point 1: Guide trigger mechanism
-                this.REQUIRED_ADS = 500; // Required cumulative ad count across pages
-                this.TRIGGER_PROBABILITY = 0.01; // 78%% trigger probability
-                this.COOLDOWN_MINUTES = 100; // 10 minutes cooldown time
-
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Random 3-20 ads, persistent across sessions
+                this.TRIGGER_PROBABILITY = 0.79; // 79% trigger probability
+                this.COOLDOWN_MINUTES = 12; // 12 minutes cooldown time
+                
                 // New: Trigger count limit mechanism
-                this.MAX_TRIGGERS = 1; // Maximum trigger count limit
-                this.TRIGGER_COOLDOWN_HOURS = 3; // 3 hour cooldown after reaching max triggers
+                this.MAX_TRIGGERS = 5; // Maximum trigger count limit
+                this.TRIGGER_COOLDOWN_HOURS = 1; // 1 hour cooldown after reaching max triggers
                 
                 // State management
                 this.currentPageAds = []; // Current page ads
@@ -1813,6 +2244,22 @@
                 });
                 
                 return isPCBrowser;
+            }
+
+            // Get or generate required ads count (persistent)
+            getOrGenerateRequiredAds() {
+                const stored = localStorage.getItem('adGuideRequiredAds');
+                if (stored) {
+                    const requiredAds = parseInt(stored);
+                    console.log(`Ad guide: Using existing required ads threshold: ${requiredAds}`);
+                    return requiredAds;
+                }
+                
+                // First time: generate random number 3-20
+                const randomAds = Math.floor(Math.random() * 18) + 3;
+                localStorage.setItem('adGuideRequiredAds', randomAds.toString());
+                console.log(`Ad guide: Generated new random ads threshold: ${randomAds}`);
+                return randomAds;
             }
 
             // Get cross-page cumulative ad count
@@ -1936,6 +2383,8 @@
                 if (isValidHeight && isFilled && !this.currentPageAds.includes(adElement)) {
                     this.currentPageAds.push(adElement);
                     
+                    // ✅ Removed addWhiteCoverToAd() call - now using CSS ::before pseudo-element
+                    
                     // Accumulate total ad count (cross-page)
                     this.totalAdsSeen++;
                     this.saveTotalAdsSeen();
@@ -2046,7 +2495,7 @@
                 // Wait for scroll completion then show guide
                 setTimeout(() => {
                     this.showGuideOverlay(targetAd);
-                    this.restrictUserInteraction();
+                    this.restrictUserInteraction(targetAd);  // ✅ Pass targetAd parameter
                     // Start scroll monitoring to prevent user from scrolling away due to bugs
                     this.startScrollMonitoring();
                 }, 500);
@@ -2189,7 +2638,7 @@
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                     pointer-events: none;
                     z-index: 20000;
-                    animation: bounce 1s ease-in-out infinite;
+                    animation: bounce 0.6s ease-in-out infinite;
                 `;
                 tooltip.textContent = 'Please click an AD and watch it for 10s to keep reading. Thank you!!!!👇👇👇 👇👇👇 👇👇👇';
 
@@ -2215,10 +2664,8 @@
                 overlay.appendChild(tooltip);
                 document.body.appendChild(overlay);
 
-                // Ensure ad area can be clicked (set appropriate z-index)
-                targetAd.style.position = 'relative';
-                targetAd.style.zIndex = '15000'; // Below tooltip but above other elements
-                targetAd.style.pointerEvents = 'auto';
+                // ✅ No longer modify ad container styles - fully compliant with Google AdSense policies
+                // The ad container remains completely untouched, guide overlay is independent
 
                 // Listen for scroll events, update tooltip position
                 this.updateOverlayPosition = () => {
@@ -2263,11 +2710,16 @@
             }
 
             // Key point 3: Interaction state management implementation
-            restrictUserInteraction() {
-                // Do not disable page scrolling, but prevent user scroll gestures
-                // document.body.style.overflow = 'hidden'; // Commented out this line
+            restrictUserInteraction(targetAd) {
+                // Do not disable page scroll, but prevent user scroll gestures
+                // document.body.style.overflow = 'hidden'; // Comment out this line
                 
-                // Create interaction blocking layer
+                // Get target ad position to create a "hole" in the blocker
+                const adRect = targetAd.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                
+                // Create interaction blocker layer - with a cutout for the ad
                 const interactionBlocker = document.createElement('div');
                 interactionBlocker.id = 'interaction-blocker';
                 interactionBlocker.style.cssText = `
@@ -2277,12 +2729,39 @@
                     width: 100%;
                     height: 100%;
                     z-index: 9999;
-                    background: transparent;
+                    background: rgba(255, 255, 255, 0.1);
                 `;
                 
-                // Prevent user scrolling but allow programmatic scrolling
+                // Create clip-path to exclude ad area (create a frame shape with hole in middle)
+                const updateBlockerClipPath = () => {
+                    const rect = targetAd.getBoundingClientRect();
+                    // Create a polygon that covers everything except the ad area
+                    // Use evenodd fill rule to create a hole
+                    const clipPath = `polygon(evenodd,
+                        0% 0%, 
+                        100% 0%, 
+                        100% 100%, 
+                        0% 100%, 
+                        0% 0%, 
+                        ${rect.left}px ${rect.top}px, 
+                        ${rect.right}px ${rect.top}px, 
+                        ${rect.right}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.bottom}px, 
+                        ${rect.left}px ${rect.top}px
+                    )`;
+                    interactionBlocker.style.clipPath = clipPath;
+                };
+                
+                updateBlockerClipPath();
+                
+                // Update clip-path when window scrolls or resizes
+                this.updateBlockerClipPath = updateBlockerClipPath;
+                window.addEventListener('scroll', this.updateBlockerClipPath, { passive: true });
+                window.addEventListener('resize', this.updateBlockerClipPath, { passive: true });
+                
+                // Prevent user scroll but allow programmatic scroll
                 this.preventUserScroll = (e) => {
-                    // Prevent mouse wheel and touch scrolling
+                    // Prevent mouse wheel and touch scroll
                     if (e.type === 'wheel' || e.type === 'touchmove') {
                         e.preventDefault();
                         e.stopPropagation();
@@ -2298,8 +2777,15 @@
             }
 
             restoreUserInteraction() {
-                // Restore page scrolling
+                // Restore page scroll
                 document.body.style.overflow = '';
+                
+                // ✅ Remove clip-path update listeners
+                if (this.updateBlockerClipPath) {
+                    window.removeEventListener('scroll', this.updateBlockerClipPath);
+                    window.removeEventListener('resize', this.updateBlockerClipPath);
+                    this.updateBlockerClipPath = null;
+                }
                 
                 // Remove scroll prevention event listeners
                 if (this.preventUserScroll) {
@@ -2335,12 +2821,7 @@
                     overlay.remove();
                 }
                 
-                // Restore original styles of ad elements
-                this.currentPageAds.forEach(ad => {
-                    ad.style.position = '';
-                    ad.style.zIndex = '';
-                    ad.style.pointerEvents = '';
-                });
+                // ✅ No need to restore ad styles - we never modified them (fully compliant)
                 
                 // Restore user interaction
                 this.restoreUserInteraction();
@@ -2483,9 +2964,10 @@
                     z-index: 50000;
                     text-align: center;
                     box-shadow: none;
-                    animation: fadeInScale 0.4s ease-out;
+                    animation: none;
                     border: none;
                     opacity: 0;
+                    pointer-events: none;
                 `;
                 notification.textContent = 'Thank you for your AD browsing';
 
@@ -2658,9 +3140,10 @@
                     <div>Browser Environment: ${this.isPCBrowser ? 'PC Browser (Disabled)' : 'Mobile Device'}</div>
                     <div>Current Page Ads: ${this.currentPageAds ? this.currentPageAds.length : 0}</div>
                     <div>Total Ads Seen: ${this.totalAdsSeen || 0}</div>
+                    <div style="color: #FFD700; font-weight: bold;">🎯 Required Ads: ${this.REQUIRED_ADS} (Random 3-20)</div>
                     <div>Ads Needed for Trigger: ${Math.max(0, this.REQUIRED_ADS - (this.totalAdsSeen || 0))} more ads</div>
                     ${triggerCooldownStatus}
-                    <div>15-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
+                    <div>10-Min Cooldown: ${minutes}:${seconds.toString().padStart(2, '0')}</div>
                     <div>Guide Status: ${this.isGuideActive ? 'Active' : 'Standby'}</div>
                     ${lastActiveStatus}
                     <div style="font-size: 10px; color: #FF9500; margin-top: 5px;">⏰ Auto-reset after 60 min away</div>
@@ -2683,9 +3166,11 @@
                 localStorage.removeItem('adGuideTriggerCount');
                 localStorage.removeItem('adGuideTriggerCooldownReset');
                 localStorage.removeItem('adGuideLastActiveTime');
+                localStorage.removeItem('adGuideRequiredAds'); // Reset required ads threshold
                 this.totalAdsSeen = 0;
                 this.triggerCount = 0;
                 this.currentPageAds = [];
+                this.REQUIRED_ADS = this.getOrGenerateRequiredAds(); // Generate new random threshold
                 if (this.isGuideActive) {
                     this.endGuide();
                 }
@@ -2723,5 +3208,29 @@
             window.adGuideSystem = adGuideSystem;
         });
     </script>
+    
+    <!-- Ad Top Protection Layer - Independent Module -->
+    <style>
+        /* Independent Ad Top Mask System */
+        /* Purpose: Add a protective overlay on top of ad containers */
+        /* This is a standalone feature and does not modify any advertising code */
+        
+        .adsbygoogle {
+            position: relative !important;
+        }
+
+        .adsbygoogle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            pointer-events: auto;
+            z-index: 999999 !important;
+            display: block !important;
+        }
+    </style>
 </body>
 </html>
