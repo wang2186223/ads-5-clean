@@ -848,25 +848,17 @@
         <div class="container">
             <h1 class="chapter-title">{{ chapter.title if chapter.title else 'Chapter ' + chapter.number|string }}</h1>
             <div class="content font-medium">
+                {% set ad_slots = ['2912660874', '1601123794', '1773302850', '3433080214'] %}
                 {% for paragraph in chapter.content.split('\n') %}
                 {% if paragraph.strip() %}
                 <p>{{ paragraph.strip() }}</p>
+                {% if loop.index == 1 or (loop.index % 6 == 0) %}
                 {% if loop.index == 1 %}
-                <!-- AdSense In-Article Ad after first paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="2912660874"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+                    {% set ad_index = 0 %}
+                {% else %}
+                    {% set ad_index = (loop.index // 6) % 4 %}
                 {% endif %}
-                {% if loop.index == 5 %}
-                <!-- AdSense In-Article Ad after fifth paragraph -->
+                <!-- AdSense In-Article Ad (Ad Unit {{ ad_index + 1 }}: {{ ad_slots[ad_index] }}) -->
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
                      crossorigin="anonymous"></script>
                 <ins class="adsbygoogle"
@@ -874,35 +866,7 @@
                      data-ad-layout="in-article"
                      data-ad-format="fluid"
                      data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1601123794"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                {% endif %}
-                {% if loop.index == 15 %}
-                <!-- AdSense In-Article Ad after fifteenth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="1773302850"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-                {% endif %}
-                {% if loop.index == 25 %}
-                <!-- AdSense In-Article Ad after twenty-fifth paragraph -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8782251874113390"
-                     crossorigin="anonymous"></script>
-                <ins class="adsbygoogle"
-                     style="display:block; text-align:center;"
-                     data-ad-layout="in-article"
-                     data-ad-format="fluid"
-                     data-ad-client="ca-pub-8782251874113390"
-                     data-ad-slot="3433080214"></ins>
+                     data-ad-slot="{{ ad_slots[ad_index] }}"></ins>
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
